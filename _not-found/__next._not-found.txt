@@ -2,4 +2,4 @@
 2:I[39756,["/anthony-jennifer-wedding/_next/static/chunks/0dbhjjzl8qfwv.js"],"default"]
 3:I[37457,["/anthony-jennifer-wedding/_next/static/chunks/0dbhjjzl8qfwv.js"],"default"]
 4:[]
-0:{"rsc":["$","$1","c",{"children":[null,["$","$L2",null,{"parallelRouterKey":"children","template":["$","$L3",null,{}]}]]}],"isPartial":false,"staleTime":300,"varyParams":"$W4","buildId":"0H9qkric1wb9BMzkrqo8K"}
+0:{"rsc":["$","$1","c",{"children":[null,["$","$L2",null,{"parallelRouterKey":"children","template":["$","$L3",null,{}]}]]}],"isPartial":false,"staleTime":300,"varyParams":"$W4","buildId":"fdi_bCohpq20dVc1jkoTy"}
