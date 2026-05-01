@@ -1,3 +1,4 @@
+import EntranceSplash from "@/components/EntranceSplash";
 import Hero from "@/components/Hero";
 import Story from "@/components/Story";
 import Photos from "@/components/Photos";
@@ -10,6 +11,7 @@ import Footer from "@/components/Footer";
 export default function Home() {
   return (
     <main className="bg-cream text-body">
+      <EntranceSplash />
       <Hero />
       <Story />
       <Photos />

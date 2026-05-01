@@ -1,20 +1,59 @@
 @import "tailwindcss";
 
-/* Palette — locked from SYNTHESIS-v2 + Anthony's olive accent pick.
-   Tweak hexes here; everything else inherits. */
+/* === BRAND IDENTITY (locked from save-the-date + Anthony 2026-05-02) === */
+/* Display font: Blosta (#495314 olive)
+   Body font:    Gordita (#2b2b2b near-black)
+   To activate the actual fonts, drop these files into public/fonts/:
+     - public/fonts/Blosta.woff2
+     - public/fonts/Gordita-Regular.woff2
+     - public/fonts/Gordita-Medium.woff2  (optional)
+   Until then, the @font-face rules silently fall through to the fallback
+   stack (Cormorant Garamond / Plus Jakarta Sans / Tenor Sans). */
+
+@font-face {
+  font-family: "Blosta";
+  src: url("/anthony-jennifer-wedding/fonts/Blosta.woff2") format("woff2");
+  font-weight: 400;
+  font-style: normal;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: "Gordita";
+  src: url("/anthony-jennifer-wedding/fonts/Gordita-Regular.woff2") format("woff2");
+  font-weight: 400;
+  font-style: normal;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: "Gordita";
+  src: url("/anthony-jennifer-wedding/fonts/Gordita-Medium.woff2") format("woff2");
+  font-weight: 500;
+  font-style: normal;
+  font-display: swap;
+}
+
 :root {
   --cream: #f4ece0;
   --parchment: #e8ddc8;
-  --ink: #2a2520;
-  --body: #3d362e;
+
+  /* Brand colors — Anthony's spec */
+  --display: #495314;        /* Blosta olive — headings, names */
+  --body: #2b2b2b;           /* Gordita near-black — body copy */
+
+  /* Legacy aliases (used by older components) */
+  --ink: #2b2b2b;
+  --olive-deep: #495314;
+  --olive: #6e7a3a;          /* lighter olive for accents */
+
+  /* Accents */
   --gold: #b8924a;
   --gold-soft: #d4b87a;
-  --olive: #7a8a5e;
-  --olive-deep: #5d6c45;
-  --shadow: rgba(42, 37, 32, 0.08);
+  --shadow: rgba(43, 43, 43, 0.08);
 
   --background: var(--cream);
-  --foreground: var(--ink);
+  --foreground: var(--body);
 }
 
 @theme inline {
@@ -24,32 +63,35 @@
   --color-parchment: var(--parchment);
   --color-ink: var(--ink);
   --color-body: var(--body);
+  --color-display: var(--display);
   --color-gold: var(--gold);
   --color-gold-soft: var(--gold-soft);
   --color-olive: var(--olive);
   --color-olive-deep: var(--olive-deep);
-  --font-display: var(--font-cormorant);
-  --font-body: var(--font-tenor);
+
+  /* Font stacks — Blosta + Gordita first, Google Fonts as graceful fallback */
+  --font-display: "Blosta", var(--font-cormorant), Georgia, serif;
+  --font-body: "Gordita", var(--font-tenor), system-ui, sans-serif;
   --font-script: var(--font-italianno);
 }
 
 html, body {
   background: var(--cream);
   color: var(--body);
-  font-family: var(--font-tenor), Georgia, serif;
+  font-family: "Gordita", var(--font-tenor), system-ui, sans-serif;
   -webkit-font-smoothing: antialiased;
   text-rendering: optimizeLegibility;
 }
 
 h1, h2, h3, h4 {
-  font-family: var(--font-cormorant), Georgia, serif;
-  color: var(--ink);
+  font-family: "Blosta", var(--font-cormorant), Georgia, serif;
+  color: var(--display);
   font-weight: 400;
   letter-spacing: -0.01em;
 }
 
 ::selection {
-  background: var(--olive);
+  background: var(--olive-deep);
   color: var(--cream);
 }
 
@@ -70,6 +112,19 @@ h1, h2, h3, h4 {
 /* Smooth scroll */
 html {
   scroll-behavior: smooth;
+}
+
+/* Color liveliness for the scroll-scrubbed watercolor frame sequences */
+.scene-frame,
+#hero img {
+  filter: saturate(1.18) contrast(1.06) brightness(1.02);
+}
+
+/* Lemon corner accents + paper plane — gentler boost */
+img[src*="lemon.png"],
+img[src*="plane.png"],
+img[src*="lemon-hanging.png"] {
+  filter: saturate(1.12) contrast(1.04) drop-shadow(0 6px 14px rgba(43,43,43,0.16));
 }
 
 /* Hide scrollbar on hero sequence to keep cinematic feel */

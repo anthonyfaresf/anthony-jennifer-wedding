@@ -44,3 +44,5 @@ assets/design-refs/website references/
 *.log
 .vscode/
 .idea/
+.vercel
+.env*.local

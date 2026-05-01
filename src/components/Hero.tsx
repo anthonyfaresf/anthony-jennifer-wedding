@@ -3,107 +3,70 @@
 import { useEffect, useRef } from "react";
 import gsap from "gsap";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
+import { FrameSequence } from "./FrameSequence";
 
 if (typeof window !== "undefined") gsap.registerPlugin(ScrollTrigger);
 
 /**
  * Hero — full-bleed cinematic opener.
- * Video is a 5s slow push-in from a medium two-shot of the couple at a café
- * table to an extreme close-up of two wine glasses cheers-ing. Plays scroll-
- * scrubbed: scrolling drives the camera move. Text overlays fade in at
- * specific scroll points (names, date, venue, scroll cue).
+ * Wine-cheers push-in as a 31-frame image sequence (not <video>) — bulletproof
+ * scroll-scrub on every device including iOS Safari (video.currentTime seeks
+ * are unreliable on mobile Safari due to buffer eviction).
  */
 export default function Hero() {
   const sectionRef = useRef<HTMLElement>(null);
-  const videoRef = useRef<HTMLVideoElement>(null);
 
   useEffect(() => {
     const reduceMotion =
       typeof window !== "undefined" &&
       window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+    if (reduceMotion) return;
 
     const ctx = gsap.context(() => {
       const sectionEl = sectionRef.current;
-      const video = videoRef.current;
-      if (!sectionEl || !video) return;
+      if (!sectionEl) return;
 
-      const wireScrub = () => {
-        if (!isFinite(video.duration) || video.duration === 0) return;
+      // Names fade out as the camera pushes into the cheers ECU
+      gsap.to(".hero-names", {
+        opacity: 0,
+        y: -30,
+        ease: "none",
+        scrollTrigger: {
+          trigger: sectionEl,
+          start: "top -30%",
+          end: "top -65%",
+          scrub: 0.5,
+        },
+      });
 
-        // Prime buffer for iOS Safari smooth scrub
-        const prime = video.play();
-        if (prime && typeof prime.then === "function") {
-          prime.then(() => video.pause()).catch(() => video.pause());
-        } else {
-          video.pause();
+      // Date + venue appear during the close-up moment
+      gsap.fromTo(
+        ".hero-date",
+        { opacity: 0, y: 30 },
+        {
+          opacity: 1,
+          y: 0,
+          ease: "power2.out",
+          scrollTrigger: {
+            trigger: sectionEl,
+            start: "top -55%",
+            end: "top -90%",
+            scrub: 0.5,
+          },
         }
+      );
 
-        if (reduceMotion) {
-          video.currentTime = 0;
-          return;
-        }
-
-        // Bind currentTime to scroll progress through the hero section
-        gsap.to(video, {
-          currentTime: video.duration,
-          ease: "none",
-          scrollTrigger: {
-            trigger: sectionEl,
-            start: "top top",
-            end: "bottom bottom",
-            scrub: 0.5,
-          },
-        });
-
-        // Names start visible at scroll 0 (over the wide two-shot), then fade
-        // out as the camera pushes into the cheers ECU.
-        gsap.to(".hero-names", {
-          opacity: 0,
-          y: -30,
-          ease: "none",
-          scrollTrigger: {
-            trigger: sectionEl,
-            start: "top -30%",
-            end: "top -65%",
-            scrub: 0.5,
-          },
-        });
-
-        // Date + venue appear during the close-up moment
-        gsap.fromTo(
-          ".hero-date",
-          { opacity: 0, y: 30 },
-          {
-            opacity: 1,
-            y: 0,
-            ease: "power2.out",
-            scrollTrigger: {
-              trigger: sectionEl,
-              start: "top -55%",
-              end: "top -90%",
-              scrub: 0.5,
-            },
-          }
-        );
-
-        // Scroll indicator fades out as the user scrolls
-        gsap.to(".hero-scroll-cue", {
-          opacity: 0,
-          ease: "none",
-          scrollTrigger: {
-            trigger: sectionEl,
-            start: "top top",
-            end: "top -20%",
-            scrub: 0.5,
-          },
-        });
-      };
-
-      if (video.readyState >= 3 && isFinite(video.duration)) {
-        wireScrub();
-      } else {
-        video.addEventListener("canplay", wireScrub, { once: true });
-      }
+      // Scroll indicator fades out as the user scrolls
+      gsap.to(".hero-scroll-cue", {
+        opacity: 0,
+        ease: "none",
+        scrollTrigger: {
+          trigger: sectionEl,
+          start: "top top",
+          end: "top -20%",
+          scrub: 0.5,
+        },
+      });
     }, sectionRef);
 
     return () => ctx.revert();
@@ -112,23 +75,20 @@ export default function Hero() {
   return (
     <section
       ref={sectionRef}
+      id="hero"
       className="relative w-full"
       style={{ height: "220vh" }}
     >
       <div className="sticky top-0 h-[100svh] supports-[height:100dvh]:h-[100dvh] w-full overflow-hidden bg-ink">
-        {/* Full-bleed wine-cheers video, scrubbed by scroll */}
-        <video
-          ref={videoRef}
-          src="/videos/hero-wine-cheers.mp4"
-          poster="/videos/posters/hero-wine-cheers.jpg"
-          muted
-          playsInline
-          preload="auto"
+        {/* Wine-cheers push-in as image sequence (31 frames, scroll-scrubbed) */}
+        <FrameSequence
+          scene="hero-wine-cheers"
+          frameCount={31}
+          triggerSelector="#hero"
           className="absolute inset-0 w-full h-full object-cover"
-          style={{ pointerEvents: "none" }}
         />
 
-        {/* Soft vignette gradient — gives text contrast over the warm video */}
+        {/* Soft vignette gradient — gives text contrast over the warm scene */}
         <div
           aria-hidden
           className="absolute inset-0 pointer-events-none"
@@ -138,7 +98,7 @@ export default function Hero() {
           }}
         />
 
-        {/* Couple's names — center, fade in early then out as camera pushes in */}
+        {/* Couple's names — center, fade out as camera pushes in */}
         <div className="absolute inset-0 flex flex-col items-center justify-center text-center px-6 pointer-events-none">
           <div className="hero-names">
             <p
