@@ -7,10 +7,12 @@ import Schedule from "@/components/Schedule";
 import RSVP from "@/components/RSVP";
 import FAQ from "@/components/FAQ";
 import Footer from "@/components/Footer";
+import AudioPlayer from "@/components/AudioPlayer";
 
 export default function Home() {
   return (
     <main className="bg-cream text-body">
+      <AudioPlayer />
       <EntranceSplash />
       <Hero />
       <Story />
