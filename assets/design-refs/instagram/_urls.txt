@@ -1,0 +1,10 @@
+# Paste Instagram URLs here, ONE PER LINE.
+# Reels, carousels, and photo posts all work.
+# Example:
+# https://www.instagram.com/reel/Cxxx/
+# https://www.instagram.com/p/Cyyy/
+
+https://www.instagram.com/p/DXpfmPFDdN-/
+https://www.instagram.com/p/DXj5MFZCCOf/
+https://www.instagram.com/p/DUsQNBHDF80/
+https://www.instagram.com/p/DV4Cf8ygNFJ/
