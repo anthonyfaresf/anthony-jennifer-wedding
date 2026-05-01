@@ -1,0 +1,37 @@
+# macOS
+.DS_Store
+
+# Next.js / Node
+web/.next/
+web/node_modules/
+web/data/
+web/out/
+web/.vercel/
+
+# Local env
+.env
+.env.local
+.env.*.local
+
+# QA / test artifacts (regeneratable)
+web/scripts/screenshots/
+
+# Heavy raw assets — kept on disk only, not pushed.
+# Master video sources + rembg ONNX downloads.
+assets/master-refs/videos/
+assets/master-refs/*.mp4
+assets/master-refs/*.png
+!assets/master-refs/elements/*.png
+
+# Reference design dumps (large screenshots / IG downloads)
+assets/design-refs/instagram/Reels/
+assets/design-refs/instagram/_frames/
+assets/design-refs/instagram/_analysis/
+assets/design-refs/website references/
+
+# Editor / system
+*.swp
+*.bak
+*.log
+.vscode/
+.idea/

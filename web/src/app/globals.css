@@ -1,0 +1,85 @@
+@import "tailwindcss";
+
+/* Palette — locked from SYNTHESIS-v2 + Anthony's olive accent pick.
+   Tweak hexes here; everything else inherits. */
+:root {
+  --cream: #f4ece0;
+  --parchment: #e8ddc8;
+  --ink: #2a2520;
+  --body: #3d362e;
+  --gold: #b8924a;
+  --gold-soft: #d4b87a;
+  --olive: #7a8a5e;
+  --olive-deep: #5d6c45;
+  --shadow: rgba(42, 37, 32, 0.08);
+
+  --background: var(--cream);
+  --foreground: var(--ink);
+}
+
+@theme inline {
+  --color-background: var(--background);
+  --color-foreground: var(--foreground);
+  --color-cream: var(--cream);
+  --color-parchment: var(--parchment);
+  --color-ink: var(--ink);
+  --color-body: var(--body);
+  --color-gold: var(--gold);
+  --color-gold-soft: var(--gold-soft);
+  --color-olive: var(--olive);
+  --color-olive-deep: var(--olive-deep);
+  --font-display: var(--font-cormorant);
+  --font-body: var(--font-tenor);
+  --font-script: var(--font-italianno);
+}
+
+html, body {
+  background: var(--cream);
+  color: var(--body);
+  font-family: var(--font-tenor), Georgia, serif;
+  -webkit-font-smoothing: antialiased;
+  text-rendering: optimizeLegibility;
+}
+
+h1, h2, h3, h4 {
+  font-family: var(--font-cormorant), Georgia, serif;
+  color: var(--ink);
+  font-weight: 400;
+  letter-spacing: -0.01em;
+}
+
+::selection {
+  background: var(--olive);
+  color: var(--cream);
+}
+
+/* Subtle paper texture — applied to body via overlay */
+.paper-grain {
+  position: relative;
+}
+.paper-grain::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  background-image: url("data:image/svg+xml;utf8,<svg viewBox='0 0 400 400' xmlns='http://www.w3.org/2000/svg'><filter id='n'><feTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='2' stitchTiles='stitch'/><feColorMatrix values='0 0 0 0 0.16 0 0 0 0 0.14 0 0 0 0 0.13 0 0 0 0.06 0'/></filter><rect width='100%25' height='100%25' filter='url(%23n)'/></svg>");
+  opacity: 0.5;
+  mix-blend-mode: multiply;
+}
+
+/* Smooth scroll */
+html {
+  scroll-behavior: smooth;
+}
+
+/* Hide scrollbar on hero sequence to keep cinematic feel */
+.no-scroll {
+  overflow: hidden;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  * {
+    animation-duration: 0.01ms !important;
+    transition-duration: 0.01ms !important;
+  }
+}
