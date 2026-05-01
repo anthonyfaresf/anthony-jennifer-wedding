@@ -128,7 +128,7 @@ export function FrameSequence({
         trigger,
         start: "top top",
         end: "bottom bottom",
-        scrub: 0.6, // slightly higher than before — smooths fast-scroll reversal
+        scrub: 0.25, // tight — feels like the camera tracks the finger
       },
       onUpdate: () => {
         drawFrame(Math.round(state.frame));
