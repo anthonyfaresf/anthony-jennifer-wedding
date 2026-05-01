@@ -185,12 +185,15 @@ export default function EntranceSplash() {
           aria-hidden
         />
 
-        {/* z-20 — CENTERED FOCAL POINT: lemons + writing as one stacked unit
-            in the middle of the viewport, bridging both halves. */}
-        <div className="absolute inset-0 z-20 flex flex-col items-center justify-center text-center px-6 pointer-events-none">
-          {/* Lemons — directly above the writing */}
+        {/* z-20 — FOCAL BLOCK: lemons + writing live entirely on the LEFT
+            cream side (centered within the left 50%). This keeps the writing
+            on cream paper for legibility, lets Jennifer fill the right half
+            without text covering her face — the "magazine cover" split that
+            Anthony asked for. */}
+        <div className="absolute top-0 left-0 w-1/2 h-full z-20 flex flex-col items-center justify-center text-center px-4 pointer-events-none">
+          {/* Lemons — directly above the writing, sized for the half-width column */}
           <div className="splash-lemons-wrap mb-2 sm:mb-4">
-            <div className="splash-lemons w-[58vw] sm:w-[34vw] max-w-[300px]">
+            <div className="splash-lemons w-[42vw] sm:w-[24vw] max-w-[260px]">
               <img
                 src={`${BP}/elements/lemon-hanging.png`}
                 alt=""
@@ -204,7 +207,7 @@ export default function EntranceSplash() {
           </div>
 
           {/* Writing — directly below the lemons */}
-          <div className="splash-text-block max-w-[90%]">
+          <div className="splash-text-block w-full max-w-[44vw]">
             <p
               className="splash-text-line text-[10px] sm:text-xs uppercase tracking-[0.55em] mb-5"
               style={{
@@ -218,7 +221,7 @@ export default function EntranceSplash() {
 
             {/* "A & J" with text-clip mask — letters reveal lemon image through them */}
             <h1
-              className="splash-text-line text-7xl sm:text-9xl leading-none mb-3 splash-monogram"
+              className="splash-text-line text-6xl sm:text-8xl leading-none mb-3 splash-monogram"
               style={{
                 fontFamily: "var(--font-display)",
                 letterSpacing: "0.02em",
@@ -258,47 +261,39 @@ export default function EntranceSplash() {
             />
 
             <p
-              className="splash-text-line text-2xl sm:text-3xl mb-4"
+              className="splash-text-line text-xl sm:text-3xl mb-4 leading-tight"
               style={{
                 fontFamily: "var(--font-display)",
                 color: "var(--display)",
-                textShadow: "0 1px 10px rgba(244,236,224,0.6)",
               }}
             >
-              Anthony · Jennifer
+              Anthony
+              <br />
+              Jennifer
             </p>
 
             <p
-              className="splash-text-line text-[10px] sm:text-xs uppercase tracking-[0.4em] mb-2"
-              style={{
-                color: "var(--display)",
-                textShadow: "0 1px 8px rgba(244,236,224,0.55)",
-              }}
+              className="splash-text-line text-[9px] sm:text-xs uppercase tracking-[0.35em] mb-2"
+              style={{ color: "var(--display)" }}
             >
               July 18 · 2026
             </p>
             <p
-              className="splash-text-line text-[9px] sm:text-[10px] uppercase tracking-[0.35em]"
-              style={{
-                color: "var(--display)",
-                opacity: 0.75,
-                textShadow: "0 1px 8px rgba(244,236,224,0.55)",
-              }}
+              className="splash-text-line text-[8px] sm:text-[10px] uppercase tracking-[0.3em] leading-relaxed"
+              style={{ color: "var(--display)", opacity: 0.75 }}
             >
-              Couvent Saint Jean · Okaibe · Lebanon
+              Couvent Saint Jean
+              <br />
+              Okaibe · Lebanon
             </p>
           </div>
         </div>
 
-        {/* Swipe-up cue — bottom, animated bounce ("unlock" framing) */}
-        <div className="splash-cue absolute bottom-14 left-0 right-0 text-center z-20 pointer-events-none">
+        {/* Swipe-up cue — sits on the cream half so it never crosses Jennifer */}
+        <div className="splash-cue absolute bottom-14 left-0 w-1/2 text-center z-20 pointer-events-none">
           <p
-            className="text-[10px] uppercase tracking-[0.45em] mb-3"
-            style={{
-              color: "var(--display)",
-              opacity: 0.78,
-              textShadow: "0 1px 8px rgba(244,236,224,0.55)",
-            }}
+            className="text-[9px] uppercase tracking-[0.4em] mb-3"
+            style={{ color: "var(--display)", opacity: 0.75 }}
           >
             Swipe to unlock
           </p>
@@ -319,15 +314,11 @@ export default function EntranceSplash() {
           </svg>
         </div>
 
-        {/* z-30 — AF&U credit (always on top, link clickable) */}
-        <div className="absolute bottom-3 left-0 right-0 text-center z-30 pointer-events-auto">
+        {/* z-30 — AF&U credit (cream half, link clickable) */}
+        <div className="absolute bottom-3 left-0 w-1/2 text-center z-30 pointer-events-auto">
           <p
-            className="text-[9px] uppercase tracking-[0.3em]"
-            style={{
-              color: "var(--display)",
-              opacity: 0.6,
-              textShadow: "0 1px 8px rgba(244,236,224,0.55)",
-            }}
+            className="text-[8px] uppercase tracking-[0.3em]"
+            style={{ color: "var(--display)", opacity: 0.6 }}
           >
             Crafted with care by{" "}
             <a
