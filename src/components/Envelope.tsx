@@ -29,7 +29,10 @@
 import { useEffect, useRef, useState } from "react";
 import gsap from "gsap";
 
-type Phase = "sealed" | "opening" | "opened" | "dismissed";
+// Collapsed 2026-05-15 per Anthony — single-tap entrance, no intermediate
+// "ENTER" pause state. One click on the seal runs the full open animation,
+// holds the invite card on-screen for absorption, then fades to hero.
+type Phase = "sealed" | "opening" | "dismissed";
 
 const SESSION_KEY = "envelope-opened-v1";
 
@@ -43,7 +46,6 @@ export default function Envelope() {
   const sealRightRef = useRef<SVGGElement>(null);
   const letterRef = useRef<HTMLDivElement>(null);
   const sealedHintRef = useRef<HTMLParagraphElement>(null);
-  const enterCtaRef = useRef<HTMLButtonElement>(null);
 
   // Skip on second visit in the same browser session
   useEffect(() => {
@@ -70,22 +72,39 @@ export default function Envelope() {
     if (phase !== "sealed") return;
     setPhase("opening");
 
+    const dismiss = () => {
+      if (typeof window !== "undefined") {
+        sessionStorage.setItem(SESSION_KEY, "true");
+      }
+      gsap.to(overlayRef.current, {
+        opacity: 0,
+        duration: 0.7,
+        ease: "power2.inOut",
+        onComplete: () => {
+          setPhase("dismissed");
+          document.body.style.overflow = "";
+        },
+      });
+    };
+
     const reduceMotion =
       typeof window !== "undefined" &&
       window.matchMedia("(prefers-reduced-motion: reduce)").matches;
 
     if (reduceMotion) {
-      gsap.set(sealGroupRef.current, { opacity: 0 });
-      gsap.set(flapRef.current, { rotationX: -175 });
-      gsap.set(letterRef.current, { opacity: 1, y: 0 });
-      gsap.set(sealedHintRef.current, { opacity: 0 });
-      gsap.set(enterCtaRef.current, { opacity: 1, y: 0 });
-      setPhase("opened");
+      // Honor the motion preference — instant dismiss with no animation.
+      gsap.set(overlayRef.current, { opacity: 0 });
+      setPhase("dismissed");
+      document.body.style.overflow = "";
       return;
     }
 
     const tl = gsap.timeline({
-      onComplete: () => setPhase("opened"),
+      onComplete: () => {
+        // Hold the invite card on-screen ~1.4s so the names + date land,
+        // then auto-fade. Single-tap commitment per Anthony 2026-05-15.
+        gsap.delayedCall(1.4, dismiss);
+      },
     });
 
     tl
@@ -141,32 +160,7 @@ export default function Envelope() {
         { y: 90, opacity: 0, scale: 0.96 },
         { y: 0, opacity: 1, scale: 1, duration: 0.75, ease: "power3.out" },
         "-=0.55"
-      )
-      // ENTER cta appears
-      .fromTo(
-        enterCtaRef.current,
-        { y: 16, opacity: 0 },
-        { y: 0, opacity: 1, duration: 0.5, ease: "power2.out" },
-        "-=0.15"
       );
-  };
-
-  const handleEnter = () => {
-    if (phase !== "opened") return;
-
-    if (typeof window !== "undefined") {
-      sessionStorage.setItem(SESSION_KEY, "true");
-    }
-
-    gsap.to(overlayRef.current, {
-      opacity: 0,
-      duration: 0.7,
-      ease: "power2.inOut",
-      onComplete: () => {
-        setPhase("dismissed");
-        document.body.style.overflow = "";
-      },
-    });
   };
 
   if (phase === "dismissed") return null;
@@ -578,18 +572,6 @@ export default function Envelope() {
       >
         {phase === "sealed" ? "Tap the seal to open" : ""}
       </p>
-
-      {/* "Enter" CTA after open */}
-      <button
-        ref={enterCtaRef}
-        type="button"
-        onClick={handleEnter}
-        className="absolute left-1/2 -translate-x-1/2 opacity-0 px-7 py-3 rounded-full border border-ink/15 bg-cream/90 backdrop-blur-sm text-[10px] uppercase tracking-[0.45em] hover:bg-cream transition-colors"
-        style={{ bottom: "max(8vh, 48px)", color: "var(--display)" }}
-        aria-label="Enter the wedding website"
-      >
-        Enter
-      </button>
 
       {/* AF&U credit */}
       <p

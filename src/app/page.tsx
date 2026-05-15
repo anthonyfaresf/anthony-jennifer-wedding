@@ -10,6 +10,7 @@ import Footer from "@/components/Footer";
 import AudioPlayer from "@/components/AudioPlayer";
 import StickyNav from "@/components/StickyNav";
 import SkipLink from "@/components/SkipLink";
+import PaperStack from "@/components/PaperStack";
 
 export default function Home() {
   return (
@@ -17,11 +18,16 @@ export default function Home() {
       {/* Skip-to-RSVP — first focusable for keyboard/screen-reader users.
           Per 2026 a11y research (Knot Marble pattern). */}
       <SkipLink />
-      {/* Envelope restored 2026-05-15 per Anthony — sealed "door" gate before
-          the hero. Tap the wax seal to open, then "Enter" to dismiss the
-          overlay and reveal the rest of the site. SessionStorage skip on
-          subsequent visits so it doesn't replay all day. */}
+      {/* Envelope restored 2026-05-15 per Anthony — single-tap entrance now.
+          Tap the wax seal → envelope opens + invite holds ~1.4s → fades to
+          hero. Music starts on that same gesture (AudioPlayer listens for
+          first user click). SessionStorage skip on subsequent visits. */}
       <Envelope />
+      {/* PaperStack — adds Apple/Linear scroll-stack reveal to each section
+          (entry: rise + fade + scale-in, exit: subtle scale-down + dim).
+          Skips Hero/Story (they have their own internal scrub timelines).
+          Per Anthony 2026-05-15: "sections stack on top like papers". */}
+      <PaperStack />
       {/* Sticky pill nav — appears after hero scrolls past, IntersectionObserver
           highlights active section. Per 2026 wedding-site research, this is
           the canonical wayfinding pattern for long-scroll single-page sites. */}

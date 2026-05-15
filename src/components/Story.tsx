@@ -347,27 +347,41 @@ export default function Story() {
                 {/* === CAPTION — no card, text floats over the watercolor +
                     sits above the scrim. Strong text-shadow + scrim = legible
                     on every watercolor patch. */}
+                {/* Caption block — wrapped in a soft cream-blur scrim so
+                    olive/cream text always lands on a dark patch regardless
+                    of which watercolor frame the scrub is showing. Backdrop-
+                    filter blurs the watercolor underneath; the dark gradient
+                    layer guarantees minimum contrast for text-shadow + cream
+                    text. Installed 2026-05-15 contrast pass. */}
                 <div className="scene-caption absolute bottom-8 sm:bottom-12 left-0 right-0 px-6 text-center pointer-events-none z-30">
-                  <div className="scene-caption-card inline-block max-w-md sm:max-w-lg">
+                  <div
+                    className="scene-caption-card inline-block max-w-md sm:max-w-lg px-6 py-5 sm:px-8 sm:py-6 rounded-sm"
+                    style={{
+                      background:
+                        "radial-gradient(ellipse 75% 100% at center, rgba(20,18,14,0.42) 0%, rgba(20,18,14,0.28) 55%, rgba(20,18,14,0) 100%)",
+                      backdropFilter: "blur(2px)",
+                      WebkitBackdropFilter: "blur(2px)",
+                    }}
+                  >
                     <p
                       className="font-display text-5xl sm:text-6xl text-gold leading-none mb-2"
-                      style={{ textShadow: "0 4px 22px rgba(0,0,0,0.55)" }}
+                      style={{ textShadow: "0 4px 22px rgba(0,0,0,0.65)" }}
                     >
                       <span className="caption-char inline-block">{s.n}</span>
                     </p>
                     <p
                       className="text-[10px] sm:text-xs uppercase tracking-[0.4em] text-cream mb-3"
-                      style={{ textShadow: "0 2px 12px rgba(0,0,0,0.65)" }}
+                      style={{ textShadow: "0 2px 12px rgba(0,0,0,0.75)" }}
                     >
                       {splitChars(`${s.title} · ${s.year}`)}
                     </p>
                     <div
                       className="w-10 h-px bg-gold/70 mx-auto mb-3"
-                      style={{ boxShadow: "0 0 8px rgba(0,0,0,0.35)" }}
+                      style={{ boxShadow: "0 0 8px rgba(0,0,0,0.45)" }}
                     />
                     <p
                       className="text-cream text-xs sm:text-sm leading-relaxed max-w-sm sm:max-w-md mx-auto"
-                      style={{ textShadow: "0 2px 14px rgba(0,0,0,0.7)" }}
+                      style={{ textShadow: "0 2px 14px rgba(0,0,0,0.8)" }}
                     >
                       {splitChars(s.body)}
                     </p>

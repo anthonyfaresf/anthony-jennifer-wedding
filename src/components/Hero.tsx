@@ -1,9 +1,10 @@
 "use client";
 
-import { useEffect, useRef } from "react";
+import { useEffect, useRef, useState } from "react";
 import gsap from "gsap";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
 import { FrameSequence } from "./FrameSequence";
+import Confetti from "./Confetti";
 
 if (typeof window !== "undefined") gsap.registerPlugin(ScrollTrigger);
 
@@ -27,6 +28,15 @@ if (typeof window !== "undefined") gsap.registerPlugin(ScrollTrigger);
  */
 export default function Hero() {
   const sectionRef = useRef<HTMLElement>(null);
+  // Confetti petal-drift fires once when the names have landed (~1.8s after
+  // mount). Per SYNTHESIS-v3 Tier 1 #5 (itskevinyang reference).
+  const [confettiPlay, setConfettiPlay] = useState(false);
+
+  useEffect(() => {
+    // Trigger the confetti burst shortly after the name-stagger lands.
+    const t = setTimeout(() => setConfettiPlay(true), 1800);
+    return () => clearTimeout(t);
+  }, []);
 
   useEffect(() => {
     const reduceMotion =
@@ -215,10 +225,14 @@ export default function Hero() {
           />
         </div>
 
-        {/* CREAM PAGE-TURN */}
+        {/* CREAM PAGE-TURN — initial opacity dropped 0.75 → 0.4 (2026-05-15
+            contrast pass). At 0.75 the veil over the watercolor blended cream
+            text + cream-tinted watercolor + cream veil into mush. 0.4 keeps
+            the "page-turn" feel while letting the dark vignette + name shadow
+            do contrast work. */}
         <div
           className="hero-cream-veil absolute inset-0 pointer-events-none z-10"
-          style={{ background: "var(--cream)", opacity: 0.75 }}
+          style={{ background: "var(--cream)", opacity: 0.4 }}
           aria-hidden
         />
 
@@ -229,8 +243,11 @@ export default function Hero() {
           aria-hidden
           className="hero-vignette absolute inset-0 pointer-events-none z-20"
           style={{
+            // Boosted 2026-05-15 — center alpha 0.55 → 0.68 + tightened
+            // falloff so the names ALWAYS land on dark patch regardless of
+            // which watercolor frame is showing through.
             background:
-              "radial-gradient(ellipse 70% 55% at center, rgba(20,18,14,0.55) 0%, rgba(20,18,14,0.35) 40%, rgba(20,18,14,0.15) 70%, rgba(20,18,14,0) 100%), linear-gradient(180deg, rgba(20,18,14,0.5) 0%, rgba(20,18,14,0.08) 22%, rgba(20,18,14,0.08) 65%, rgba(20,18,14,0.7) 100%)",
+              "radial-gradient(ellipse 65% 50% at center, rgba(20,18,14,0.68) 0%, rgba(20,18,14,0.45) 40%, rgba(20,18,14,0.18) 70%, rgba(20,18,14,0) 100%), linear-gradient(180deg, rgba(20,18,14,0.55) 0%, rgba(20,18,14,0.08) 22%, rgba(20,18,14,0.08) 65%, rgba(20,18,14,0.75) 100%)",
             opacity: 1,
           }}
         />
@@ -324,6 +341,11 @@ export default function Hero() {
             </p>
           </div>
         </div>
+
+        {/* Confetti / petal-drift on hero name reveal — SYNTHESIS-v3 Tier 1 #5,
+            itskevinyang reference. Tasteful, ~22 particles, drifts past the
+            text block then settles. */}
+        <Confetti play={confettiPlay} count={22} fullViewport />
 
         {/* Scroll cue — text only, no pill backdrop */}
         <div className="hero-scroll-cue absolute bottom-6 left-1/2 -translate-x-1/2 text-center pointer-events-none z-30">

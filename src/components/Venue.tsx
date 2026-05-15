@@ -137,10 +137,21 @@ export default function Venue() {
             for stable legibility (replaces the mix-blend-multiply approach
             which read unpredictably across watercolor light/dark patches). */}
         <div className="absolute bottom-8 sm:bottom-12 left-0 right-0 px-6 text-center pointer-events-none z-30">
-          <div className="venue-title-card inline-block">
+          <div
+            className="venue-title-card inline-block px-7 py-5 sm:px-10 sm:py-6 rounded-sm"
+            style={{
+              // Same cream-blur scrim pattern as Story scene captions
+              // (2026-05-15 contrast pass) — guarantees the watercolor
+              // bell-tower scene + cream text never blend into mush.
+              background:
+                "radial-gradient(ellipse 80% 100% at center, rgba(20,18,14,0.45) 0%, rgba(20,18,14,0.3) 55%, rgba(20,18,14,0) 100%)",
+              backdropFilter: "blur(2px)",
+              WebkitBackdropFilter: "blur(2px)",
+            }}
+          >
             <p
               className="text-[11px] sm:text-xs uppercase tracking-[0.5em] mb-3 text-cream"
-              style={{ textShadow: "0 2px 14px rgba(0,0,0,0.7), 0 0 6px rgba(0,0,0,0.4)" }}
+              style={{ textShadow: "0 2px 14px rgba(0,0,0,0.75), 0 0 6px rgba(0,0,0,0.5)" }}
             >
               Where
             </p>
@@ -150,18 +161,18 @@ export default function Venue() {
                 fontFamily: "var(--font-display)",
                 fontSize: "clamp(40px, 6vw, 88px)",
                 letterSpacing: "0.01em",
-                textShadow: "0 4px 28px rgba(0,0,0,0.7), 0 2px 10px rgba(0,0,0,0.5)",
+                textShadow: "0 4px 28px rgba(0,0,0,0.8), 0 2px 10px rgba(0,0,0,0.6)",
               }}
             >
               Couvent Saint Jean
             </h2>
-            <div className="w-10 h-px bg-gold mx-auto my-3" style={{ boxShadow: "0 0 8px rgba(0,0,0,0.3)" }} />
+            <div className="w-10 h-px bg-gold mx-auto my-3" style={{ boxShadow: "0 0 8px rgba(0,0,0,0.4)" }} />
             <p
               className="italic text-cream"
               style={{
                 fontFamily: "var(--font-display)",
                 fontSize: "clamp(16px, 1.6vw, 22px)",
-                textShadow: "0 2px 12px rgba(0,0,0,0.65)",
+                textShadow: "0 2px 12px rgba(0,0,0,0.75)",
               }}
             >
               Okaibe · Lebanon
