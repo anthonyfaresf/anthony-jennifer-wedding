@@ -7,8 +7,11 @@ import path from "node:path";
  * The original record stays on disk; the latest record per token wins
  * (matches /cancel/[token]/page.tsx lookup).
  *
- * In production: replace with a Postgres/Vercel KV update + n8n webhook fan-out
- * to send the cancellation email + WhatsApp + Anthony notification.
+ * In production (stack-conformant 2026-05-15 — see ../../../../reservations/SPEC.md):
+ *   - Replace with Cloudflare D1 UPDATE (status='cancelled', cancelled_at=now)
+ *   - Fire n8n webhook → Hostinger SMTP cancellation email + Anthony notification
+ *   - NO auto-WhatsApp (Cloud API off-stack); Anthony optionally messages manually
+ *   - NOT Vercel KV (Vercel banned per CLAUDE.md infra → Cloudflare)
  */
 
 type CancelBody = { token?: string };

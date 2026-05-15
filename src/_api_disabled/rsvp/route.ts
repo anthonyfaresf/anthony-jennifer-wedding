@@ -4,10 +4,14 @@ import path from "node:path";
 
 /*
  * Local stub: appends each RSVP to ./data/rsvps.jsonl.
- * Production-bound (Vercel + n8n + WhatsApp Cloud API) wiring goes here later —
- * forward the validated payload to:
- *   process.env.N8N_RSVP_WEBHOOK
- * which fans out to WhatsApp + (optionally) email.
+ *
+ * Production-bound wiring (stack-conformant 2026-05-15 — see ../../../reservations/SPEC.md):
+ *   - Forward validated payload to process.env.N8N_RSVP_WEBHOOK
+ *   - n8n fans out to: Hostinger SMTP via Email node (confirmation email) + Anthony notification
+ *   - WhatsApp auto-send is DEFERRED — Cloud API is off-stack per Projects/ai-os/tool-stack.json.
+ *     The phone field stays in D1 so Anthony can message guests manually from his WhatsApp UI.
+ *   - Klaviyo is NOT used here (FindFetch-scope-locked).
+ *   - Vercel is NOT used as host — deploys go to Cloudflare Pages per CLAUDE.md infra.
  */
 
 type Payload = {
@@ -39,7 +43,7 @@ export async function POST(request: Request) {
   }
   if (!body.phone || typeof body.phone !== "string") {
     return NextResponse.json(
-      { error: "WhatsApp number is required" },
+      { error: "Phone number is required" },
       { status: 400 }
     );
   }

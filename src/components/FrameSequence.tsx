@@ -21,6 +21,15 @@ interface Props {
   framing?: string;
   /** style override */
   style?: React.CSSProperties;
+  /**
+   * Optional master horizontal-scroll tween. When provided, this FrameSequence
+   * uses GSAP's containerAnimation pattern — the ScrollTrigger watches the
+   * trigger element's position WITHIN the master horizontal motion (not the
+   * page's vertical scroll). Frames advance from 0 → frameCount-1 as the
+   * trigger transits the viewport (left edge enters from right → right edge
+   * exits to left). Used by the horizontal Story scroll.
+   */
+  containerAnimation?: gsap.core.Tween | null;
 }
 
 /**
@@ -43,6 +52,7 @@ export function FrameSequence({
   className,
   framing = "center",
   style,
+  containerAnimation,
 }: Props) {
   const canvasRef = useRef<HTMLCanvasElement>(null);
   const imagesRef = useRef<HTMLImageElement[]>([]);
@@ -120,16 +130,32 @@ export function FrameSequence({
     const trigger = document.querySelector(triggerSelector) as HTMLElement | null;
     if (!trigger) return;
 
+    // Two scroll modes:
+    //   - Default: page-vertical scrub. Trigger element pinned via its own
+    //     200vh container; frames map 0→N-1 over the pin range.
+    //   - containerAnimation provided (horizontal Story): trigger is a
+    //     scene panel inside a horizontally-translating track. Frames map
+    //     0→N-1 over the panel's transit through the viewport.
+    const stConfig = containerAnimation
+      ? {
+          trigger,
+          containerAnimation,
+          start: "left right",
+          end: "right left",
+          scrub: 0.5,
+        }
+      : {
+          trigger,
+          start: "top top",
+          end: "bottom bottom",
+          scrub: 0.25, // tight — feels like the camera tracks the finger
+        };
+
     const state = { frame: 0 };
     const tween = gsap.to(state, {
       frame: frameCount - 1,
       ease: "none",
-      scrollTrigger: {
-        trigger,
-        start: "top top",
-        end: "bottom bottom",
-        scrub: 0.25, // tight — feels like the camera tracks the finger
-      },
+      scrollTrigger: stConfig,
       onUpdate: () => {
         drawFrame(Math.round(state.frame));
       },
@@ -146,7 +172,7 @@ export function FrameSequence({
       tween.kill();
       window.removeEventListener("resize", onResize);
     };
-  }, [scene, frameCount, triggerSelector, framingFracY]);
+  }, [scene, frameCount, triggerSelector, framingFracY, containerAnimation]);
 
   return (
     <canvas

@@ -10,19 +10,20 @@ if (typeof window !== "undefined") gsap.registerPlugin(ScrollTrigger);
 /**
  * Hero — full-bleed cinematic opener.
  *
- * Wine-cheers push-in as a 31-frame canvas sequence (no img.src swapping
- * = no strobe on iOS). 180vh tall (was 220 — feels snappier per Anthony
- * 2026-05-02 "i feel there's something lagging").
+ * Wine-cheers watercolor as a 31-frame canvas sequence. 180vh tall.
  *
- * Appearance choreography (per Anthony 2026-05-02 "make it appear more"):
- *   1. CREAM PAGE-TURN — a warm cream wash starts at 75% opacity and lifts
- *      to 0 as you scroll into the hero. Bridges splash → hero seamlessly.
- *   2. SCALE PULL-IN — frame canvas starts at scale 1.07 and eases to 1
- *      as it appears. Subtle focal pull, like a lens settling.
- *   3. NAMES SLIDE FROM SIDES — Anthony from -40px on the left, Jennifer
- *      from +40px on the right, "and" scales 0.6 → 1. They land together.
- *   4. DATE LIFTS UP — date + venue rises from y=40 with a soft fade.
- *   5. VIGNETTE SOFTENS — heavier bottom shadow at start, eases out.
+ * Per Anthony 2026-05-02 ("make the motion cinematic, glass card behind text"):
+ *   - All hero text lives inside a SINGLE `glass-card-strong` invitation card,
+ *     centered, sitting on the watercolor like a real wedding invite pressed
+ *     into the page.
+ *   - Names reveal character-by-character (manual span split + GSAP stagger).
+ *     Soft slight-up rise per char, ease power3.out, 0.04s stagger.
+ *   - Card scales in from 0.96 + opacity 0 + 6px backdrop blur lifting,
+ *     synced with the canvas scale pull-in for cohesive entry.
+ *   - Gold rule under the names grows from 0 → 48px width as part of the
+ *     card reveal sequence.
+ *   - Date + venue lifts up after the names land.
+ *   - Vignette + cream-page-turn unchanged from the original choreography.
  */
 export default function Hero() {
   const sectionRef = useRef<HTMLElement>(null);
@@ -37,7 +38,7 @@ export default function Hero() {
       const sectionEl = sectionRef.current;
       if (!sectionEl) return;
 
-      // 1. CREAM PAGE-TURN — fades from 0.75 → 0 in the first 25% of hero scroll
+      // 1. CREAM PAGE-TURN — fades from 0.75 → 0
       gsap.to(".hero-cream-veil", {
         opacity: 0,
         ease: "power2.out",
@@ -49,12 +50,13 @@ export default function Hero() {
         },
       });
 
-      // 2. SCALE PULL-IN — frame canvas scales 1.07 → 1.0 as hero enters
+      // 2. CANVAS SCALE PULL-IN + blur-clear — 1.07 → 1.0, blur(8) → blur(0)
       gsap.fromTo(
         ".hero-frame-wrap",
-        { scale: 1.07 },
+        { scale: 1.07, filter: "blur(8px)" },
         {
           scale: 1.0,
+          filter: "blur(0px)",
           ease: "power2.out",
           scrollTrigger: {
             trigger: sectionEl,
@@ -65,97 +67,75 @@ export default function Hero() {
         }
       );
 
-      // 3. NAMES SLIDE FROM SIDES — Anthony from left, Jennifer from right
-      gsap.fromTo(
-        ".hero-name-anthony",
-        { x: -50, opacity: 0 },
-        {
-          x: 0,
-          opacity: 1,
-          ease: "power3.out",
-          scrollTrigger: {
-            trigger: sectionEl,
-            start: "top 75%",
-            end: "top 30%",
-            scrub: 0.5,
-          },
-        }
-      );
-      gsap.fromTo(
-        ".hero-name-jennifer",
-        { x: 50, opacity: 0 },
-        {
-          x: 0,
-          opacity: 1,
-          ease: "power3.out",
-          scrollTrigger: {
-            trigger: sectionEl,
-            start: "top 75%",
-            end: "top 30%",
-            scrub: 0.5,
-          },
-        }
-      );
-      gsap.fromTo(
-        ".hero-name-and",
-        { scale: 0.55, opacity: 0 },
-        {
-          scale: 1,
-          opacity: 1,
-          ease: "back.out(1.4)",
-          scrollTrigger: {
-            trigger: sectionEl,
-            start: "top 70%",
-            end: "top 35%",
-            scrub: 0.5,
-          },
-        }
-      );
-      gsap.fromTo(
-        ".hero-name-tagline",
-        { y: 20, opacity: 0 },
-        {
-          y: 0,
-          opacity: 1,
-          ease: "power2.out",
-          scrollTrigger: {
-            trigger: sectionEl,
-            start: "top 75%",
-            end: "top 40%",
-            scrub: 0.5,
-          },
-        }
-      );
+      // 3. INVITATION CARD ENTRY — plays on mount (no scroll trigger because
+      //    the hero is the first section and is in view from frame 0).
+      //    Card scales in → tagline chars stagger → name chars stagger with
+      //    rotateX flip → ampersand pops with back ease → gold rule grows →
+      //    date + venue rises.
+      const tl = gsap.timeline({ delay: 0.4 });
 
-      // Names fade out as the camera pushes into the cheers ECU
-      gsap.to(".hero-names", {
+      tl.fromTo(
+        ".hero-card",
+        { y: 36, opacity: 0, scale: 0.96 },
+        { y: 0, opacity: 1, scale: 1, ease: "power3.out", duration: 1.0 }
+      )
+        .fromTo(
+          ".hero-tagline-char",
+          { y: 12, opacity: 0 },
+          { y: 0, opacity: 1, ease: "power3.out", duration: 0.5, stagger: 0.018 },
+          "-=0.6"
+        )
+        .fromTo(
+          ".hero-name-char",
+          { y: 36, opacity: 0, rotateX: -45 },
+          {
+            y: 0,
+            opacity: 1,
+            rotateX: 0,
+            ease: "power3.out",
+            duration: 0.85,
+            stagger: 0.04,
+          },
+          "-=0.45"
+        )
+        .fromTo(
+          ".hero-and",
+          { scale: 0.55, opacity: 0, rotation: -8 },
+          {
+            scale: 1,
+            opacity: 1,
+            rotation: 0,
+            ease: "back.out(1.5)",
+            duration: 0.7,
+          },
+          "-=0.35"
+        )
+        .fromTo(
+          ".hero-rule",
+          { width: 0 },
+          { width: 48, ease: "power3.out", duration: 0.7 },
+          "-=0.2"
+        )
+        .fromTo(
+          ".hero-date-line",
+          { y: 14, opacity: 0 },
+          { y: 0, opacity: 1, ease: "power3.out", duration: 0.55, stagger: 0.06 },
+          "-=0.3"
+        );
+
+      // Card lifts + fades as the camera pushes deeper into the cheers ECU
+      gsap.to(".hero-card", {
         opacity: 0,
-        y: -30,
+        y: -40,
+        scale: 0.97,
         ease: "none",
         scrollTrigger: {
           trigger: sectionEl,
-          start: "top -20%",
-          end: "top -55%",
+          start: "top -25%",
+          end: "top -65%",
           scrub: 0.5,
         },
       });
-
-      // 4. DATE + venue rises during close-up moment
-      gsap.fromTo(
-        ".hero-date",
-        { opacity: 0, y: 40 },
-        {
-          opacity: 1,
-          y: 0,
-          ease: "power2.out",
-          scrollTrigger: {
-            trigger: sectionEl,
-            start: "top -45%",
-            end: "top -75%",
-            scrub: 0.5,
-          },
-        }
-      );
 
       // Scroll indicator fades out
       gsap.to(".hero-scroll-cue", {
@@ -169,7 +149,7 @@ export default function Hero() {
         },
       });
 
-      // 5. VIGNETTE — softens as you scroll deeper
+      // VIGNETTE softens as scroll deepens
       gsap.to(".hero-vignette", {
         opacity: 0.55,
         ease: "none",
@@ -185,6 +165,19 @@ export default function Hero() {
     return () => ctx.revert();
   }, []);
 
+  // Manual character split — keeps text accessible (the text is still in the
+  // DOM as plain content) while letting GSAP target each char.
+  const splitChars = (text: string, baseClass: string) =>
+    Array.from(text).map((char, i) => (
+      <span
+        key={i}
+        className={`${baseClass} inline-block`}
+        style={{ whiteSpace: char === " " ? "pre" : undefined }}
+      >
+        {char}
+      </span>
+    ));
+
   return (
     <section
       ref={sectionRef}
@@ -192,8 +185,8 @@ export default function Hero() {
       className="relative w-full"
       style={{ height: "180vh" }}
     >
-      <div className="sticky top-0 h-[100svh] supports-[height:100dvh]:h-[100dvh] w-full overflow-hidden bg-ink">
-        {/* Frame canvas — wrapped so we can scale the wrap without scaling the canvas's drawing context */}
+      <div className="cream-fade-edges sticky top-0 h-[100svh] supports-[height:100dvh]:h-[100dvh] w-full overflow-hidden bg-ink">
+        {/* Frame canvas */}
         <div
           className="hero-frame-wrap absolute inset-0 w-full h-full"
           style={{ transformOrigin: "center center" }}
@@ -206,17 +199,14 @@ export default function Hero() {
           />
         </div>
 
-        {/* CREAM PAGE-TURN — bridges splash → hero. Fades to 0 as you scroll in. */}
+        {/* CREAM PAGE-TURN */}
         <div
           className="hero-cream-veil absolute inset-0 pointer-events-none z-10"
-          style={{
-            background: "var(--cream)",
-            opacity: 0.75,
-          }}
+          style={{ background: "var(--cream)", opacity: 0.75 }}
           aria-hidden
         />
 
-        {/* Vignette — gives text contrast over the warm scene */}
+        {/* Vignette */}
         <div
           aria-hidden
           className="hero-vignette absolute inset-0 pointer-events-none z-20"
@@ -227,67 +217,106 @@ export default function Hero() {
           }}
         />
 
-        {/* Couple's names — slide in from sides */}
-        <div className="absolute inset-0 flex flex-col items-center justify-center text-center px-6 pointer-events-none z-30">
-          <div className="hero-names">
+        {/* === HERO TEXT — no card backdrop ===
+            All text floats over the watercolor with strong text-shadow for
+            contrast. Same character-reveal motion as before, just no glass
+            box behind it (per Anthony 2026-05-02 "boxes are ugly"). */}
+        <div className="absolute inset-0 flex items-center justify-center px-6 pointer-events-none z-30">
+          <div
+            className="hero-card text-center"
+            style={{
+              maxWidth: "min(92vw, 600px)",
+              opacity: 0,
+              perspective: "800px",
+            }}
+          >
             <p
-              className="hero-name-tagline text-[10px] sm:text-xs uppercase tracking-[0.45em] text-cream/85 mb-6"
-              style={{ textShadow: "0 2px 14px rgba(0,0,0,0.55)" }}
+              className="text-[10px] sm:text-xs uppercase tracking-[0.5em] text-cream/90 mb-7"
+              style={{ textShadow: "0 2px 14px rgba(0,0,0,0.7)" }}
             >
-              Together with their families
+              {splitChars("Together with their families", "hero-tagline-char")}
             </p>
+
             <h1
-              className="hero-name-anthony font-display text-6xl sm:text-7xl md:text-8xl text-cream leading-none mb-2"
-              style={{ textShadow: "0 4px 28px rgba(0,0,0,0.55)" }}
+              className="font-display leading-none mb-3 text-cream"
+              style={{
+                fontSize: "clamp(56px, 9vw, 110px)",
+                letterSpacing: "0.01em",
+                textShadow: "0 4px 32px rgba(0,0,0,0.65), 0 0 12px rgba(0,0,0,0.4)",
+              }}
             >
-              Anthony
+              {splitChars("Anthony", "hero-name-char")}
             </h1>
+
             <p
-              className="hero-name-and text-5xl sm:text-6xl md:text-7xl leading-none mb-2"
+              className="hero-and leading-none mb-3 inline-block"
               style={{
                 fontFamily: "var(--font-italianno)",
+                fontSize: "clamp(40px, 6vw, 72px)",
                 color: "#d4b87a",
-                textShadow: "0 4px 18px rgba(0,0,0,0.6)",
-                display: "inline-block",
+                textShadow: "0 4px 22px rgba(0,0,0,0.7)",
               }}
             >
               and
             </p>
+
             <h1
-              className="hero-name-jennifer font-display text-6xl sm:text-7xl md:text-8xl text-cream leading-none"
-              style={{ textShadow: "0 4px 28px rgba(0,0,0,0.55)" }}
+              className="font-display leading-none mb-7 text-cream"
+              style={{
+                fontSize: "clamp(56px, 9vw, 110px)",
+                letterSpacing: "0.01em",
+                textShadow: "0 4px 32px rgba(0,0,0,0.65), 0 0 12px rgba(0,0,0,0.4)",
+              }}
             >
-              Jennifer
+              {splitChars("Jennifer", "hero-name-char")}
             </h1>
+
+            <div
+              className="hero-rule h-px mx-auto my-6"
+              style={{
+                background: "var(--gold)",
+                width: 0,
+                boxShadow: "0 0 12px rgba(0,0,0,0.4)",
+              }}
+            />
+
+            <p
+              className="hero-date-line leading-none mb-3 text-cream"
+              style={{
+                fontSize: "clamp(18px, 2.1vw, 26px)",
+                letterSpacing: "0.04em",
+                opacity: 0,
+                textShadow: "0 3px 18px rgba(0,0,0,0.65)",
+              }}
+            >
+              July 18 · 2026
+            </p>
+            <p
+              className="hero-date-line text-[10px] sm:text-xs uppercase tracking-[0.4em] text-cream/90"
+              style={{
+                opacity: 0,
+                textShadow: "0 2px 12px rgba(0,0,0,0.65)",
+              }}
+            >
+              Couvent Saint Jean · Okaibe · Lebanon
+            </p>
           </div>
         </div>
 
-        {/* Date + venue — rises during close-up */}
-        <div className="hero-date absolute bottom-20 sm:bottom-28 left-0 right-0 text-center px-6 pointer-events-none opacity-0 z-30">
-          <div className="w-12 h-px bg-gold mx-auto mb-5" />
-          <p
-            className="font-display text-3xl sm:text-4xl text-cream leading-none mb-3"
-            style={{ textShadow: "0 4px 18px rgba(0,0,0,0.55)" }}
-          >
-            July 18 · 2026
-          </p>
-          <p
-            className="text-[10px] sm:text-xs uppercase tracking-[0.4em] text-cream/85"
-            style={{ textShadow: "0 2px 12px rgba(0,0,0,0.55)" }}
-          >
-            Couvent Saint Jean · Okaibe · Lebanon
-          </p>
-        </div>
-
-        {/* Scroll cue */}
+        {/* Scroll cue — text only, no pill backdrop */}
         <div className="hero-scroll-cue absolute bottom-6 left-1/2 -translate-x-1/2 text-center pointer-events-none z-30">
           <p
-            className="text-[10px] uppercase tracking-[0.4em] text-cream/70 mb-2"
-            style={{ textShadow: "0 2px 8px rgba(0,0,0,0.4)" }}
+            className="text-[10px] uppercase tracking-[0.4em] text-cream/75 mb-2"
+            style={{ textShadow: "0 2px 8px rgba(0,0,0,0.55)" }}
           >
             Scroll
           </p>
-          <p className="text-cream/60 text-xs">↓</p>
+          <p
+            className="text-cream/60 text-xs"
+            style={{ textShadow: "0 2px 6px rgba(0,0,0,0.5)" }}
+          >
+            ↓
+          </p>
         </div>
       </div>
     </section>

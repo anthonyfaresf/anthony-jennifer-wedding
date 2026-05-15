@@ -1,6 +1,7 @@
 "use client";
 
 import { useState } from "react";
+import Confetti from "./Confetti";
 
 export default function RSVP() {
   const [attending, setAttending] = useState<"yes" | "no" | null>(null);
@@ -47,13 +48,15 @@ export default function RSVP() {
 
   if (done === "ok") {
     return (
-      <section id="rsvp" className="py-32 px-6">
-        <div className="max-w-md mx-auto text-center">
+      <section id="rsvp" className="py-32 px-6 relative overflow-hidden">
+        {/* Petal-drift confetti burst on success — per SYNTHESIS-v3 TIER 1 #5 */}
+        <Confetti play={true} count={attending === "yes" ? 32 : 0} fullViewport={false} />
+        <div className="max-w-md mx-auto text-center relative z-10">
           <p className="text-xs uppercase tracking-[0.4em] text-olive-deep mb-6">
-            Thank you
+            {attending === "yes" ? "See you there" : "Thank you"}
           </p>
           <h2 className="font-display text-5xl text-ink mb-6">
-            Your reply is saved.
+            {attending === "yes" ? "We can't wait." : "Your reply is saved."}
           </h2>
           <div className="w-16 h-px bg-gold mx-auto my-8" />
           <p className="text-body leading-relaxed">
@@ -109,7 +112,7 @@ export default function RSVP() {
                     : "bg-cream text-ink border-ink/15 hover:border-olive-deep"
                 }`}
               >
-                Joyfully accept
+                I&apos;ll be there
               </button>
               <button
                 type="button"
@@ -120,7 +123,7 @@ export default function RSVP() {
                     : "bg-cream text-ink border-ink/15 hover:border-ink"
                 }`}
               >
-                Regretfully decline
+                Sadly, no
               </button>
             </div>
           </div>
@@ -175,7 +178,7 @@ export default function RSVP() {
                 disabled={submitting}
                 className="w-full bg-olive-deep text-cream py-5 text-xs uppercase tracking-[0.4em] hover:bg-olive transition-colors disabled:opacity-60"
               >
-                {submitting ? "Sending..." : "Send RSVP"}
+                {submitting ? "Sending..." : attending === "yes" ? "Lock it in" : "Send reply"}
               </button>
 
               {done === "err" && (

@@ -22,7 +22,7 @@ Projects/wedding-website/
 │   │   └── README.md                      ← Drop your couple photos here
 │   └── master-refs/                       ← AI-generated assets if needed (later)
 ├── reservations/
-│   └── SPEC.md                            ← RSVP architecture (Cloudflare + n8n + Klaviyo + WhatsApp)
+│   └── SPEC.md                            ← RSVP architecture (Cloudflare + n8n + Hostinger SMTP transactional email · WhatsApp/Klaviyo deferred per 2026-05-15 stack lock)
 └── src/                                   ← Next.js app (created when build starts)
 ```
 
@@ -61,12 +61,12 @@ Once IG refs + tone + basics are in, I write `assets/SYNTHESIS.md` (combined des
 Run `/website-new --tier=cinematic` from this folder. The cinematic tier loads GSAP + ScrollTrigger + the anti-slop pipeline (impeccable + taste-skill + anti-ai-writing). Section-by-section build. Playwright iterative QA loop on every section. Lighthouse ≥90 before launch.
 
 ### 7. RSVP backend
-Cloudflare Worker + D1 + n8n webhook + Klaviyo + WhatsApp Cloud API per `reservations/SPEC.md`. End-to-end test before launch.
+Cloudflare Worker + D1 + n8n webhook + Hostinger SMTP via n8n Email node per `reservations/SPEC.md`. End-to-end test before launch. ~~Klaviyo~~ (FindFetch-scope-locked) and ~~WhatsApp Cloud API~~ (off-stack) are NOT used — gate them through `tool-stack.json` before re-introducing.
 
 ### 8. Launch
 - Domain in Cloudflare DNS
 - Cloudflare Pages deploy
-- Test RSVP end-to-end with your phone (real WhatsApp delivery)
+- Test RSVP end-to-end with your phone (verify email delivery to a real inbox; SPF/DKIM passing)
 - Send the link
 
 ## What I will NOT do without confirmation
@@ -80,4 +80,4 @@ Cloudflare Worker + D1 + n8n webhook + Klaviyo + WhatsApp Cloud API per `reserva
 - **Skills loaded automatically**: `awesome-design-md`, `impeccable`, `taste-skill`, `anti-ai-writing`, `accessibility-auditor`, `web-performance-optimization`, `meta-tags-optimizer`
 - **Commands available**: `/ig-download` (for IG refs), `/website-new --tier=cinematic` (the build), `/impeccable [audit|critique|polish]` (anti-slop pipeline)
 - **Rules loaded**: `.claude/rules/website-build.md`, `.claude/rules/identity-check.md` (lighter for personal), `.claude/rules/marketing-os.md` LAW 2 (write for one specific guest)
-- **Stack used**: Cloudflare (Pages + Workers + D1 + DNS), n8n (Hostinger), Klaviyo (email), WhatsApp Cloud API, Mapbox or Google Maps, Next.js + GSAP
+- **Stack used**: Cloudflare (Pages + Workers + D1 + DNS), n8n (Hostinger) + Hostinger SMTP for transactional email, Mapbox or Google Maps, Next.js + GSAP. NOT Klaviyo (FindFetch-scope-locked per 2026-05-15). NOT WhatsApp Cloud API (off-stack per same).

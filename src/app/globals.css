@@ -10,9 +10,14 @@
    Until then, the @font-face rules silently fall through to the fallback
    stack (Cormorant Garamond / Plus Jakarta Sans / Tenor Sans). */
 
+/* Comma-separated src lets the browser try root path first (works in dev where
+   basePath is empty) then fall through to the basePath-prefixed path (works in
+   production GitHub Pages deploy at /anthony-jennifer-wedding/...). One file,
+   two URLs, no per-environment config needed. */
 @font-face {
   font-family: "Blosta";
-  src: url("/anthony-jennifer-wedding/fonts/Blosta.woff2") format("woff2");
+  src: url("/fonts/Blosta.woff2") format("woff2"),
+       url("/anthony-jennifer-wedding/fonts/Blosta.woff2") format("woff2");
   font-weight: 400;
   font-style: normal;
   font-display: swap;
@@ -20,7 +25,8 @@
 
 @font-face {
   font-family: "Gordita";
-  src: url("/anthony-jennifer-wedding/fonts/Gordita-Regular.woff2") format("woff2");
+  src: url("/fonts/Gordita-Regular.woff2") format("woff2"),
+       url("/anthony-jennifer-wedding/fonts/Gordita-Regular.woff2") format("woff2");
   font-weight: 400;
   font-style: normal;
   font-display: swap;
@@ -28,7 +34,8 @@
 
 @font-face {
   font-family: "Gordita";
-  src: url("/anthony-jennifer-wedding/fonts/Gordita-Medium.woff2") format("woff2");
+  src: url("/fonts/Gordita-Medium.woff2") format("woff2"),
+       url("/anthony-jennifer-wedding/fonts/Gordita-Medium.woff2") format("woff2");
   font-weight: 500;
   font-style: normal;
   font-display: swap;
@@ -83,11 +90,22 @@ html, body {
   text-rendering: optimizeLegibility;
 }
 
-h1, h2, h3, h4 {
+/* TYPOGRAPHY HIERARCHY (updated 2026-05-15 per Anthony — Blosta is artistic
+   but heavy at small sizes, hard to read. Reserve it for the BIG titles
+   only: hero names + section H1/H2. Everything smaller — H3 subtitles,
+   labels, body copy — uses Tenor Sans (the body font) for legibility. */
+h1, h2 {
   font-family: "Blosta", var(--font-cormorant), Georgia, serif;
   color: var(--display);
   font-weight: 400;
   letter-spacing: -0.01em;
+}
+
+h3, h4 {
+  font-family: "Tenor Sans", var(--font-tenor), system-ui, sans-serif;
+  color: var(--display);
+  font-weight: 400;
+  letter-spacing: 0.01em;
 }
 
 ::selection {
@@ -132,9 +150,208 @@ img[src*="lemon-hanging.png"] {
   overflow: hidden;
 }
 
+/* === Cream "cloud" edge bleed ===
+   Soft watercolor falloff on all four sides of an image/photo container
+   so it dissolves into the cream paper instead of cutting hard against it.
+   Use on every photo, every section image, and anywhere a hard rectangular
+   image edge would break the watercolor identity. */
+.cream-feather {
+  position: relative;
+}
+.cream-feather::after {
+  content: "";
+  position: absolute;
+  inset: -1px;
+  pointer-events: none;
+  background: radial-gradient(
+    ellipse 100% 100% at center,
+    transparent 55%,
+    rgba(244, 236, 224, 0.5) 80%,
+    var(--cream) 100%
+  );
+  z-index: 2;
+}
+
+/* Stronger variant — heavier cream cloud, used on hero/venue photos
+   where the bleed should be more dramatic (small tight photos in a grid
+   use the standard .cream-feather above). */
+.cream-feather-strong {
+  position: relative;
+}
+.cream-feather-strong::after {
+  content: "";
+  position: absolute;
+  inset: -1px;
+  pointer-events: none;
+  background: radial-gradient(
+    ellipse 100% 100% at center,
+    transparent 40%,
+    rgba(244, 236, 224, 0.6) 70%,
+    var(--cream) 100%
+  );
+  z-index: 2;
+}
+
+/* === Section transition bleed ===
+   Cream gradient at the top and bottom of a section so it dissolves into
+   the next section instead of cutting hard. Apply to any section that
+   sits between two cream/parchment surfaces. */
+.section-cream-bleed::before,
+.section-cream-bleed::after {
+  content: "";
+  position: absolute;
+  left: 0;
+  right: 0;
+  height: 100px;
+  pointer-events: none;
+  z-index: 5;
+}
+.section-cream-bleed::before {
+  top: 0;
+  background: linear-gradient(to bottom, var(--cream), transparent);
+}
+.section-cream-bleed::after {
+  bottom: 0;
+  background: linear-gradient(to top, var(--cream), transparent);
+}
+
+/* === Cream fade edges (canvas sections) ===
+   Always-on cream gradient at the TOP and BOTTOM of any sticky-canvas
+   section (splash, hero, each story scene). Eliminates the hard horizontal
+   line where dark watercolor scenes meet cream paper at section boundaries.
+   These gradients sit ON TOP of the canvas but BELOW text content (z-15). */
+.cream-fade-edges::before,
+.cream-fade-edges::after {
+  content: "";
+  position: absolute;
+  left: 0;
+  right: 0;
+  pointer-events: none;
+  z-index: 25;
+}
+.cream-fade-edges::before {
+  top: 0;
+  height: 18vh;
+  background: linear-gradient(
+    to bottom,
+    var(--cream) 0%,
+    rgba(244, 236, 224, 0.85) 25%,
+    rgba(244, 236, 224, 0.5) 60%,
+    transparent 100%
+  );
+}
+.cream-fade-edges::after {
+  bottom: 0;
+  height: 18vh;
+  background: linear-gradient(
+    to top,
+    var(--cream) 0%,
+    rgba(244, 236, 224, 0.85) 25%,
+    rgba(244, 236, 224, 0.5) 60%,
+    transparent 100%
+  );
+}
+
+/* Lighter variant — when only edge softening is needed (the cream wash
+   is heavy enough that a gentler fade reads better). */
+.cream-fade-edges-light::before,
+.cream-fade-edges-light::after {
+  content: "";
+  position: absolute;
+  left: 0;
+  right: 0;
+  pointer-events: none;
+  z-index: 25;
+}
+.cream-fade-edges-light::before {
+  top: 0;
+  height: 12vh;
+  background: linear-gradient(
+    to bottom,
+    var(--cream) 0%,
+    rgba(244, 236, 224, 0.6) 40%,
+    transparent 100%
+  );
+}
+.cream-fade-edges-light::after {
+  bottom: 0;
+  height: 12vh;
+  background: linear-gradient(
+    to top,
+    var(--cream) 0%,
+    rgba(244, 236, 224, 0.6) 40%,
+    transparent 100%
+  );
+}
+
+/* === Glass card — translucent rounded backdrop for text overlaid on
+   watercolor scenes ===
+   Applied to every text group sitting on top of a watercolor (hero names,
+   scene captions, venue title) per Anthony 2026-05-02. Cream wash with
+   backdrop-blur means the watercolor still reads underneath, but the text
+   gets a stable surface to sit on. Curved radius, soft shadow + inner
+   highlight = looks like a real invitation card pressed into the paper.
+
+   NOTE: Wrapped in @layer components so Tailwind v4 doesn't strip them as
+   "unused" — utility-style custom classes need to be in this layer to make
+   it through the v4 build (without it, getComputedStyle returns nothing). */
+@layer components {
+  .glass-card {
+    background: rgba(244, 236, 224, 0.78);
+    -webkit-backdrop-filter: blur(14px) saturate(1.1);
+    backdrop-filter: blur(14px) saturate(1.1);
+    border: 1px solid rgba(73, 83, 20, 0.08);
+    border-radius: 18px;
+    box-shadow:
+      0 18px 44px -18px rgba(42, 37, 32, 0.42),
+      0 4px 14px -4px rgba(42, 37, 32, 0.18),
+      inset 0 1px 0 rgba(244, 236, 224, 0.5);
+  }
+
+  .glass-card-strong {
+    background: rgba(244, 236, 224, 0.92);
+    -webkit-backdrop-filter: blur(16px) saturate(1.15);
+    backdrop-filter: blur(16px) saturate(1.15);
+    border: 1px solid rgba(73, 83, 20, 0.12);
+    border-radius: 20px;
+    box-shadow:
+      0 24px 56px -22px rgba(42, 37, 32, 0.5),
+      0 6px 18px -6px rgba(42, 37, 32, 0.22),
+      inset 0 1px 0 rgba(244, 236, 224, 0.65);
+  }
+
+  .glass-pill {
+    background: rgba(244, 236, 224, 0.6);
+    -webkit-backdrop-filter: blur(10px) saturate(1.05);
+    backdrop-filter: blur(10px) saturate(1.05);
+    border: 1px solid rgba(73, 83, 20, 0.08);
+    border-radius: 999px;
+    box-shadow:
+      0 6px 16px -8px rgba(42, 37, 32, 0.3),
+      inset 0 1px 0 rgba(244, 236, 224, 0.5);
+  }
+}
+
 @media (prefers-reduced-motion: reduce) {
   * {
     animation-duration: 0.01ms !important;
     transition-duration: 0.01ms !important;
   }
+}
+
+/* === Venue background — slow ambient push toward the bell tower ===
+   30s cycle with `alternate` so the loop reverses through the same keyframes
+   instead of snapping back. No visible loop seam. Tuned to be perceivable:
+   10% scale + 2% translate over 30s reads as "alive but not obvious."
+   60s × 6% read as static to the viewer — below the perceptual threshold. */
+.venue-drift {
+  --venue-push: venue-push 30s ease-in-out infinite alternate;
+  animation: var(--venue-push);
+  transform-origin: 55% 45%;
+  will-change: transform;
+}
+
+@keyframes venue-push {
+  from { transform: scale(1) translate(0, 0); }
+  to   { transform: scale(1.10) translate(-2%, -1.5%); }
 }

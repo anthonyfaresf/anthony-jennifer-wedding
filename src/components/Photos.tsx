@@ -46,9 +46,9 @@ export default function Photos() {
     <section
       ref={sectionRef}
       id="photos"
-      className="py-32 px-6 bg-parchment/40 relative"
+      className="py-32 px-6 bg-cream relative"
     >
-      <div className="max-w-6xl mx-auto">
+      <div className="max-w-6xl mx-auto relative z-10">
         <div className="text-center mb-16">
           <p className="text-xs uppercase tracking-[0.4em] text-olive-deep mb-4">
             Moments
@@ -59,11 +59,11 @@ export default function Photos() {
           <div className="w-16 h-px bg-gold mx-auto mt-8" />
         </div>
 
-        <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4 md:gap-6">
+        <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-6 md:gap-10">
           {photos.map((p, i) => (
             <div
               key={i}
-              className={`photo-item relative overflow-hidden rounded-sm bg-cream ${
+              className={`photo-item cream-feather relative overflow-hidden bg-cream ${
                 p.aspect === "portrait"
                   ? "aspect-[3/4]"
                   : p.aspect === "landscape"

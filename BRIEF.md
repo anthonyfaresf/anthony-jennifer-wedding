@@ -8,8 +8,8 @@ A wedding website that:
 - Has some kind of story (how we met → engagement → today)
 - Animations as people scroll (cinematic feel)
 - Takes the reservations
-- Sends WhatsApp + email confirmations
-- Sends WhatsApp + email cancellations
+- Sends email confirmations (via Hostinger SMTP + n8n Email node — WhatsApp auto-send is off-stack; Anthony messages personally if desired)
+- Sends email cancellations (same path; no auto-WhatsApp)
 - Has the map of the venue
 - Has photos of me and my wife-to-be
 
@@ -29,9 +29,9 @@ A wedding website that:
 - Required: name, email, phone, attending (yes/no)
 - If attending: party size, dietary restrictions, +1 name
 - Optional: message to the couple
-- Submit → store in Cloudflare D1 → trigger n8n webhook → fire confirmation email (Klaviyo) + WhatsApp (Cloud API)
+- Submit → store in Cloudflare D1 → trigger n8n webhook → fire confirmation email via Hostinger SMTP (n8n Email node) · ~~Klaviyo~~ FindFetch-scope-locked · ~~WhatsApp Cloud API~~ off-stack (per `Projects/ai-os/tool-stack.json` 2026-05-15)
 - Confirmation includes: cancellation link with unique token (no password needed)
-- Cancellation → updates D1 record → fires cancellation email + WhatsApp to guest + notification to Anthony
+- Cancellation → updates D1 record → fires cancellation email to guest + notification to Anthony; WhatsApp confirmation deferred (Anthony optionally messages guests manually from his existing number)
 
 ## Animation references
 - (TBD — will fill from Instagram refs once URLs are dropped in `_urls.txt`)
@@ -53,5 +53,5 @@ A wedding website that:
 - [ ] Single language vs multilingual (Lebanon → likely EN + Arabic + French)
 - [ ] Map: Mapbox custom-styled vs Google Maps embed
 - [ ] Photo source: existing photos vs new shoot
-- [ ] WhatsApp Business setup: Anthony's existing number vs new dedicated one
+- [ ] WhatsApp number to display on the site for manual contact (Anthony's existing number vs a new dedicated one) — note: this is only a `tel:` / `wa.me/` link for guests to message manually; the WhatsApp Business Cloud API path is OFF-STACK and not in scope
 - [ ] Tone: classic-elegant vs editorial-modern vs playful-warm (drives the design)

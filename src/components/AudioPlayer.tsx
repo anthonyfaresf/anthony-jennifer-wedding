@@ -7,20 +7,46 @@ const BP = process.env.NEXT_PUBLIC_BASE_PATH || "";
 /**
  * Background music — plays throughout the wedding experience.
  *
- * Browser policy: autoplay-with-sound is blocked everywhere on first paint.
- * Strategy:
- *   - <audio> mounted muted + loop + preload
- *   - Floating bottom-right toggle (cream pill, olive icon) controls play/mute
- *   - On the FIRST user gesture (tap, click, scroll), if the user hasn't muted,
- *     unmute + play
- *   - Preference persists in localStorage so a returning guest doesn't reset
+ * Currently testing (2026-05-15 — switching tracks for A/B feel):
+ *   roi-instrumental-slowed.mp3 (~3:50) · xaoc
  *
- * To activate: drop an MP3 at `public/audio/ambient.mp3`. Until then the
- * component renders the toggle but the audio element will 404 silently.
+ * Browser policy: autoplay-with-sound is hard-blocked on first paint
+ * (Chrome/Safari/Firefox — no API bypass exists). So the pattern is:
+ *   - <audio> mounted at volume 0 (NOT muted — that's a snap-on UX)
+ *   - On the FIRST user gesture (tap/click/scroll), call .play() then
+ *     GSAP-fade volume 0 → 1.0 over 4s for a real cinematic entry
+ *   - Floating bottom-right toggle pauses/resumes (also fades)
+ *   - Preference persists in localStorage so a returning guest doesn't reset
+ *   - Native loop on the audio element — track repeats forever
  */
+const TRACK = "/audio/roi-instrumental-slowed.mp3";
+const FADE_IN_SECONDS = 4;
+const FADE_OUT_SECONDS = 1.2;
+const TARGET_VOLUME = 0.85; // slightly under full so it sits behind any UI sound
+
 export default function AudioPlayer() {
   const audioRef = useRef<HTMLAudioElement>(null);
   const [isPlaying, setIsPlaying] = useState(false);
+
+  // Smooth fade helper — uses requestAnimationFrame instead of GSAP
+  // (avoids importing GSAP just for this; the audio element's volume
+  // can be tweened directly).
+  const fadeVolume = (from: number, to: number, durationSec: number) => {
+    const a = audioRef.current;
+    if (!a) return;
+    const start = performance.now();
+    a.volume = from;
+    const step = (now: number) => {
+      const t = Math.min(1, (now - start) / (durationSec * 1000));
+      // ease-in-out cubic
+      const eased = t < 0.5 ? 4 * t * t * t : 1 - Math.pow(-2 * t + 2, 3) / 2;
+      const aNow = audioRef.current;
+      if (!aNow) return;
+      aNow.volume = from + (to - from) * eased;
+      if (t < 1) requestAnimationFrame(step);
+    };
+    requestAnimationFrame(step);
+  };
 
   // Restore preference on mount
   useEffect(() => {
@@ -32,7 +58,10 @@ export default function AudioPlayer() {
     }
   }, []);
 
-  // Try to start on the first user gesture (browsers require this)
+  // Try to start on the first user gesture (browsers require this).
+  // Cinematic entry: start audio at volume 0, then fade up to TARGET_VOLUME
+  // over FADE_IN_SECONDS so it dissolves into the experience instead of
+  // snapping on.
   useEffect(() => {
     const tryStart = () => {
       if (typeof window === "undefined") return;
@@ -42,9 +71,13 @@ export default function AudioPlayer() {
 
       const a = audioRef.current;
       if (!a) return;
+      a.volume = 0;
       a.muted = false;
       a.play()
-        .then(() => setIsPlaying(true))
+        .then(() => {
+          setIsPlaying(true);
+          fadeVolume(0, TARGET_VOLUME, FADE_IN_SECONDS);
+        })
         .catch(() => {
           // Some browsers still refuse — user can click the toggle
         });
@@ -66,15 +99,22 @@ export default function AudioPlayer() {
     if (!a) return;
 
     if (isPlaying) {
-      a.pause();
+      // Fade out, then pause when silent
+      fadeVolume(a.volume, 0, FADE_OUT_SECONDS);
+      setTimeout(() => {
+        const aNow = audioRef.current;
+        if (aNow) aNow.pause();
+      }, FADE_OUT_SECONDS * 1000);
       setIsPlaying(false);
       localStorage.setItem("aj-audio-on", "0");
     } else {
+      a.volume = 0;
       a.muted = false;
       a.play()
         .then(() => {
           setIsPlaying(true);
           localStorage.setItem("aj-audio-on", "1");
+          fadeVolume(0, TARGET_VOLUME, FADE_IN_SECONDS);
         })
         .catch(() => {});
     }
@@ -84,9 +124,8 @@ export default function AudioPlayer() {
     <>
       <audio
         ref={audioRef}
-        src={`${BP}/audio/ambient.mp3`}
+        src={`${BP}${TRACK}`}
         loop
-        muted
         preload="auto"
         playsInline
       />

@@ -1,10 +1,13 @@
-# Paste Instagram URLs here, ONE PER LINE.
-# Reels, carousels, and photo posts all work.
-# Example:
-# https://www.instagram.com/reel/Cxxx/
-# https://www.instagram.com/p/Cyyy/
+# Wedding website design references — Instagram batch
+# Updated 2026-05-15 — added 7 new refs (DXT2V7axjky, DWiwH64RD2A, DXuaziTD1Zf, DWAGGs8CIH6, DXhR1ptCDVU, DXXtFTlAFZ_, DXuaziTD1Zf)
+# v2 SYNTHESIS already covers the first 3.
 
 https://www.instagram.com/p/DXpfmPFDdN-/
 https://www.instagram.com/p/DXj5MFZCCOf/
-https://www.instagram.com/p/DUsQNBHDF80/
 https://www.instagram.com/p/DV4Cf8ygNFJ/
+https://www.instagram.com/p/DXT2V7axjky/
+https://www.instagram.com/p/DWiwH64RD2A/
+https://www.instagram.com/p/DXuaziTD1Zf/
+https://www.instagram.com/p/DWAGGs8CIH6/
+https://www.instagram.com/p/DXhR1ptCDVU/
+https://www.instagram.com/p/DXXtFTlAFZ_/

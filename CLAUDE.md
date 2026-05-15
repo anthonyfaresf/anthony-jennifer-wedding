@@ -11,14 +11,14 @@ Personal — Anthony's actual wedding. NOT an AF&U client deliverable, NOT FindF
 - Photo gallery (couple photos)
 - Venue section with embedded map
 - RSVP form (name, party size, dietary, +1, attending/declining)
-- Confirmation flow: WhatsApp + email auto-send on submission
+- Confirmation flow: **email via Hostinger SMTP + n8n Email node** (authorized in `tool-stack.json` 2026-05-15 for non-FindFetch projects). WhatsApp confirmations: manual via UI only (WhatsApp Business Cloud API remains off-stack).
 - Cancellation flow: token-based link in confirmation, no login needed
 - FAQ + travel info (for guests flying in)
 
 ## Tech stack
 - **Frontend**: Next.js 14+ / React 19 / Tailwind v4 / shadcn/ui
 - **Animations**: GSAP 3 + ScrollTrigger (per `.claude/rules/website-build.md` cinematic tier)
-- **Forms backend**: Cloudflare Worker → D1 (guest records) → n8n webhook (Hostinger) → Klaviyo email + WhatsApp Business Cloud API
+- **Forms backend**: Cloudflare Worker → D1 (guest records) → n8n webhook (Hostinger) → Hostinger SMTP via n8n Email node (transactional). **NOT Klaviyo** (FindFetch-scope-locked). **NOT WhatsApp Business Cloud API** (off-stack — see Workstream 2 routing below for stack-decision-required path).
 - **Map**: Mapbox custom-styled (premium feel) OR Google Maps embed (zero-config)
 - **Hosting**: Cloudflare Pages + Cloudflare DNS (per CLAUDE.md infra)
 - **Photos**: Stored in `assets/photos/`, served via Cloudflare R2 in production
@@ -33,7 +33,7 @@ Per `.claude/rules/website-build.md`:
 
 ## Identity check (lighter than client work)
 - Solo operator (Anthony) — no humans involved in the build
-- Stack: on-stack tools only (Cloudflare, n8n, Klaviyo, fal.ai if AI imagery needed)
+- Stack: on-stack tools only per `Projects/ai-os/tool-stack.json` — Cloudflare Pages/Workers/D1, n8n (Hostinger), fal.ai (if AI imagery needed). NOT Klaviyo (FindFetch-scope-locked). NOT WhatsApp Cloud API (off-stack).
 - Claims: every detail (date, venue, schedule) verified against Anthony's source-of-truth before publishing
 - Photos: real couple photos only — no AI-generated faces of him + fiancée
 
@@ -51,11 +51,55 @@ Per `.claude/rules/website-build.md`:
 | Other inspiration (PDFs, screenshots) | `assets/inspiration/` |
 | Couple photos | `assets/photos/` |
 | AI-generated assets (if needed) | `assets/master-refs/` |
-| Synthesized design direction | `assets/SYNTHESIS.md` (created after refs analyzed) |
+| Synthesized design direction (active spec) | [`assets/design-refs/SYNTHESIS-v2.md`](assets/design-refs/SYNTHESIS-v2.md) — linked 2026-05-08 (was orphan; v1 superseded + archived 2026-05-07) |
+| Synthesized design direction (template path) | `assets/SYNTHESIS.md` (created after refs analyzed) |
 | Brand guide (colors, fonts, voice) | `BRAND_GUIDE.md` |
 | Project brief (your asks) | `BRIEF.md` |
 | RSVP architecture spec | `reservations/SPEC.md` |
 | Next.js source code | `src/` (created when build starts) |
+
+## Workstreams + worker routing (added 2026-05-15)
+
+This project has TWO workstreams that share the same folder + same `Projects/wedding-website/` Claude session. No need to switch projects between them.
+
+### Workstream 1 — Frontend / design (current focus)
+- **Worker**: Mateo (website-builder agent at `.claude/agents/website-builder.md`)
+- **Skills**: `awesome-design-md` · `impeccable` · `taste-skill` · `anti-ai-writing` · `frontend-design`
+- **Tools**: Next.js 14 · React 19 · Tailwind v4 · shadcn/ui · GSAP 3 · Cloudflare Pages (deploy)
+- **When done**: design tokens locked in `BRAND_GUIDE.md`, `/impeccable audit` passes, Playwright iterative QA loop converges, sections render on mobile + desktop
+
+### Workstream 2 — Backend / automations (next phase)
+
+**Honest state of capabilities (verified 2026-05-15):**
+
+| Piece needed | Worker / skill that covers it | Gap status |
+|---|---|---|
+| Cloudflare **Pages** hosting + DNS | **Mateo** (website-builder agent) — verified | ✓ covered |
+| Cloudflare **Worker** code (form POST handler) | Mateo's agent line 2 lists "Cloudflare (DNS/CDN/Workers)" as awareness · operational depth (Worker code patterns) NOT in his references | ⚠ Mateo can scaffold but MAIN Claude fills the gap with Wrangler CLI + Cloudflare MCP · document patterns to `reservations/worker.ts` |
+| Cloudflare **D1** schema + queries | No specialist · zero D1 references in any agent | ⚠ build inline · document schema in `reservations/d1-schema.sql` |
+| Confirmation **email** for RSVPs | ✓ **Hostinger SMTP via n8n Email node** — formally authorized in `tool-stack.json` (Hostinger VPS entry, 2026-05-15) for non-FindFetch transactional email. Klaviyo remains FindFetch-only. | ✓ **DECIDED — BUILD THIS**: n8n workflow with Email node, SMTP creds in the n8n env, From: `rsvp@<wedding-domain>` (SPF/DKIM via Hostinger DNS) |
+| **n8n** workflow design (orchestrates Worker → email → admin notification) | **NEW 2026-05-15**: install `n8n-mcp` (czlonkowski) — local stdio MCP that lets Claude Code design + execute n8n workflows directly. Install: `claude mcp add n8n-mcp -e MCP_MODE=stdio -e LOG_LEVEL=error -e DISABLE_CONSOLE_OUTPUT=true -- npx n8n-mcp` + optionally add `N8N_API_URL=https://n8n.srv1295871.hstgr.cloud` and `N8N_API_KEY=<generated in n8n UI>` for full R/W. Status: EVAL in `tool-stack.json` — install + test before relying on it. | ✓ once installed: Claude designs the workflow inline · exports to `reservations/n8n-workflow.json`. Until installed: design manually in Hostinger UI. |
+| **WhatsApp** confirmation message | ⚠ **OFF-STACK** — `tool-stack.json` lists WhatsApp as "manual client comms" only. WhatsApp Business Cloud API is NOT on-stack: no entry in tool-stack.json, no token in `~/.claude/.env`. Original wedding-website spec mentioned it but predates the tool-stack lock. | ❌ **DO NOT BUILD until either** (a) WhatsApp Business Cloud API is explicitly added to `tool-stack.json` with `status: active` + token wired into `~/.claude/.env`, OR (b) confirmation channel is dropped from scope (RSVP form just records to D1, Anthony manually messages guests via WhatsApp UI) |
+
+**Worker assignment for Workstream 2:** **MAIN Claude** (you, this session) handles all of it. Mateo's domain is frontend + Cloudflare Pages. The backend pieces don't have a specialist worker yet — that's a real gap in the vault, not a hidden capability.
+
+**Tools currently on-stack and usable here**: Cloudflare Pages · Cloudflare Workers · D1 · n8n (Hostinger) + Hostinger SMTP via n8n Email node (for transactional confirmation).
+**Blocked until added to `tool-stack.json`**: WhatsApp Business Cloud API.
+**Out of scope for wedding-website**: Klaviyo (FindFetch-scope-locked per Anthony 2026-05-15).
+
+### How to switch phases
+When Phase 1 is done, just type `we're moving to backend / RSVP automations now` in this same folder — Claude will see this Workstreams section and load the Workstream 2 skill stack. No project change.
+
+### What lives where for backend
+| File | Purpose |
+|---|---|
+| `reservations/SPEC.md` | architecture (already declared above) |
+| `reservations/d1-schema.sql` | guest records schema (to create) |
+| `reservations/worker.ts` | Cloudflare Worker handling POST from form |
+| `reservations/n8n-workflow.json` | exported n8n flow (confirmation + cancellation) |
+| `reservations/whatsapp-integration.md` | ❌ DO NOT CREATE — WhatsApp Cloud API is off-stack. If you eventually add it to tool-stack.json, this file can be revived. |
+| `data/guests.csv` | source-of-truth guest list (Anthony maintains) |
+| `reservations/admin-dashboard.md` | how to view who-RSVP'd-what (probably a `/api/guests` route + admin page) |
 
 ## Inputs needed from Anthony before build starts
 - [ ] Wedding date

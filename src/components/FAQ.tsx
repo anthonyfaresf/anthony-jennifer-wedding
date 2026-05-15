@@ -32,7 +32,7 @@ const faqs = [
 export default function FAQ() {
   const [open, setOpen] = useState<number | null>(null);
   return (
-    <section id="faq" className="py-32 px-6 bg-parchment/40">
+    <section id="faq" className="py-32 px-6 bg-cream">
       <div className="max-w-2xl mx-auto">
         <div className="text-center mb-16">
           <p className="text-xs uppercase tracking-[0.4em] text-olive-deep mb-4">
@@ -51,7 +51,7 @@ export default function FAQ() {
               className="w-full text-left border-b border-ink/10 py-6 group"
             >
               <div className="flex justify-between items-start gap-6">
-                <p className="font-display text-xl text-ink group-hover:text-olive-deep transition-colors">
+                <p className="text-base sm:text-lg text-ink group-hover:text-olive-deep transition-colors leading-snug tracking-wide">
                   {f.q}
                 </p>
                 <span

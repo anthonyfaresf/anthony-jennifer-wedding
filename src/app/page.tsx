@@ -1,5 +1,6 @@
-import EntranceSplash from "@/components/EntranceSplash";
 import Hero from "@/components/Hero";
+import Envelope from "@/components/Envelope";
+import Countdown from "@/components/Countdown";
 import Story from "@/components/Story";
 import Photos from "@/components/Photos";
 import Venue from "@/components/Venue";
@@ -12,9 +13,14 @@ import AudioPlayer from "@/components/AudioPlayer";
 export default function Home() {
   return (
     <main className="bg-cream text-body">
+      {/* Envelope restored 2026-05-15 per Anthony — sealed "door" gate before
+          the hero. Tap the wax seal to open, then "Enter" to dismiss the
+          overlay and reveal the rest of the site. SessionStorage skip on
+          subsequent visits so it doesn't replay all day. */}
+      <Envelope />
       <AudioPlayer />
-      <EntranceSplash />
       <Hero />
+      <Countdown />
       <Story />
       <Photos />
       <Venue />
