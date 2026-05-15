@@ -1,2 +1,4 @@
 :HL["/anthony-jennifer-wedding/_next/static/chunks/0czph-gjk7~-l.css","style"]
-0:{"tree":{"name":"","param":null,"prefetchHints":16,"slots":{"children":{"name":"/_not-found","param":null,"prefetchHints":0,"slots":{"children":{"name":"__PAGE__","param":null,"prefetchHints":0,"slots":null}}}}},"staleTime":300,"buildId":"n9SM-QuROm7iuE0Qj7YVo"}
+:HL["/anthony-jennifer-wedding/frames/hero-wine-cheers/f-01.jpg","image",{"fetchPriority":"high"}]
+:HL["/anthony-jennifer-wedding/frames/scene-01-meeting/f-01.jpg","image"]
+0:{"tree":{"name":"","param":null,"prefetchHints":16,"slots":{"children":{"name":"/_not-found","param":null,"prefetchHints":0,"slots":{"children":{"name":"__PAGE__","param":null,"prefetchHints":0,"slots":null}}}}},"staleTime":300,"buildId":"XOM5kQl8Z3vyHrqlPayLt"}
