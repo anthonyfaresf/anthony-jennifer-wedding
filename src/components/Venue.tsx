@@ -117,36 +117,51 @@ export default function Venue() {
           }}
         />
 
+        {/* Bottom scrim — soft dark wash behind the venue title for stable
+            contrast across watercolor brightness variations (per 2026-05-15
+            contrast pass). */}
+        <div
+          aria-hidden
+          className="absolute inset-x-0 bottom-0 pointer-events-none z-25"
+          style={{
+            height: "45%",
+            background:
+              "linear-gradient(to top, rgba(20,18,14,0.55) 0%, rgba(20,18,14,0.30) 40%, rgba(20,18,14,0.10) 75%, transparent 100%)",
+          }}
+        />
+
         {/* Title overlay — no card, text floats over the watercolor with
             mix-blend-multiply (the olive numerals darken whatever they sit
             over without competing for color, the way they did before). */}
-        <div className="absolute bottom-8 sm:bottom-12 left-0 right-0 px-6 text-center pointer-events-none z-30 mix-blend-multiply">
+        {/* Title overlay — cream text on watercolor with strong text-shadow
+            for stable legibility (replaces the mix-blend-multiply approach
+            which read unpredictably across watercolor light/dark patches). */}
+        <div className="absolute bottom-8 sm:bottom-12 left-0 right-0 px-6 text-center pointer-events-none z-30">
           <div className="venue-title-card inline-block">
             <p
-              className="text-[10px] sm:text-xs uppercase tracking-[0.5em] mb-3"
-              style={{ color: "var(--display)", opacity: 0.85 }}
+              className="text-[11px] sm:text-xs uppercase tracking-[0.5em] mb-3 text-cream"
+              style={{ textShadow: "0 2px 14px rgba(0,0,0,0.7), 0 0 6px rgba(0,0,0,0.4)" }}
             >
               Where
             </p>
             <h2
-              className="leading-none"
+              className="leading-none text-cream"
               style={{
                 fontFamily: "var(--font-display)",
                 fontSize: "clamp(40px, 6vw, 88px)",
-                color: "var(--display)",
                 letterSpacing: "0.01em",
+                textShadow: "0 4px 28px rgba(0,0,0,0.7), 0 2px 10px rgba(0,0,0,0.5)",
               }}
             >
               Couvent Saint Jean
             </h2>
-            <div className="w-10 h-px bg-gold/50 mx-auto my-3" />
+            <div className="w-10 h-px bg-gold mx-auto my-3" style={{ boxShadow: "0 0 8px rgba(0,0,0,0.3)" }} />
             <p
-              className="italic"
+              className="italic text-cream"
               style={{
                 fontFamily: "var(--font-display)",
                 fontSize: "clamp(16px, 1.6vw, 22px)",
-                color: "var(--display)",
-                opacity: 0.78,
+                textShadow: "0 2px 12px rgba(0,0,0,0.65)",
               }}
             >
               Okaibe · Lebanon

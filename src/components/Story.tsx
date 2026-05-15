@@ -142,12 +142,16 @@ export default function Story() {
         if (!sceneEl) return;
 
         // Caption pill enters with scale + fade, then characters in title +
-        // body reveal letter by letter (manual span split, see render below).
+        // body reveal letter by letter. Per Anthony 2026-05-15: animations
+        // need to play BOTH directions (forward on scroll down INTO scene,
+        // reverse on scroll up OUT). "play reverse play reverse" matches
+        // the year-marker pattern that already works.
         const tl = gsap.timeline({
           scrollTrigger: {
             trigger: sceneEl,
-            start: "top 50%",
-            toggleActions: "play none none reverse",
+            start: "top 60%",
+            end: "bottom 40%",
+            toggleActions: "play reverse play reverse",
           },
         });
         tl.fromTo(
@@ -272,10 +276,10 @@ export default function Story() {
           How we got here
         </h2>
         <div className="w-16 h-px bg-gold mx-auto mt-8" />
-        <p className="text-xs uppercase tracking-[0.3em] text-olive-deep/60 mt-12">
+        <p className="text-xs uppercase tracking-[0.3em] text-olive-deep/80 mt-12">
           Scroll to begin
         </p>
-        <p className="text-xs text-olive-deep/40 mt-2">↓</p>
+        <p className="text-sm text-olive-deep/70 mt-2" aria-hidden>↓</p>
       </div>
 
       {/* === 3-SCENE VERTICAL TIMELINE === */}
@@ -326,9 +330,23 @@ export default function Story() {
                   </span>
                 </div>
 
-                {/* === CAPTION — no card, text floats over the watercolor ===
-                    Strong text-shadow keeps it readable. Title + body use
-                    character-reveal stagger. */}
+                {/* === CAPTION SCRIM — soft darkening gradient behind the
+                    caption text so cream text is readable on bright watercolor
+                    patches (fixes contrast issue Anthony flagged 2026-05-15).
+                    Sits below the text z-30, above the watercolor frame. */}
+                <div
+                  aria-hidden
+                  className="absolute inset-x-0 bottom-0 pointer-events-none z-20"
+                  style={{
+                    height: "55%",
+                    background:
+                      "linear-gradient(to top, rgba(20,18,14,0.65) 0%, rgba(20,18,14,0.45) 30%, rgba(20,18,14,0.15) 70%, transparent 100%)",
+                  }}
+                />
+
+                {/* === CAPTION — no card, text floats over the watercolor +
+                    sits above the scrim. Strong text-shadow + scrim = legible
+                    on every watercolor patch. */}
                 <div className="scene-caption absolute bottom-8 sm:bottom-12 left-0 right-0 px-6 text-center pointer-events-none z-30">
                   <div className="scene-caption-card inline-block max-w-md sm:max-w-lg">
                     <p
@@ -357,7 +375,10 @@ export default function Story() {
                 </div>
 
                 {/* Scene index — text only, top-right */}
-                <div className="absolute top-6 right-6 text-[10px] uppercase tracking-[0.3em] text-cream/85 z-30 mix-blend-difference">
+                <div
+                  className="absolute top-6 right-6 text-[11px] uppercase tracking-[0.3em] text-cream z-30"
+                  style={{ textShadow: "0 2px 10px rgba(0,0,0,0.7), 0 0 4px rgba(0,0,0,0.4)" }}
+                >
                   {s.n} / 03
                 </div>
               </div>

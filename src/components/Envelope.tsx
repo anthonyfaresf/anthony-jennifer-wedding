@@ -596,7 +596,7 @@ export default function Envelope() {
         className="absolute bottom-3 left-0 right-0 text-center text-[9px] uppercase tracking-[0.3em] pointer-events-auto"
         style={{ color: "var(--display)", opacity: 0.5 }}
       >
-        Crafted with care by{" "}
+        By{" "}
         <a
           href="https://www.afandu.com"
           target="_blank"

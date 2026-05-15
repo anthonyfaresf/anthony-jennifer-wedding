@@ -79,8 +79,8 @@ export default function CalendarMark() {
       </p>
       <div className="w-8 h-px bg-gold/60 mx-auto mb-5" />
 
-      {/* Weekday header */}
-      <div className="grid grid-cols-7 gap-1 mb-2 text-[9px] uppercase tracking-[0.18em] text-olive-deep/55">
+      {/* Weekday header — bumped to 11px + /75 opacity for legibility (was 9px /55, failed AA) */}
+      <div className="grid grid-cols-7 gap-1 mb-2 text-[11px] uppercase tracking-[0.22em] text-olive-deep/75 font-medium">
         {["S", "M", "T", "W", "T", "F", "S"].map((d, i) => (
           <span key={i}>{d}</span>
         ))}

@@ -170,8 +170,12 @@ export default function EntranceSplash() {
               You are invited
             </p>
 
-            {/* "A & J" monogram */}
-            <h1
+            {/* "A & J" monogram — visually a heading, but NOT an h1 (Hero owns the
+                single page h1 for SEO/a11y). Using <p> with role="heading" aria-level
+                so screen readers still announce it as a heading inside the splash. */}
+            <p
+              role="heading"
+              aria-level={2}
               className="splash-text-line text-7xl sm:text-9xl leading-none mb-3"
               style={{
                 fontFamily: "var(--font-display)",
@@ -192,7 +196,7 @@ export default function EntranceSplash() {
                 &
               </span>
               J
-            </h1>
+            </p>
 
             {/* Gold rule */}
             <div
@@ -258,7 +262,7 @@ export default function EntranceSplash() {
             className="text-[9px] uppercase tracking-[0.3em]"
             style={{ color: "var(--display)", opacity: 0.6 }}
           >
-            Crafted with care by{" "}
+            By{" "}
             <a
               href="https://www.afandu.com"
               target="_blank"

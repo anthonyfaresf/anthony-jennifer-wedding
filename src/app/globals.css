@@ -88,6 +88,49 @@ html, body {
   font-family: "Gordita", var(--font-tenor), system-ui, sans-serif;
   -webkit-font-smoothing: antialiased;
   text-rendering: optimizeLegibility;
+  /* Body type — 16px mobile, 18px tablet+. 1.65 line-height per 2026
+     premium-wedding-site readability research (Joy + Bliss & Bone). */
+  font-size: 16px;
+  line-height: 1.65;
+}
+
+@media (min-width: 640px) {
+  html, body {
+    font-size: 18px;
+  }
+}
+
+/* Universal focus-visible ring — gold halo, never on outline:none alone.
+   Skips focus-visible on elements that opt out (the envelope manages its
+   own focus ring with focus-visible:ring-gold/40 inline). */
+*:focus-visible {
+  outline: 2px solid var(--gold);
+  outline-offset: 3px;
+  border-radius: 2px;
+}
+
+/* Screen-reader-only utility (Tailwind's `sr-only` equivalent — explicit
+   for the SkipLink before it gains focus). */
+.sr-only {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip: rect(0, 0, 0, 0);
+  white-space: nowrap;
+  border: 0;
+}
+.focus\:not-sr-only:focus {
+  position: static;
+  width: auto;
+  height: auto;
+  padding: revert;
+  margin: revert;
+  overflow: visible;
+  clip: auto;
+  white-space: normal;
 }
 
 /* TYPOGRAPHY HIERARCHY (updated 2026-05-15 per Anthony — Blosta is artistic
@@ -337,6 +380,18 @@ img[src*="lemon-hanging.png"] {
     animation-duration: 0.01ms !important;
     transition-duration: 0.01ms !important;
   }
+}
+
+/* === Flip-clock split-flap digit animation (Countdown) ===
+   When a digit changes, briefly rotate the top half down (180°) with a
+   cubic-bezier ease-in-out, then snap back as the new value appears. */
+@keyframes flip-down {
+  0%   { transform: rotateX(0deg);   opacity: 1; }
+  45%  { transform: rotateX(-95deg); opacity: 0.4; }
+  100% { transform: rotateX(0deg);   opacity: 1; }
+}
+.flip-anim {
+  animation: flip-down 0.28s cubic-bezier(0.6, 0, 0.4, 1);
 }
 
 /* === Venue background — slow ambient push toward the bell tower ===

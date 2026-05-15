@@ -24,6 +24,8 @@
 scripts/screenshots/
 scripts/screenshots-web/
 *.tsbuildinfo
+# Local Playwright UX/UI audit scripts (run on-demand, not part of build)
+/_audit*.mjs
 
 # Heavy raw assets — kept on disk only, not pushed
 assets/master-refs/videos/

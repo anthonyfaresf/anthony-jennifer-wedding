@@ -42,7 +42,9 @@ export default function AudioPlayer() {
       const eased = t < 0.5 ? 4 * t * t * t : 1 - Math.pow(-2 * t + 2, 3) / 2;
       const aNow = audioRef.current;
       if (!aNow) return;
-      aNow.volume = from + (to - from) * eased;
+      // Clamp — floating-point rounding can push the result slightly negative
+      // at the tail of a fade-out, which throws DOMException on .volume =
+      aNow.volume = Math.max(0, Math.min(1, from + (to - from) * eased));
       if (t < 1) requestAnimationFrame(step);
     };
     requestAnimationFrame(step);

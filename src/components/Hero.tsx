@@ -206,13 +206,15 @@ export default function Hero() {
           aria-hidden
         />
 
-        {/* Vignette */}
+        {/* Vignette — darker centered behind the names so cream text always
+            sits on a dark patch regardless of watercolor luminance. Strengthened
+            2026-05-15 per Anthony contrast feedback. */}
         <div
           aria-hidden
           className="hero-vignette absolute inset-0 pointer-events-none z-20"
           style={{
             background:
-              "linear-gradient(180deg, rgba(42,37,32,0.45) 0%, rgba(42,37,32,0.05) 28%, rgba(42,37,32,0.05) 65%, rgba(42,37,32,0.7) 100%)",
+              "radial-gradient(ellipse 70% 55% at center, rgba(20,18,14,0.55) 0%, rgba(20,18,14,0.35) 40%, rgba(20,18,14,0.15) 70%, rgba(20,18,14,0) 100%), linear-gradient(180deg, rgba(20,18,14,0.5) 0%, rgba(20,18,14,0.08) 22%, rgba(20,18,14,0.08) 65%, rgba(20,18,14,0.7) 100%)",
             opacity: 1,
           }}
         />
@@ -237,7 +239,10 @@ export default function Hero() {
               {splitChars("Together with their families", "hero-tagline-char")}
             </p>
 
-            <h1
+            {/* Single h1 spans both names — was two h1s, fails SEO + a11y "exactly one h1". */}
+            <h1 className="sr-only">Anthony & Jennifer · 18 July 2026 · Couvent Saint Jean, Okaibe, Lebanon</h1>
+            <p
+              aria-hidden
               className="font-display leading-none mb-3 text-cream"
               style={{
                 fontSize: "clamp(56px, 9vw, 110px)",
@@ -246,7 +251,7 @@ export default function Hero() {
               }}
             >
               {splitChars("Anthony", "hero-name-char")}
-            </h1>
+            </p>
 
             <p
               className="hero-and leading-none mb-3 inline-block"
@@ -260,7 +265,8 @@ export default function Hero() {
               and
             </p>
 
-            <h1
+            <p
+              aria-hidden
               className="font-display leading-none mb-7 text-cream"
               style={{
                 fontSize: "clamp(56px, 9vw, 110px)",
@@ -269,7 +275,7 @@ export default function Hero() {
               }}
             >
               {splitChars("Jennifer", "hero-name-char")}
-            </h1>
+            </p>
 
             <div
               className="hero-rule h-px mx-auto my-6"

@@ -23,6 +23,45 @@ function diff(now: number): Tick {
 }
 
 /**
+ * FlipDigit — split-flap board aesthetic. When `value` changes, the top
+ * half folds down with a brief perspective flip (cubic-bezier ease-in)
+ * revealing the new value underneath. Per 2026 wedding-site research —
+ * vintage split-flap is the canonical "elevated countdown" pattern
+ * (Bliss & Bone Hannah + Matt).
+ */
+function FlipDigit({ value }: { value: string }) {
+  const [displayed, setDisplayed] = useState(value);
+  const [flipping, setFlipping] = useState(false);
+
+  useEffect(() => {
+    if (value === displayed) return;
+    setFlipping(true);
+    const t = setTimeout(() => {
+      setDisplayed(value);
+      setFlipping(false);
+    }, 280);
+    return () => clearTimeout(t);
+  }, [value, displayed]);
+
+  return (
+    <span
+      className="flip-digit relative inline-block"
+      style={{ perspective: "240px" }}
+    >
+      <span
+        className={`inline-block ${flipping ? "flip-anim" : ""}`}
+        style={{
+          transformOrigin: "center bottom",
+          transformStyle: "preserve-3d",
+        }}
+      >
+        {displayed}
+      </span>
+    </span>
+  );
+}
+
+/**
  * Countdown — between Hero and Story.
  *
  * 4 Blosta-olive digit clusters (days · hours · minutes · seconds) on cream
@@ -112,9 +151,13 @@ export default function Countdown() {
                   letterSpacing: "-0.01em",
                 }}
               >
-                {c.padTo === 3
+                {(c.padTo === 3
                   ? String(c.value).padStart(3, "0")
-                  : pad(c.value)}
+                  : pad(c.value))
+                  .split("")
+                  .map((ch, i) => (
+                    <FlipDigit key={i} value={ch} />
+                  ))}
               </p>
               <p
                 className="mt-3 text-olive-deep/75 italic"
