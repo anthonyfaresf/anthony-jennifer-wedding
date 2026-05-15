@@ -1,10 +1,9 @@
 "use client";
 
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useRef } from "react";
 import gsap from "gsap";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
 import { FrameSequence } from "./FrameSequence";
-import Confetti from "./Confetti";
 
 if (typeof window !== "undefined") gsap.registerPlugin(ScrollTrigger);
 
@@ -28,15 +27,6 @@ if (typeof window !== "undefined") gsap.registerPlugin(ScrollTrigger);
  */
 export default function Hero() {
   const sectionRef = useRef<HTMLElement>(null);
-  // Confetti petal-drift fires once when the names have landed (~1.8s after
-  // mount). Per SYNTHESIS-v3 Tier 1 #5 (itskevinyang reference).
-  const [confettiPlay, setConfettiPlay] = useState(false);
-
-  useEffect(() => {
-    // Trigger the confetti burst shortly after the name-stagger lands.
-    const t = setTimeout(() => setConfettiPlay(true), 1800);
-    return () => clearTimeout(t);
-  }, []);
 
   useEffect(() => {
     const reduceMotion =
@@ -341,11 +331,6 @@ export default function Hero() {
             </p>
           </div>
         </div>
-
-        {/* Confetti / petal-drift on hero name reveal — SYNTHESIS-v3 Tier 1 #5,
-            itskevinyang reference. Tasteful, ~22 particles, drifts past the
-            text block then settles. */}
-        <Confetti play={confettiPlay} count={22} fullViewport />
 
         {/* Scroll cue — text only, no pill backdrop */}
         <div className="hero-scroll-cue absolute bottom-6 left-1/2 -translate-x-1/2 text-center pointer-events-none z-30">

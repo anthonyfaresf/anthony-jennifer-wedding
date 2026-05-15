@@ -175,6 +175,60 @@ html {
   scroll-behavior: smooth;
 }
 
+/*
+  PAPER STACK — Apple/Pirelli-style section stacking.
+  Each `.paper-slot` is position:sticky pinned at top:0 with a higher
+  z-index than its predecessor. As the user scrolls, the current paper
+  pins to the top and the next paper (higher z-index) rises from below
+  and PHYSICALLY COVERS the previous one. Result: pages layering like
+  a deck of cards being placed down.
+
+  Implementation notes:
+  - Each paper must be opaque so it actually covers what's behind it
+    (cream bg, paper-grain texture).
+  - The paper-stack-root needs no special positioning — it's just a
+    block container. The stickiness is on each slot.
+  - min-height: 100svh ensures every paper gets full viewport before
+    sticking, so the scroll distance "feels right".
+  - Hero + Story are NOT in the stack (they have internal pin scrubs).
+*/
+.paper-stack-root {
+  position: relative;
+  isolation: isolate; /* fresh stacking context — z-index is scoped */
+}
+.paper-slot {
+  position: sticky;
+  top: 0;
+  min-height: 100vh;
+  min-height: 100svh;
+  background: var(--cream);
+  /* Tiny inset shadow on the top edge so each paper reads as physically
+     placed on top of the one below (light catches the paper edge). */
+  box-shadow: 0 -6px 22px -16px rgba(20, 18, 14, 0.35);
+  /* Promote to its own composited layer for smooth scroll behavior on iOS. */
+  will-change: transform;
+}
+.paper-slot[data-paper="1"] { z-index: 1; }
+.paper-slot[data-paper="2"] { z-index: 2; }
+.paper-slot[data-paper="3"] { z-index: 3; }
+.paper-slot[data-paper="4"] { z-index: 4; }
+.paper-slot[data-paper="5"] { z-index: 5; }
+.paper-slot[data-paper="6"] { z-index: 6; }
+.paper-slot[data-paper="7"] { z-index: 7; }
+/* Nested <section> child (e.g. Countdown, Venue) fills the slot. */
+.paper-slot > section,
+.paper-slot > footer {
+  min-height: inherit;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .paper-slot {
+    position: static;
+    min-height: auto;
+    box-shadow: none;
+  }
+}
+
 /* Color liveliness for the scroll-scrubbed watercolor frame sequences */
 .scene-frame,
 #hero img {

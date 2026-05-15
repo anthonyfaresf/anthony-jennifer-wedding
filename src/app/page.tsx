@@ -10,7 +10,6 @@ import Footer from "@/components/Footer";
 import AudioPlayer from "@/components/AudioPlayer";
 import StickyNav from "@/components/StickyNav";
 import SkipLink from "@/components/SkipLink";
-import PaperStack from "@/components/PaperStack";
 
 export default function Home() {
   return (
@@ -18,29 +17,37 @@ export default function Home() {
       {/* Skip-to-RSVP — first focusable for keyboard/screen-reader users.
           Per 2026 a11y research (Knot Marble pattern). */}
       <SkipLink />
-      {/* Envelope restored 2026-05-15 per Anthony — single-tap entrance now.
-          Tap the wax seal → envelope opens + invite holds ~1.4s → fades to
-          hero. Music starts on that same gesture (AudioPlayer listens for
-          first user click). SessionStorage skip on subsequent visits. */}
+      {/* Envelope — single-tap entrance. Tap the wax seal → envelope opens
+          + invite holds ~1.4s → fades to hero. Music starts on that same
+          gesture. SessionStorage skip on subsequent visits. */}
       <Envelope />
-      {/* PaperStack — adds Apple/Linear scroll-stack reveal to each section
-          (entry: rise + fade + scale-in, exit: subtle scale-down + dim).
-          Skips Hero/Story (they have their own internal scrub timelines).
-          Per Anthony 2026-05-15: "sections stack on top like papers". */}
-      <PaperStack />
       {/* Sticky pill nav — appears after hero scrolls past, IntersectionObserver
-          highlights active section. Per 2026 wedding-site research, this is
-          the canonical wayfinding pattern for long-scroll single-page sites. */}
+          highlights active section. */}
       <StickyNav />
       <AudioPlayer />
+      {/*
+        PAPER STACK — sections after Hero+Story stack on top of each other
+        as you scroll, like a deck of cards being laid down. Each `.paper`
+        section is position:sticky / top:0 / min-h-screen with z-index
+        incrementing per slot, so the next paper rises up from below and
+        physically covers the previous one (which stays pinned underneath).
+        Apple AirPods / Pirelli wallpaper pattern.
+
+        Hero + Story are NOT in the stack — they have their own internal
+        scrub timelines (FrameSequence pin + horizontal Story scenes) that
+        would conflict with an outer sticky parent. Hero plays its own film,
+        Story horizontals its scenes, then the stack begins at Countdown.
+      */}
       <Hero />
-      <Countdown />
       <Story />
-      <Venue />
-      <Schedule />
-      <RSVP />
-      <FAQ />
-      <Footer />
+      <div className="paper-stack-root">
+        <section className="paper-slot" data-paper="1"><Countdown /></section>
+        <section className="paper-slot" data-paper="2"><Venue /></section>
+        <section className="paper-slot" data-paper="3"><Schedule /></section>
+        <section className="paper-slot" data-paper="4"><RSVP /></section>
+        <section className="paper-slot" data-paper="5"><FAQ /></section>
+        <section className="paper-slot" data-paper="6"><Footer /></section>
+      </div>
     </main>
   );
 }
