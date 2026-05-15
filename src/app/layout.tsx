@@ -45,11 +45,24 @@ export const viewport: Viewport = {
 export default function RootLayout({
   children,
 }: Readonly<{ children: React.ReactNode }>) {
+  // Bake basePath into the preload href at SSG time. Empty for Cloudflare,
+  // /anthony-jennifer-wedding for GitHub Pages — see next.config.ts.
+  const bp = process.env.NEXT_PUBLIC_BASE_PATH || "";
   return (
     <html
       lang="en"
       className={`${cormorant.variable} ${tenor.variable} ${italianno.variable} h-full antialiased`}
     >
+      <head>
+        {/*
+          Preload hero frame 1 + story scene-1 frame 1. Both are inside the
+          first viewport (hero) or the very next scroll position (story
+          opener). Preloading kills the 1-8s "calculator" loading state
+          where bg-ink showed through under unloaded canvas frames.
+        */}
+        <link rel="preload" as="image" href={`${bp}/frames/hero-wine-cheers/f-01.jpg`} fetchPriority="high" />
+        <link rel="preload" as="image" href={`${bp}/frames/scene-01-meeting/f-01.jpg`} />
+      </head>
       <body className="min-h-full flex flex-col">{children}</body>
     </html>
   );

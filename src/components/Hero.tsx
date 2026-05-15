@@ -185,11 +185,27 @@ export default function Hero() {
       className="relative w-full"
       style={{ height: "180vh" }}
     >
-      <div className="cream-fade-edges sticky top-0 h-[100svh] supports-[height:100dvh]:h-[100dvh] w-full overflow-hidden bg-ink">
+      {/*
+        Loading-state fallback: bg-cream (NOT bg-ink) so the first ~500ms
+        before the FrameSequence canvas paints reads as cream paper, not a
+        black rectangle with floating text. The hero-frame-wrap layers
+        f-01.jpg as a static CSS background — when the canvas finally
+        paints frame 0 it draws the same image at full fidelity on top,
+        so there's no visible swap. NEXT_PUBLIC_BASE_PATH gets baked at
+        build time per next.config.ts (empty for Cloudflare, repo prefix
+        for GitHub Pages).
+      */}
+      <div className="cream-fade-edges sticky top-0 h-[100svh] supports-[height:100dvh]:h-[100dvh] w-full overflow-hidden bg-cream">
         {/* Frame canvas */}
         <div
           className="hero-frame-wrap absolute inset-0 w-full h-full"
-          style={{ transformOrigin: "center center" }}
+          style={{
+            transformOrigin: "center center",
+            backgroundImage: `url("${process.env.NEXT_PUBLIC_BASE_PATH || ""}/frames/hero-wine-cheers/f-01.jpg")`,
+            backgroundSize: "cover",
+            backgroundPosition: "center",
+            backgroundRepeat: "no-repeat",
+          }}
         >
           <FrameSequence
             scene="hero-wine-cheers"
