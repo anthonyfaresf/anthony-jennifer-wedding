@@ -1,5 +1,5 @@
-:HL["/anthony-jennifer-wedding/_next/static/chunks/0xgqx84.mz_g~.css","style"]
+:HL["/anthony-jennifer-wedding/_next/static/chunks/10ottub4p5-p8.css","style"]
 :HL["/anthony-jennifer-wedding/_next/static/media/01e4147cff8141ee-s.p.10ked.7w885.g.woff2","font",{"crossOrigin":"","type":"font/woff2"}]
 :HL["/anthony-jennifer-wedding/_next/static/media/2723dd1e6871fd18-s.p.10hb_mhorpudv.woff2","font",{"crossOrigin":"","type":"font/woff2"}]
 :HL["/anthony-jennifer-wedding/_next/static/media/35a317e37c2135a2-s.p.09ucq6r62przl.woff2","font",{"crossOrigin":"","type":"font/woff2"}]
-0:{"tree":{"name":"","param":null,"prefetchHints":16,"slots":{"children":{"name":"__PAGE__","param":null,"prefetchHints":0,"slots":null}}},"staleTime":300,"buildId":"ahr3RdNBpbrIC-wBwMd9l"}
+0:{"tree":{"name":"","param":null,"prefetchHints":16,"slots":{"children":{"name":"__PAGE__","param":null,"prefetchHints":0,"slots":null}}},"staleTime":300,"buildId":"q5No-QVxHF6YZj3D76CmA"}
