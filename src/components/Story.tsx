@@ -399,6 +399,16 @@ export default function Story() {
             </div>
           </Fragment>
         ))}
+
+        {/*
+          Closing phase divider — matches the rhythm of the two
+          inter-scene dividers ("Three years pass" before scene 2,
+          "And the day arrives" before scene 3). Without this, scene 3
+          ended abruptly into the paper stack. Per Anthony 2026-05-15:
+          "the space between the wedding slide and the church is super
+          close, they should have the same spacing like the rest".
+        */}
+        <PhaseDivider text="The day is near" />
       </div>
     </section>
   );

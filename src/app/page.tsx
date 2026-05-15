@@ -10,6 +10,7 @@ import Footer from "@/components/Footer";
 import AudioPlayer from "@/components/AudioPlayer";
 import StickyNav from "@/components/StickyNav";
 import SkipLink from "@/components/SkipLink";
+import PaperStackScale from "@/components/PaperStackScale";
 
 export default function Home() {
   return (
@@ -38,6 +39,10 @@ export default function Home() {
         would conflict with an outer sticky parent. Hero plays its own film,
         Story horizontals its scenes, then the stack begins at Countdown.
       */}
+      {/* Drives the scroll-bound scale-down on each outgoing paper so the
+          stack reads as physical depth (next paper rises over previous,
+          previous visibly recedes underneath). */}
+      <PaperStackScale />
       <Hero />
       <Story />
       <div className="paper-stack-root">
