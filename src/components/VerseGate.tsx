@@ -119,7 +119,23 @@ export default function VerseGate() {
     }
 
     setCanvasSize();
-    img.onload = () => drawCover(img);
+    img.onload = () => {
+      drawCover(img);
+      // SLOW ZOOM-IN entrance per Anthony 2026-05-16: "the first opening
+      // page should start slowly zooming in and getting darker with the
+      // overlay and the text and button appears." 8s sine zoom from 1.0
+      // to 1.06 on the canvas (paired with the entrance timeline that
+      // fades the overlay + verse + names + ENTER in over the same window).
+      const reduceMotion =
+        window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+      if (!reduceMotion && canvas) {
+        gsap.fromTo(
+          canvas,
+          { scale: 1.0, transformOrigin: "50% 50%" },
+          { scale: 1.06, duration: 8, ease: "sine.inOut" }
+        );
+      }
+    };
     img.src = `${BP}/frames/opener/f-15.jpg`;
     frames[14] = img;
 
@@ -144,6 +160,39 @@ export default function VerseGate() {
       onTapPlayback?.kill();
       window.removeEventListener("resize", onResize);
     };
+  }, [phase]);
+
+  // ENTRANCE TIMELINE — bright photo first, then overlay darkens, then
+  // verse + names + ENTER fade in. Per Anthony 2026-05-16: "the first
+  // opening page should start slowly zooming in and getting darker with
+  // the overlay and the text and button appears."
+  useEffect(() => {
+    if (phase !== "gate") return;
+    const reduceMotion =
+      typeof window !== "undefined" &&
+      window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+    if (reduceMotion) return;
+
+    const ctx = gsap.context(() => {
+      const tl = gsap.timeline({ delay: 0.15 });
+      // 1. Overlay scrims start CLEAR (bright photo visible) and darken
+      //    over ~1.6s. Pre-set to 0 then animate to 1.
+      tl.set([".gate-fade-out", ".gate-scrim-base", ".gate-scrim-radial"], {
+        opacity: 0,
+      })
+        .to([".gate-scrim-base", ".gate-scrim-radial"], {
+          opacity: 1,
+          duration: 1.6,
+          ease: "sine.out",
+        })
+        // 2. Verse + attribution rise after the overlay is mostly set
+        .to(
+          ".gate-fade-out",
+          { opacity: 1, duration: 1.2, ease: "power2.out", stagger: 0.18 },
+          "-=0.6"
+        );
+    }, overlayRef);
+    return () => ctx.revert();
   }, [phase]);
 
   const handleEnter = () => {
@@ -233,7 +282,7 @@ export default function VerseGate() {
           watercolor sits as atmospheric texture, not competing content. */}
       <div
         aria-hidden
-        className="gate-fade-out absolute inset-0 pointer-events-none"
+        className="gate-scrim-base absolute inset-0 pointer-events-none"
         style={{
           background:
             "linear-gradient(to bottom, rgba(20,18,14,0.72) 0%, rgba(20,18,14,0.62) 35%, rgba(20,18,14,0.68) 65%, rgba(20,18,14,0.88) 100%)",
@@ -241,150 +290,131 @@ export default function VerseGate() {
       />
       <div
         aria-hidden
-        className="gate-fade-out absolute inset-0 pointer-events-none"
+        className="gate-scrim-radial absolute inset-0 pointer-events-none"
         style={{
           background:
             "radial-gradient(ellipse 75% 55% at 50% 38%, rgba(20,18,14,0.55) 0%, rgba(20,18,14,0.2) 55%, transparent 85%)",
         }}
       />
 
-      {/* Content layer */}
-      <div className="relative z-10 flex flex-col items-center justify-between text-center min-h-[100svh] px-6 pt-14 pb-10 sm:pb-14">
+      {/* Content layer — verse takes the CENTER as the dominant element,
+          names + ENTER sit small at the bottom. Per Anthony 2026-05-16:
+          "the verse should be the main thing on the page, and the names
+          smaller at the bottom with the enter, without an arrow. enter
+          only not tap to enter, and a more cinematic and elegant font." */}
+      <div className="relative z-10 flex flex-col items-center text-center min-h-[100lvh] px-6 pt-14 pb-8 sm:pb-12">
+        {/* Top spacer */}
         <div className="flex-1" />
 
-        {/* THE VERSE — full-screen, dominant. The hero element of the gate. */}
-        <div className="gate-fade-out flex flex-col items-center">
+        {/* THE VERSE — DOMINANT center element. Italianno cursive script
+            for the verse text itself (the most cinematic + elegant choice
+            for a wedding-invitation Bible quote — reads as handwritten
+            calligraphy on parchment), Cormorant for the attribution. */}
+        <div className="gate-fade-out flex flex-col items-center max-w-[28ch] sm:max-w-[34ch]">
           <p
-            className="italic leading-[1.22] text-cream max-w-[18ch] sm:max-w-[28ch]"
+            className="leading-[1.05] text-cream"
             style={{
-              fontFamily: "var(--font-display), 'Cormorant Garamond', serif",
-              fontWeight: 300,
-              fontSize: "clamp(32px, 5.5vw, 64px)",
+              fontFamily: "var(--font-italianno), 'Italianno', cursive",
+              fontWeight: 400,
+              fontSize: "clamp(48px, 8.5vw, 104px)",
               letterSpacing: "0.005em",
               textShadow:
-                "0 4px 32px rgba(0,0,0,0.7), 0 0 12px rgba(0,0,0,0.45)",
+                "0 6px 36px rgba(0,0,0,0.78), 0 0 14px rgba(0,0,0,0.55)",
             }}
           >
-            &ldquo;I have found the one whom my soul loves.&rdquo;
+            I have found the one whom my soul loves.
           </p>
           <p
-            className="mt-5 sm:mt-7 text-cream/90 text-[10px] sm:text-xs uppercase"
+            className="mt-7 sm:mt-9 text-cream/80 text-[10px] sm:text-xs uppercase"
             style={{
-              letterSpacing: "0.5em",
-              textShadow: "0 2px 14px rgba(0,0,0,0.7)",
+              letterSpacing: "0.55em",
+              textShadow: "0 2px 14px rgba(0,0,0,0.75)",
             }}
           >
             Song of Solomon &nbsp;3&thinsp;:&thinsp;4
           </p>
         </div>
 
+        {/* Bottom spacer — pushes names + ENTER to the bottom */}
         <div className="flex-1" />
 
-        {/* THE COUPLE — single small line "Anthony & Jennifer" per Anthony
-            2026-05-16. Was a 3-line stacked display (Anthony / and /
-            Jennifer); now a single elegant smaller line with the literal
-            ampersand. Positioned to roughly match the Hero's name position
-            so the visual reads as continuity across the paper-white fade
-            (crossfade-with-position-continuity per 4-brain consensus —
-            FLIP is too fragile on iOS Safari). */}
-        <div className="hero-name-anchor flex flex-col items-center">
+        {/* THE COUPLE — small, intimate, at the bottom near the ENTER. */}
+        <div className="hero-name-anchor flex flex-col items-center mt-auto">
           <p
             className="hero-name-text font-display text-cream"
             style={{
-              fontSize: "clamp(28px, 4.5vw, 48px)",
-              letterSpacing: "0.04em",
+              fontSize: "clamp(20px, 3.2vw, 32px)",
+              letterSpacing: "0.06em",
               fontWeight: 300,
               textShadow:
-                "0 4px 32px rgba(0,0,0,0.7), 0 0 12px rgba(0,0,0,0.45)",
+                "0 3px 22px rgba(0,0,0,0.78), 0 0 10px rgba(0,0,0,0.5)",
             }}
           >
             Anthony &amp; Jennifer
           </p>
 
-          <div
-            className="h-px my-5 sm:my-6"
-            style={{
-              background: "#d4b87a",
-              width: 56,
-              boxShadow: "0 0 12px rgba(0,0,0,0.4)",
-            }}
-          />
-
           <p
-            className="text-cream/90 text-xs sm:text-sm uppercase"
-            style={{
-              letterSpacing: "0.5em",
-              textShadow: "0 2px 14px rgba(0,0,0,0.7)",
-            }}
-          >
-            18 &middot; 07 &middot; 2026
-          </p>
-          <p
-            className="mt-3 text-cream/70 text-[10px] sm:text-xs uppercase"
+            className="mt-2 text-cream/70 text-[9px] sm:text-[10px] uppercase"
             style={{
               letterSpacing: "0.4em",
               textShadow: "0 2px 14px rgba(0,0,0,0.7)",
             }}
           >
-            Couvent Saint Jean &middot; Okaibe &middot; Lebanon
+            18 &middot; 07 &middot; 2026 &nbsp;·&nbsp; Couvent Saint Jean
           </p>
-        </div>
 
-        {/* DYNAMIC TAP-TO-ENTER cue — per Anthony 2026-05-16: "tap to enter
-            should be a bit more dynamic for people to see it." Pulsing
-            gold pill button with a label, chevron, and breathing ring —
-            unmistakable interaction signal. */}
-        <div className="gate-fade-out mt-10 flex flex-col items-center gap-3 pointer-events-none">
-          <button
-            type="button"
-            tabIndex={-1}
+          {/* ELEGANT ENTER — refined gold rule + ENTER caps + gold rule.
+              Per Anthony 2026-05-16: "enter only not tap to enter… more
+              elegant." No chevron, no pill background, no halo ring — just
+              the word ENTER framed by two thin gold lines, with a subtle
+              opacity pulse so the eye lands on it.
+
+              The whole gate is clickable; this is just the visible cue. */}
+          <div
             aria-hidden
-            className="gate-cta-pill relative px-7 py-3.5 rounded-full text-[11px] sm:text-xs uppercase pointer-events-none"
-            style={{
-              border: "1px solid rgba(212, 184, 122, 0.55)",
-              background: "rgba(20, 18, 14, 0.32)",
-              color: "#f4ecde",
-              letterSpacing: "0.42em",
-              textShadow: "0 2px 14px rgba(0,0,0,0.7)",
-              backdropFilter: "blur(2px)",
-              WebkitBackdropFilter: "blur(2px)",
-            }}
+            className="gate-cta-enter mt-8 sm:mt-10 flex items-center gap-4 pointer-events-none"
+            style={{ animation: "enter-breathe 2.6s ease-in-out infinite" }}
           >
-            <span className="gate-cta-text inline-block">Tap to enter</span>
             <span
-              aria-hidden
-              className="ml-3 inline-block"
+              className="h-px"
               style={{
-                color: "#d4b87a",
-                animation: "tap-chevron 1.6s ease-in-out infinite",
-              }}
-            >
-              ↓
-            </span>
-            {/* Breathing ring — pulsing gold halo around the button */}
-            <span
-              aria-hidden
-              className="absolute inset-0 rounded-full pointer-events-none"
-              style={{
-                border: "1px solid rgba(212, 184, 122, 0.4)",
-                animation: "tap-ring 2.2s ease-out infinite",
+                width: 36,
+                background: "#d4b87a",
+                boxShadow: "0 0 8px rgba(212,184,122,0.4)",
               }}
             />
-          </button>
+            <span
+              className="text-cream"
+              style={{
+                fontFamily: "var(--font-display)",
+                fontSize: "clamp(11px, 1.2vw, 14px)",
+                letterSpacing: "0.6em",
+                textTransform: "uppercase",
+                textShadow: "0 2px 14px rgba(0,0,0,0.75)",
+                paddingLeft: "0.3em", // visual balance with letter-spacing
+              }}
+            >
+              Enter
+            </span>
+            <span
+              className="h-px"
+              style={{
+                width: 36,
+                background: "#d4b87a",
+                boxShadow: "0 0 8px rgba(212,184,122,0.4)",
+              }}
+            />
+          </div>
         </div>
       </div>
 
       <style>{`
-        @keyframes tap-chevron {
-          0%, 100% { transform: translateY(-2px); opacity: 0.8; }
-          50% { transform: translateY(4px); opacity: 1; }
-        }
-        @keyframes tap-ring {
-          0% { transform: scale(1); opacity: 0.8; }
-          100% { transform: scale(1.22); opacity: 0; }
+        @keyframes enter-breathe {
+          0%, 100% { opacity: 0.7; }
+          50% { opacity: 1; }
         }
         @media (prefers-reduced-motion: reduce) {
-          .gate-cta-pill * { animation: none !important; }
+          .gate-cta-enter { animation: none !important; opacity: 0.9 !important; }
         }
       `}</style>
     </div>

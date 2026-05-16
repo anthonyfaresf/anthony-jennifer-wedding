@@ -161,19 +161,21 @@ export default function Hero() {
         },
       });
 
-      // ZOOM-OUT on scroll — Anthony 2026-05-16: "anthony & jennifer
-      // should be as if they're zooming out not disappear when we're
-      // scrolling." Scale the hero card down + softly fade as the user
-      // scrolls into the next section. Reads as the names physically
-      // receding into the stack, not vanishing.
+      // GENTLE zoom-out on scroll — Anthony 2026-05-16 (third pass):
+      // "you're immediately making the text disappear when people start
+      // scrolling, this is bad." Was scale → 0.62 + opacity → 0.35
+      // (too aggressive — names vanished by 20% of scroll). Pushed to
+      // a much subtler scale → 0.82 + opacity → 0.65, and the timeline
+      // starts later (top 30%) + ends later (50% past top) so the
+      // names stay readable through most of the hero's exit.
       gsap.to(".hero-card", {
-        scale: 0.62,
-        opacity: 0.35,
+        scale: 0.82,
+        opacity: 0.65,
         ease: "none",
         scrollTrigger: {
           trigger: sectionEl,
-          start: "top top",
-          end: "bottom top",
+          start: "top -30%",
+          end: "bottom -10%",
           scrub: 0.6,
         },
       });

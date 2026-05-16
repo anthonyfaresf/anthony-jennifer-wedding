@@ -401,17 +401,24 @@ export default function Story({ only }: StoryProps = {}) {
                       WebkitBackdropFilter: "blur(2px)",
                     }}
                   >
+                    {/* Scene number "01 / 02 / 03" removed per Anthony
+                        2026-05-16 (third pass) — caption now leads with
+                        the chapter title + time directly. */}
                     <p
-                      className="font-display text-5xl sm:text-6xl text-gold leading-none mb-2"
-                      style={{ textShadow: "0 4px 22px rgba(0,0,0,0.65)" }}
+                      className="font-display text-cream leading-none mb-3"
+                      style={{
+                        fontSize: "clamp(28px, 4vw, 44px)",
+                        letterSpacing: "0.02em",
+                        textShadow: "0 4px 22px rgba(0,0,0,0.75)",
+                      }}
                     >
-                      <span className="caption-char inline-block">{s.n}</span>
+                      {splitChars(s.title)}
                     </p>
                     <p
-                      className="text-[10px] sm:text-xs uppercase tracking-[0.4em] text-cream mb-3"
+                      className="text-[10px] sm:text-xs uppercase tracking-[0.4em] text-cream/85 mb-3"
                       style={{ textShadow: "0 2px 12px rgba(0,0,0,0.75)" }}
                     >
-                      {splitChars(`${s.title} · ${s.year}`)}
+                      {splitChars(s.year)}
                     </p>
                     <div
                       className="w-10 h-px bg-gold/70 mx-auto mb-3"
@@ -426,13 +433,7 @@ export default function Story({ only }: StoryProps = {}) {
                   </div>
                 </div>
 
-                {/* Scene index — text only, top-right */}
-                <div
-                  className="absolute top-6 right-6 text-[11px] uppercase tracking-[0.3em] text-cream z-30"
-                  style={{ textShadow: "0 2px 10px rgba(0,0,0,0.7), 0 0 4px rgba(0,0,0,0.4)" }}
-                >
-                  {s.n} / 03
-                </div>
+                {/* Scene numbering removed per Anthony 2026-05-16. */}
               </div>
             </div>
           </Fragment>

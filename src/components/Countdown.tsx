@@ -127,42 +127,42 @@ export default function Countdown() {
     <section
       ref={sectionRef}
       id="countdown"
-      className="relative py-28 sm:py-36 px-6 bg-cream paper-grain overflow-hidden"
+      className="relative min-h-[100svh] flex items-center justify-center px-6 py-20 sm:py-28 bg-cream paper-grain overflow-hidden"
     >
       <div className="max-w-4xl mx-auto text-center relative z-10">
         <p className="cd-eyebrow text-xs uppercase tracking-[0.5em] text-olive-deep/85 mb-10">
           The countdown
         </p>
 
-        {/* MOBILE — single elegant line: "47d · 13h · 22m"
-            Per 4-brain 2026-05-16: drops seconds (battery + clutter),
-            collapses 4 unit cards to 3 tape units that fit any phone
-            without text-wrap. The split-flap aesthetic moves to desktop
-            only — the mobile readout is calm + restrained, not anxious. */}
+        {/* MOBILE — single elegant line with seconds back per Anthony
+            2026-05-16: "add back seconds." Format: "63 · 03 · 53 · 12"
+            (days · hours · min · sec) on one line. */}
         <div className="sm:hidden cd-cluster">
           <p
             className="font-display text-olive-deep leading-none tabular-nums"
             style={{
-              fontSize: "clamp(38px, 11vw, 60px)",
+              fontSize: "clamp(30px, 9vw, 52px)",
               letterSpacing: "-0.005em",
               whiteSpace: "nowrap",
             }}
           >
             <span>{tick?.days ?? 0}</span>
-            <span className="text-olive-deep/55 px-2" style={{ fontSize: "0.75em" }}>·</span>
+            <span className="text-olive-deep/55 px-1.5" style={{ fontSize: "0.7em" }}>·</span>
             <span>{pad(tick?.hours ?? 0)}</span>
-            <span className="text-olive-deep/55 px-2" style={{ fontSize: "0.75em" }}>·</span>
+            <span className="text-olive-deep/55 px-1.5" style={{ fontSize: "0.7em" }}>·</span>
             <span>{pad(tick?.minutes ?? 0)}</span>
+            <span className="text-olive-deep/55 px-1.5" style={{ fontSize: "0.7em" }}>·</span>
+            <span>{pad(tick?.seconds ?? 0)}</span>
           </p>
           <p
             className="mt-4 text-olive-deep/70 italic"
             style={{
               fontFamily: "var(--font-italianno), 'Italianno', cursive",
-              fontSize: "26px",
-              letterSpacing: "0.06em",
+              fontSize: "24px",
+              letterSpacing: "0.05em",
             }}
           >
-            days · hours · minutes
+            days · hours · minutes · seconds
           </p>
         </div>
 
@@ -206,15 +206,40 @@ export default function Countdown() {
         </div>
 
         <div
-          className="cd-rule h-px bg-gold mx-auto mt-12 mb-6"
+          className="cd-rule h-px bg-gold mx-auto mt-12 mb-8"
           style={{ width: 64 }}
         />
 
-        <p
-          className="cd-footnote italic text-body/70 text-sm sm:text-base tracking-wide"
-        >
-          until we say I do · 18 July 2026 · Couvent Saint Jean
-        </p>
+        {/* 3-line footnote per Anthony 2026-05-16 — was a single line. */}
+        <div className="cd-footnote space-y-2.5">
+          <p
+            className="italic text-body/85"
+            style={{
+              fontFamily: "var(--font-display)",
+              fontSize: "clamp(18px, 2vw, 26px)",
+            }}
+          >
+            Until we say I do.
+          </p>
+          <p
+            className="text-body/75 uppercase"
+            style={{
+              fontSize: "clamp(12px, 1.3vw, 15px)",
+              letterSpacing: "0.4em",
+            }}
+          >
+            18 July 2026
+          </p>
+          <p
+            className="text-body/65 uppercase"
+            style={{
+              fontSize: "clamp(10px, 1.1vw, 13px)",
+              letterSpacing: "0.35em",
+            }}
+          >
+            Couvent Saint Jean &middot; Okaibe
+          </p>
+        </div>
       </div>
 
       {/* Soft top + bottom cream fade so it dissolves into Hero above + Story below */}

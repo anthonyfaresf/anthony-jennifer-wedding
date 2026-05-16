@@ -79,25 +79,28 @@ export default function Home() {
           RSVP      → ACTION
           FAQ       → loose ends (gifts, kids, accommodations)
           Footer    → contact + thanks */}
+      {/* STRICT ALTERNATION per Anthony 2026-05-16:
+          "1 photo, 1 white page with info, not 2 pages directly after
+          each other, not 2 white pages directly after each."
+          Every photo (watercolor scene OR venue) is followed by one
+          white info card. No back-to-back whites, no back-to-back
+          photos. Story intro removed (was redundant white). */}
       <div className="paper-stack-root">
         <section className="paper-slot" data-paper="1"><Countdown /></section>
-        <section className="paper-slot" data-paper="2">
-          <Story only="intro" />
+        <section className="paper-slot paper-slot--scene" data-paper="2">
+          <Story only={0} /> {/* Photo — Ceremony */}
         </section>
-        <section className="paper-slot paper-slot--scene" data-paper="3">
-          <Story only={0} />
-        </section>
+        <section className="paper-slot" data-paper="3"><Schedule /></section>
         <section className="paper-slot paper-slot--scene" data-paper="4">
-          <Story only={1} />
+          <Story only={1} /> {/* Photo — Reception */}
         </section>
-        <section className="paper-slot paper-slot--scene" data-paper="5">
-          <Story only={2} />
+        <section className="paper-slot" data-paper="5"><RSVP /></section>
+        <section className="paper-slot paper-slot--scene" data-paper="6">
+          <Story only={2} /> {/* Photo — Dress & Travel */}
         </section>
-        <section className="paper-slot" data-paper="6"><Venue /></section>
-        <section className="paper-slot" data-paper="7"><Schedule /></section>
-        <section className="paper-slot" data-paper="8"><RSVP /></section>
-        <section className="paper-slot" data-paper="9"><FAQ /></section>
-        <section className="paper-slot" data-paper="10"><Footer /></section>
+        <section className="paper-slot" data-paper="7"><FAQ /></section>
+        <section className="paper-slot" data-paper="8"><Venue /></section>
+        <section className="paper-slot" data-paper="9"><Footer /></section>
       </div>
     </main>
   );
