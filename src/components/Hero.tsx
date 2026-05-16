@@ -360,10 +360,11 @@ export default function Hero() {
             />
 
             <p
-              className="hero-date-line leading-none mb-3 text-cream"
+              className="hero-date-line font-display italic leading-none mb-3 text-cream"
               style={{
-                fontSize: "clamp(20px, 2.4vw, 30px)",
-                letterSpacing: "0.06em",
+                fontSize: "clamp(22px, 2.6vw, 34px)",
+                letterSpacing: "0.02em",
+                fontWeight: 300,
                 opacity: 0,
                 textShadow: "0 3px 18px rgba(0,0,0,0.65)",
               }}
