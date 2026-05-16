@@ -61,19 +61,19 @@ export default function VerseGate() {
     };
   }, [phase]);
 
-  // Frame loop — preload all 31 frames, paint to canvas, yo-yo at 12s/cycle
+  // Per Anthony 2026-05-16 second pass: the gate background should NOT
+  // animate by default. Static still until the user taps; then on tap,
+  // the photo briefly plays + fades to paper-white revealing the Hero.
+  // (Was a 12s yoyo loop; killed per 4-brain consensus — read as a
+  // portfolio loop, not a wedding invitation.) Single static frame
+  // from the opener set (f-15: the full composition with olives +
+  // lemons + wine + Couvent at sunset).
   useEffect(() => {
     if (phase === "done") return;
     const canvas = canvasRef.current;
     if (!canvas) return;
     const ctx = canvas.getContext("2d");
     if (!ctx) return;
-
-    const reduceMotion =
-      window.matchMedia("(prefers-reduced-motion: reduce)").matches;
-
-    const images: HTMLImageElement[] = [];
-    let firstReady = false;
 
     const setCanvasSize = () => {
       const dpr = Math.min(window.devicePixelRatio || 1, 2);
@@ -83,72 +83,65 @@ export default function VerseGate() {
       ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
     };
 
-    const drawFrame = (rawIdx: number) => {
-      const idx = Math.max(0, Math.min(FRAME_COUNT - 1, Math.round(rawIdx)));
-      const img = images[idx];
-      if (!img || !img.complete || img.naturalWidth === 0) return;
+    const img = new Image();
+    let onTapPlayback: gsap.core.Tween | null = null;
+
+    const drawCover = (image: HTMLImageElement) => {
+      if (!image.complete || image.naturalWidth === 0) return;
       const rect = canvas.getBoundingClientRect();
       const w = rect.width;
       const h = rect.height;
-      const iar = img.naturalWidth / img.naturalHeight;
+      const iar = image.naturalWidth / image.naturalHeight;
       const car = w / h;
       let dw, dh, dx, dy;
       if (iar > car) {
-        // image wider than canvas — fit by height, crop sides
         dh = h;
         dw = h * iar;
         dx = (w - dw) / 2;
         dy = 0;
       } else {
-        // image taller — fit by width, crop top/bottom
         dw = w;
         dh = w / iar;
         dx = 0;
         dy = (h - dh) / 2;
       }
       ctx.clearRect(0, 0, w, h);
-      ctx.drawImage(img, dx, dy, dw, dh);
+      ctx.drawImage(image, dx, dy, dw, dh);
     };
 
-    setCanvasSize();
-
+    // Preload ALL frames so the on-tap play-through is buttery, but
+    // only PAINT the static still until the user taps.
+    const frames: HTMLImageElement[] = [];
     for (let i = 0; i < FRAME_COUNT; i++) {
-      const img = new Image();
-      const idx = i;
-      img.onload = () => {
-        if (!firstReady) {
-          firstReady = true;
-          drawFrame(0);
-        }
-      };
-      img.src = `${BP}/frames/opener/f-${String(i + 1).padStart(2, "0")}.jpg`;
-      images.push(img);
+      const f = new Image();
+      f.src = `${BP}/frames/opener/f-${String(i + 1).padStart(2, "0")}.jpg`;
+      frames.push(f);
     }
 
-    if (!reduceMotion) {
-      const state = { idx: 0 };
-      tweenRef.current = gsap.to(state, {
+    setCanvasSize();
+    img.onload = () => drawCover(img);
+    img.src = `${BP}/frames/opener/f-15.jpg`;
+    frames[14] = img;
+
+    // Expose a play-on-tap fn via ref to be triggered by handleEnter
+    (canvas as HTMLCanvasElement & { __playOnTap?: () => void }).__playOnTap = () => {
+      const state = { idx: 14 };
+      onTapPlayback = gsap.to(state, {
         idx: FRAME_COUNT - 1,
-        duration: LOOP_HALF_DURATION,
-        ease: "sine.inOut",
-        yoyo: true,
-        repeat: -1,
-        onUpdate: () => drawFrame(state.idx),
+        duration: 1.6,
+        ease: "power2.out",
+        onUpdate: () => drawCover(frames[Math.round(state.idx)] ?? img),
       });
-    }
+    };
 
     const onResize = () => {
       setCanvasSize();
-      const idx = tweenRef.current
-        ? (tweenRef.current.targets()[0] as { idx: number }).idx
-        : 0;
-      drawFrame(idx);
+      drawCover(img);
     };
     window.addEventListener("resize", onResize);
 
     return () => {
-      tweenRef.current?.kill();
-      tweenRef.current = null;
+      onTapPlayback?.kill();
       window.removeEventListener("resize", onResize);
     };
   }, [phase]);
@@ -171,10 +164,37 @@ export default function VerseGate() {
       return;
     }
 
+    // 1. Play the watercolor through (1.6s)
+    const canvas = canvasRef.current as
+      | (HTMLCanvasElement & { __playOnTap?: () => void })
+      | null;
+    canvas?.__playOnTap?.();
+
+    // 2. Fade the OVERLAY (gradient scrim + verse text) out slightly
+    //    so the watercolor breathes briefly, then the whole gate
+    //    transitions to a paper-white wash that reveals the Hero
+    //    underneath. Per Anthony 2026-05-16 + 4-brain consensus.
+    gsap.to(overlayRef.current, {
+      backgroundColor: "var(--cream)",
+      duration: 1.4,
+      ease: "power2.inOut",
+      delay: 0.6,
+    });
+    gsap.to(overlayRef.current?.querySelectorAll(".gate-fade-out") ?? [], {
+      opacity: 0,
+      duration: 0.9,
+      ease: "power2.in",
+      delay: 0.4,
+    });
+    // Keep the names + verse visible longer — they hold while paper-white
+    // rises, providing visual continuity into the Hero (Anthony: "anthony
+    // & jennifer should animate from opening page to hero while remaining
+    // the same").
     gsap.to(overlayRef.current, {
       opacity: 0,
-      duration: 1.1,
-      ease: "power3.inOut",
+      duration: 0.6,
+      ease: "power2.in",
+      delay: 1.8,
       onComplete: () => {
         setPhase("done");
         document.body.style.overflow = "";
@@ -206,21 +226,25 @@ export default function VerseGate() {
         aria-hidden
       />
 
-      {/* Strong dark scrim — keeps cream text legible everywhere */}
+      {/* MUCH stronger dark scrim — per Anthony 2026-05-16: "verse should
+          be taking the full screen with an overlay stronger on the
+          background so the text is visible." Was readable but soft;
+          now opaque enough that the verse + names pop clearly while the
+          watercolor sits as atmospheric texture, not competing content. */}
       <div
         aria-hidden
-        className="absolute inset-0 pointer-events-none"
+        className="gate-fade-out absolute inset-0 pointer-events-none"
         style={{
           background:
-            "linear-gradient(to bottom, rgba(20,18,14,0.55) 0%, rgba(20,18,14,0.40) 35%, rgba(20,18,14,0.48) 65%, rgba(20,18,14,0.80) 100%)",
+            "linear-gradient(to bottom, rgba(20,18,14,0.72) 0%, rgba(20,18,14,0.62) 35%, rgba(20,18,14,0.68) 65%, rgba(20,18,14,0.88) 100%)",
         }}
       />
       <div
         aria-hidden
-        className="absolute inset-0 pointer-events-none"
+        className="gate-fade-out absolute inset-0 pointer-events-none"
         style={{
           background:
-            "radial-gradient(ellipse 75% 55% at 50% 38%, rgba(20,18,14,0.42) 0%, rgba(20,18,14,0.15) 55%, transparent 85%)",
+            "radial-gradient(ellipse 75% 55% at 50% 38%, rgba(20,18,14,0.55) 0%, rgba(20,18,14,0.2) 55%, transparent 85%)",
         }}
       />
 
@@ -228,14 +252,14 @@ export default function VerseGate() {
       <div className="relative z-10 flex flex-col items-center justify-between text-center min-h-[100svh] px-6 pt-14 pb-10 sm:pb-14">
         <div className="flex-1" />
 
-        {/* THE VERSE */}
-        <div className="flex flex-col items-center">
+        {/* THE VERSE — full-screen, dominant. The hero element of the gate. */}
+        <div className="gate-fade-out flex flex-col items-center">
           <p
             className="italic leading-[1.22] text-cream max-w-[18ch] sm:max-w-[28ch]"
             style={{
               fontFamily: "var(--font-display), 'Cormorant Garamond', serif",
               fontWeight: 300,
-              fontSize: "clamp(28px, 5vw, 58px)",
+              fontSize: "clamp(32px, 5.5vw, 64px)",
               letterSpacing: "0.005em",
               textShadow:
                 "0 4px 32px rgba(0,0,0,0.7), 0 0 12px rgba(0,0,0,0.45)",
@@ -244,7 +268,7 @@ export default function VerseGate() {
             &ldquo;I have found the one whom my soul loves.&rdquo;
           </p>
           <p
-            className="mt-5 sm:mt-7 text-cream/85 text-[10px] sm:text-xs uppercase"
+            className="mt-5 sm:mt-7 text-cream/90 text-[10px] sm:text-xs uppercase"
             style={{
               letterSpacing: "0.5em",
               textShadow: "0 2px 14px rgba(0,0,0,0.7)",
@@ -256,47 +280,32 @@ export default function VerseGate() {
 
         <div className="flex-1" />
 
-        {/* THE COUPLE — cursive "and" in #d4b87a, matching the original Hero. */}
-        <div className="flex flex-col items-center">
+        {/* THE COUPLE — single small line "Anthony & Jennifer" per Anthony
+            2026-05-16. Was a 3-line stacked display (Anthony / and /
+            Jennifer); now a single elegant smaller line with the literal
+            ampersand. Positioned to roughly match the Hero's name position
+            so the visual reads as continuity across the paper-white fade
+            (crossfade-with-position-continuity per 4-brain consensus —
+            FLIP is too fragile on iOS Safari). */}
+        <div className="hero-name-anchor flex flex-col items-center">
           <p
-            className="font-display leading-none text-cream"
+            className="hero-name-text font-display text-cream"
             style={{
-              fontSize: "clamp(40px, 7.5vw, 78px)",
-              letterSpacing: "0.01em",
+              fontSize: "clamp(28px, 4.5vw, 48px)",
+              letterSpacing: "0.04em",
+              fontWeight: 300,
               textShadow:
-                "0 4px 32px rgba(0,0,0,0.65), 0 0 12px rgba(0,0,0,0.4)",
+                "0 4px 32px rgba(0,0,0,0.7), 0 0 12px rgba(0,0,0,0.45)",
             }}
           >
-            Anthony
-          </p>
-          <p
-            className="my-1 leading-none"
-            style={{
-              fontFamily: "var(--font-italianno), 'Italianno', cursive",
-              fontSize: "clamp(34px, 5.5vw, 60px)",
-              color: "#d4b87a",
-              textShadow: "0 4px 22px rgba(0,0,0,0.7)",
-            }}
-          >
-            and
-          </p>
-          <p
-            className="font-display leading-none text-cream"
-            style={{
-              fontSize: "clamp(40px, 7.5vw, 78px)",
-              letterSpacing: "0.01em",
-              textShadow:
-                "0 4px 32px rgba(0,0,0,0.65), 0 0 12px rgba(0,0,0,0.4)",
-            }}
-          >
-            Jennifer
+            Anthony &amp; Jennifer
           </p>
 
           <div
             className="h-px my-5 sm:my-6"
             style={{
               background: "#d4b87a",
-              width: 64,
+              width: 56,
               boxShadow: "0 0 12px rgba(0,0,0,0.4)",
             }}
           />
@@ -321,34 +330,61 @@ export default function VerseGate() {
           </p>
         </div>
 
-        {/* TAP-TO-ENTER cue */}
-        <div className="mt-8 flex flex-col items-center gap-3 pointer-events-none">
-          <span
-            className="text-cream/85 text-[10px] sm:text-xs uppercase"
+        {/* DYNAMIC TAP-TO-ENTER cue — per Anthony 2026-05-16: "tap to enter
+            should be a bit more dynamic for people to see it." Pulsing
+            gold pill button with a label, chevron, and breathing ring —
+            unmistakable interaction signal. */}
+        <div className="gate-fade-out mt-10 flex flex-col items-center gap-3 pointer-events-none">
+          <button
+            type="button"
+            tabIndex={-1}
+            aria-hidden
+            className="gate-cta-pill relative px-7 py-3.5 rounded-full text-[11px] sm:text-xs uppercase pointer-events-none"
             style={{
-              letterSpacing: "0.45em",
+              border: "1px solid rgba(212, 184, 122, 0.55)",
+              background: "rgba(20, 18, 14, 0.32)",
+              color: "#f4ecde",
+              letterSpacing: "0.42em",
               textShadow: "0 2px 14px rgba(0,0,0,0.7)",
+              backdropFilter: "blur(2px)",
+              WebkitBackdropFilter: "blur(2px)",
             }}
           >
-            tap to enter
-          </span>
-          <div
-            className="w-12 h-px"
-            style={{
-              background: "#d4b87a",
-              animation: "tap-pulse 1.8s ease-in-out infinite",
-            }}
-          />
+            <span className="gate-cta-text inline-block">Tap to enter</span>
+            <span
+              aria-hidden
+              className="ml-3 inline-block"
+              style={{
+                color: "#d4b87a",
+                animation: "tap-chevron 1.6s ease-in-out infinite",
+              }}
+            >
+              ↓
+            </span>
+            {/* Breathing ring — pulsing gold halo around the button */}
+            <span
+              aria-hidden
+              className="absolute inset-0 rounded-full pointer-events-none"
+              style={{
+                border: "1px solid rgba(212, 184, 122, 0.4)",
+                animation: "tap-ring 2.2s ease-out infinite",
+              }}
+            />
+          </button>
         </div>
       </div>
 
       <style>{`
-        @keyframes tap-pulse {
-          0%, 100% { opacity: 0.45; transform: scaleX(0.75); }
-          50% { opacity: 0.95; transform: scaleX(1.25); }
+        @keyframes tap-chevron {
+          0%, 100% { transform: translateY(-2px); opacity: 0.8; }
+          50% { transform: translateY(4px); opacity: 1; }
+        }
+        @keyframes tap-ring {
+          0% { transform: scale(1); opacity: 0.8; }
+          100% { transform: scale(1.22); opacity: 0; }
         }
         @media (prefers-reduced-motion: reduce) {
-          [style*="tap-pulse"] { animation: none !important; }
+          .gate-cta-pill * { animation: none !important; }
         }
       `}</style>
     </div>

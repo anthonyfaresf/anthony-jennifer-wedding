@@ -64,21 +64,36 @@ export default function Home() {
           Order: intro → Scene1 → Countdown → Scene2 → Venue → Scene3 →
           Schedule → RSVP → FAQ → Footer. Z-indexes 1→10 ascending so each
           new paper covers the previous. */}
+      {/* Per Anthony 2026-05-16 + 4-brain consensus: "forget our story."
+          New invitation-first order — each section answers the next
+          question a guest mentally asks.
+
+          Hero      → WHO (the invitation: families, couple, request)
+          Countdown → WHEN (the date + days until)
+          Scene 1   → CEREMONY chapter (mass, time)
+          Scene 2   → RECEPTION chapter (cocktail, dinner, dancing)
+          Scene 3   → DRESS & TRAVEL chapter (formal, route, parking)
+          Venue     → WHERE (full Couvent photo + address + map)
+          Schedule  → day-of timeline (overlaps with chapters; kept
+                      for guests who want the linear list at a glance)
+          RSVP      → ACTION
+          FAQ       → loose ends (gifts, kids, accommodations)
+          Footer    → contact + thanks */}
       <div className="paper-stack-root">
-        <section className="paper-slot" data-paper="1">
+        <section className="paper-slot" data-paper="1"><Countdown /></section>
+        <section className="paper-slot" data-paper="2">
           <Story only="intro" />
         </section>
-        <section className="paper-slot paper-slot--scene" data-paper="2">
+        <section className="paper-slot paper-slot--scene" data-paper="3">
           <Story only={0} />
         </section>
-        <section className="paper-slot" data-paper="3"><Countdown /></section>
         <section className="paper-slot paper-slot--scene" data-paper="4">
           <Story only={1} />
         </section>
-        <section className="paper-slot" data-paper="5"><Venue /></section>
-        <section className="paper-slot paper-slot--scene" data-paper="6">
+        <section className="paper-slot paper-slot--scene" data-paper="5">
           <Story only={2} />
         </section>
+        <section className="paper-slot" data-paper="6"><Venue /></section>
         <section className="paper-slot" data-paper="7"><Schedule /></section>
         <section className="paper-slot" data-paper="8"><RSVP /></section>
         <section className="paper-slot" data-paper="9"><FAQ /></section>

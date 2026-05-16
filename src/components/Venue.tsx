@@ -91,14 +91,13 @@ export default function Venue() {
           Full-width cinematic 16:9 establishing shot, scroll-scrubbed. The
           cream-fade-edges-light gives soft top + bottom transitions into
           the surrounding paper. */}
-      {/* Hero strip — desktop keeps cinematic 16:9. Mobile fills 78svh
-          so the Couvent watercolor is a hero, not a letterbox. The frame
-          sequence inside uses object-cover with center framing, so the
-          facade stays composed regardless of crop. (Anthony 2026-05-16:
-          "zoom in to be full screen even if it crops from the sides.") */}
+      {/* Hero strip — FULLSCREEN on both mobile + desktop per Anthony
+          2026-05-16: "make sure the couvent st. jean with the photo are
+          full screen not like you did on mobile" → desktop was previously
+          16:9 letterbox, now matches mobile's immersive 100svh fill. */}
       <div
         ref={heroRef}
-        className="venue-hero relative w-full overflow-hidden bg-cream cream-fade-edges-light min-h-[78svh] sm:min-h-0 sm:aspect-[16/9]"
+        className="venue-hero relative w-full overflow-hidden bg-cream cream-fade-edges-light min-h-[100svh]"
       >
         <div className="venue-hero-wrap absolute inset-0">
           <FrameSequence
@@ -140,48 +139,52 @@ export default function Venue() {
         {/* Title overlay — cream text on watercolor with strong text-shadow
             for stable legibility (replaces the mix-blend-multiply approach
             which read unpredictably across watercolor light/dark patches). */}
-        <div className="absolute bottom-8 sm:bottom-12 left-0 right-0 px-6 text-center pointer-events-none z-30">
-          <div
-            className="venue-title-card inline-block px-7 py-5 sm:px-10 sm:py-6 rounded-sm"
+        {/* Title — no box. Per Anthony 2026-05-16: "remove the box or
+            change the color because the contrast is not visible."
+            Cream-on-watercolor with strong text-shadow + a dedicated
+            bottom dark-gradient scrim does the work. Box gone. */}
+        <div
+          aria-hidden
+          className="absolute inset-x-0 bottom-0 pointer-events-none z-20"
+          style={{
+            height: "65%",
+            background:
+              "linear-gradient(to top, rgba(20,18,14,0.92) 0%, rgba(20,18,14,0.85) 15%, rgba(20,18,14,0.6) 40%, rgba(20,18,14,0.25) 70%, transparent 100%)",
+          }}
+        />
+        <div className="absolute bottom-10 sm:bottom-14 left-0 right-0 px-6 text-center pointer-events-none z-30">
+          <p
+            className="text-[11px] sm:text-xs uppercase tracking-[0.5em] mb-3 text-cream/90"
+            style={{ textShadow: "0 3px 18px rgba(0,0,0,0.85)" }}
+          >
+            Where
+          </p>
+          <h2
+            className="leading-none text-cream"
             style={{
-              // Same cream-blur scrim pattern as Story scene captions
-              // (2026-05-15 contrast pass) — guarantees the watercolor
-              // bell-tower scene + cream text never blend into mush.
-              background:
-                "radial-gradient(ellipse 80% 100% at center, rgba(20,18,14,0.45) 0%, rgba(20,18,14,0.3) 55%, rgba(20,18,14,0) 100%)",
-              backdropFilter: "blur(2px)",
-              WebkitBackdropFilter: "blur(2px)",
+              fontFamily: "var(--font-display)",
+              fontSize: "clamp(40px, 6vw, 88px)",
+              letterSpacing: "0.015em",
+              textShadow:
+                "0 4px 32px rgba(0,0,0,0.9), 0 2px 14px rgba(0,0,0,0.7), 0 0 8px rgba(0,0,0,0.5)",
             }}
           >
-            <p
-              className="text-[11px] sm:text-xs uppercase tracking-[0.5em] mb-3 text-cream"
-              style={{ textShadow: "0 2px 14px rgba(0,0,0,0.75), 0 0 6px rgba(0,0,0,0.5)" }}
-            >
-              Where
-            </p>
-            <h2
-              className="leading-none text-cream"
-              style={{
-                fontFamily: "var(--font-display)",
-                fontSize: "clamp(40px, 6vw, 88px)",
-                letterSpacing: "0.01em",
-                textShadow: "0 4px 28px rgba(0,0,0,0.8), 0 2px 10px rgba(0,0,0,0.6)",
-              }}
-            >
-              Couvent Saint Jean
-            </h2>
-            <div className="w-10 h-px bg-gold mx-auto my-3" style={{ boxShadow: "0 0 8px rgba(0,0,0,0.4)" }} />
-            <p
-              className="italic text-cream"
-              style={{
-                fontFamily: "var(--font-display)",
-                fontSize: "clamp(16px, 1.6vw, 22px)",
-                textShadow: "0 2px 12px rgba(0,0,0,0.75)",
-              }}
-            >
-              Okaibe · Lebanon
-            </p>
-          </div>
+            Couvent Saint Jean
+          </h2>
+          <div
+            className="w-12 h-px bg-gold mx-auto my-4"
+            style={{ boxShadow: "0 0 12px rgba(0,0,0,0.55)" }}
+          />
+          <p
+            className="italic text-cream/95"
+            style={{
+              fontFamily: "var(--font-display)",
+              fontSize: "clamp(16px, 1.7vw, 22px)",
+              textShadow: "0 2px 14px rgba(0,0,0,0.85)",
+            }}
+          >
+            Okaibe · Lebanon
+          </p>
         </div>
       </div>
 

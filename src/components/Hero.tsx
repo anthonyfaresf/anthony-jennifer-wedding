@@ -160,6 +160,23 @@ export default function Hero() {
           scrub: 0.5,
         },
       });
+
+      // ZOOM-OUT on scroll — Anthony 2026-05-16: "anthony & jennifer
+      // should be as if they're zooming out not disappear when we're
+      // scrolling." Scale the hero card down + softly fade as the user
+      // scrolls into the next section. Reads as the names physically
+      // receding into the stack, not vanishing.
+      gsap.to(".hero-card", {
+        scale: 0.62,
+        opacity: 0.35,
+        ease: "none",
+        scrollTrigger: {
+          trigger: sectionEl,
+          start: "top top",
+          end: "bottom top",
+          scrub: 0.6,
+        },
+      });
     }, sectionRef);
 
     return () => ctx.revert();
@@ -255,53 +272,61 @@ export default function Hero() {
               perspective: "800px",
             }}
           >
+            {/* INVITATION COPY — formal Lebanese Catholic wedding voice.
+                Per Anthony 2026-05-16 + 4-brain (Codex pushed "request the
+                pleasure of your company" over "would like to invite",
+                Gemini approved family-centric phrasing). */}
             <p
-              className="text-[10px] sm:text-xs uppercase tracking-[0.5em] text-cream/90 mb-7"
+              className="text-[10px] sm:text-xs uppercase tracking-[0.45em] text-cream/85 mb-6"
               style={{ textShadow: "0 2px 14px rgba(0,0,0,0.7)" }}
             >
               {splitChars("Together with their families", "hero-tagline-char")}
             </p>
 
-            {/* Single h1 spans both names — was two h1s, fails SEO + a11y "exactly one h1". */}
-            <h1 className="sr-only">Anthony & Jennifer · 18 July 2026 · Couvent Saint Jean, Okaibe, Lebanon</h1>
+            <h1 className="sr-only">
+              Anthony &amp; Jennifer · 18 July 2026 · Couvent Saint Jean, Okaibe, Lebanon
+            </h1>
+
+            {/* Names — single line "Anthony & Jennifer" matching the gate's
+                placement so the eye reads continuity across the paper-white
+                fade (4-brain consensus: crossfade with position continuity,
+                FLIP too fragile on iOS Safari). On scroll, this group ZOOMS
+                OUT (scale down) instead of fading away — per Anthony
+                2026-05-16: "anthony & jennifer should be as if they're
+                zooming out not disappear when we're scrolling." */}
             <p
               aria-hidden
-              className="font-display leading-none mb-3 text-cream"
+              className="hero-name-text font-display leading-none mb-6 text-cream"
               style={{
-                fontSize: "clamp(56px, 9vw, 110px)",
-                letterSpacing: "0.01em",
+                fontSize: "clamp(40px, 7vw, 88px)",
+                letterSpacing: "0.025em",
+                fontWeight: 300,
                 textShadow: "0 4px 32px rgba(0,0,0,0.65), 0 0 12px rgba(0,0,0,0.4)",
               }}
             >
               {splitChars("Anthony", "hero-name-char")}
-            </p>
-
-            <p
-              className="hero-and leading-none mb-3 inline-block"
-              style={{
-                fontFamily: "var(--font-italianno)",
-                fontSize: "clamp(40px, 6vw, 72px)",
-                color: "#d4b87a",
-                textShadow: "0 4px 22px rgba(0,0,0,0.7)",
-              }}
-            >
-              and
-            </p>
-
-            <p
-              aria-hidden
-              className="font-display leading-none mb-7 text-cream"
-              style={{
-                fontSize: "clamp(56px, 9vw, 110px)",
-                letterSpacing: "0.01em",
-                textShadow: "0 4px 32px rgba(0,0,0,0.65), 0 0 12px rgba(0,0,0,0.4)",
-              }}
-            >
+              <span
+                className="inline-block mx-3 sm:mx-4 align-middle"
+                style={{
+                  color: "#d4b87a",
+                  fontSize: "0.85em",
+                  textShadow: "0 4px 22px rgba(0,0,0,0.7)",
+                }}
+              >
+                &amp;
+              </span>
               {splitChars("Jennifer", "hero-name-char")}
             </p>
 
+            <p
+              className="text-[11px] sm:text-sm uppercase tracking-[0.4em] text-cream/85 mb-6"
+              style={{ textShadow: "0 2px 14px rgba(0,0,0,0.65)" }}
+            >
+              {splitChars("request the pleasure of your company", "hero-tagline-char")}
+            </p>
+
             <div
-              className="hero-rule h-px mx-auto my-6"
+              className="hero-rule h-px mx-auto my-5"
               style={{
                 background: "var(--gold)",
                 width: 0,
@@ -312,13 +337,13 @@ export default function Hero() {
             <p
               className="hero-date-line leading-none mb-3 text-cream"
               style={{
-                fontSize: "clamp(18px, 2.1vw, 26px)",
-                letterSpacing: "0.04em",
+                fontSize: "clamp(20px, 2.4vw, 30px)",
+                letterSpacing: "0.06em",
                 opacity: 0,
                 textShadow: "0 3px 18px rgba(0,0,0,0.65)",
               }}
             >
-              July 18 · 2026
+              Saturday, 18 July 2026
             </p>
             <p
               className="hero-date-line text-[10px] sm:text-xs uppercase tracking-[0.4em] text-cream/90"
@@ -331,22 +356,7 @@ export default function Hero() {
             </p>
           </div>
         </div>
-
-        {/* Scroll cue — text only, no pill backdrop */}
-        <div className="hero-scroll-cue absolute bottom-6 left-1/2 -translate-x-1/2 text-center pointer-events-none z-30">
-          <p
-            className="text-[10px] uppercase tracking-[0.4em] text-cream/75 mb-2"
-            style={{ textShadow: "0 2px 8px rgba(0,0,0,0.55)" }}
-          >
-            Scroll
-          </p>
-          <p
-            className="text-cream/60 text-xs"
-            style={{ textShadow: "0 2px 6px rgba(0,0,0,0.5)" }}
-          >
-            ↓
-          </p>
-        </div>
+        {/* Scroll arrows REMOVED per Anthony 2026-05-16. */}
       </div>
     </section>
   );

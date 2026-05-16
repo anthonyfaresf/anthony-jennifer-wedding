@@ -33,26 +33,31 @@ if (typeof window !== "undefined") gsap.registerPlugin(ScrollTrigger);
  *     italic text fades up below
  */
 
+// Per Anthony 2026-05-16 + 4-brain UNANIMOUS: "Our Story" backstory
+// killed. Each scene now carries a chapter of the wedding day itself
+// (ceremony → reception → dress/travel) — useful logistics, not
+// relationship history. Watercolors stay; only the copy + section
+// labels change.
 const scenes = [
   {
     n: "01",
-    title: "The Meeting",
-    year: "2019",
-    body: "[A German garden bar in Lebanon. The crowd, the string lights, the specific thing she said when I walked over.]",
+    title: "The Ceremony",
+    year: "17:00",
+    body: "Catholic mass at the Couvent Saint Jean chapel. Doors open at 16:30 — please be seated by 16:55.",
     sceneFolder: "scene-01-meeting",
   },
   {
     n: "02",
-    title: "The Promise",
-    year: "2022",
-    body: "[Three years on. Positano, the Amalfi cliff, the moment she said yes.]",
+    title: "The Reception",
+    year: "19:00",
+    body: "Cocktails on the convent terrace at golden hour, dinner under the stars, dancing until late.",
     sceneFolder: "scene-02-promise",
   },
   {
     n: "03",
-    title: "The Wedding",
-    year: "2026",
-    body: "[Today. Couvent Saint Jean. Everything that came before brought us here.]",
+    title: "Dress & Travel",
+    year: "Black tie",
+    body: "Formal attire. Beirut → Okaibe is a 40-minute drive; parking on-site. Hotel suggestions in the FAQ.",
     sceneFolder: "scene-03-wedding",
   },
 ];
@@ -298,21 +303,18 @@ export default function Story({ only }: StoryProps = {}) {
       id={sectionId}
       className="relative bg-cream paper-grain"
     >
-      {/* Intro — unpinned, on cream paper. Only renders for the default
-          full Story or when explicitly sliced to "intro". */}
+      {/* Intro — unpinned, on cream paper. Per Anthony 2026-05-16:
+          "forget our story." Replaced with the wedding-day chapter
+          header. */}
       {showIntro && (
         <div className="py-32 px-6 text-center relative z-10">
           <p className="text-xs uppercase tracking-[0.4em] text-olive-deep mb-4">
-            Our story
+            The day
           </p>
           <h2 className="font-display text-5xl md:text-6xl text-ink">
-            How we got here
+            What to expect
           </h2>
           <div className="w-16 h-px bg-gold mx-auto mt-8" />
-          <p className="text-xs uppercase tracking-[0.3em] text-olive-deep/80 mt-12">
-            Scroll to begin
-          </p>
-          <p className="text-sm text-olive-deep/70 mt-2" aria-hidden>↓</p>
         </div>
       )}
 
