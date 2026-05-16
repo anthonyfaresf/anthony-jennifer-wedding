@@ -100,7 +100,18 @@ export default function Home() {
         </section>
         <section className="paper-slot" data-paper="7"><FAQ /></section>
         <section className="paper-slot" data-paper="8"><Venue /></section>
-        <section className="paper-slot" data-paper="9"><Footer /></section>
+        {/* Footer slot — content is short (3 lines), so don't pad to
+            100svh or the user sees a sea of empty cream below it.
+            min-h-0 lets the slot size to its actual content. Per Anthony
+            2026-05-16: 'after the photo and text at the bottom, they're
+            not stacking up correctly.' */}
+        <section
+          className="paper-slot flex items-center justify-center"
+          data-paper="9"
+          style={{ minHeight: "auto" }}
+        >
+          <Footer />
+        </section>
       </div>
     </main>
   );
