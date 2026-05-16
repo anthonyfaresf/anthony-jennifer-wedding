@@ -222,8 +222,12 @@ export default function Hero() {
             // Boosted 2026-05-15 — center alpha 0.55 → 0.68 + tightened
             // falloff so the names ALWAYS land on dark patch regardless of
             // which watercolor frame is showing through.
+            // Pushed harder for desktop — the watercolor shows more bright
+            // edge area on wide viewports, washing out the names. Center
+            // 0.68 → 0.78, mid 0.45 → 0.55, plus a tighter mid-section
+            // band that holds even when the watercolor is bright olive.
             background:
-              "radial-gradient(ellipse 65% 50% at center, rgba(20,18,14,0.68) 0%, rgba(20,18,14,0.45) 40%, rgba(20,18,14,0.18) 70%, rgba(20,18,14,0) 100%), linear-gradient(180deg, rgba(20,18,14,0.55) 0%, rgba(20,18,14,0.08) 22%, rgba(20,18,14,0.08) 65%, rgba(20,18,14,0.75) 100%)",
+              "radial-gradient(ellipse 70% 55% at center, rgba(20,18,14,0.78) 0%, rgba(20,18,14,0.55) 40%, rgba(20,18,14,0.25) 70%, rgba(20,18,14,0.05) 100%), linear-gradient(180deg, rgba(20,18,14,0.62) 0%, rgba(20,18,14,0.2) 25%, rgba(20,18,14,0.2) 65%, rgba(20,18,14,0.82) 100%)",
             opacity: 1,
           }}
         />
@@ -270,18 +274,20 @@ export default function Hero() {
                 OUT (scale down) instead of fading away — per Anthony
                 2026-05-16: "anthony & jennifer should be as if they're
                 zooming out not disappear when we're scrolling." */}
-            {/* Names — words kept whole inside inline-block wrappers so they
-                cannot break mid-character (splitChars wraps each char in a
-                breakable span; without grouping, the browser wraps at any
-                char boundary on narrow viewports). */}
+            {/* Names — words kept whole inside inline-block wrappers so
+                they cannot break mid-character. Desktop cap dropped from
+                84px to 68px per live audit 2026-05-16 (the 84px broke
+                'Anthony & Jennifer' across two lines on 1440px because
+                the card max-width is 600px). 68px fits comfortably. */}
             <p
               aria-hidden
-              className="hero-name-text font-display leading-[1.05] mb-6 text-cream"
+              className="hero-name-text font-display leading-[1.05] mb-6 text-cream whitespace-nowrap"
               style={{
-                fontSize: "clamp(32px, 7vw, 84px)",
+                fontSize: "clamp(32px, 6vw, 68px)",
                 letterSpacing: "0.025em",
                 fontWeight: 300,
-                textShadow: "0 4px 32px rgba(0,0,0,0.65), 0 0 12px rgba(0,0,0,0.4)",
+                textShadow:
+                  "0 4px 32px rgba(0,0,0,0.9), 0 0 16px rgba(0,0,0,0.7), 0 2px 8px rgba(0,0,0,0.5)",
               }}
             >
               <span className="inline-block whitespace-nowrap">
