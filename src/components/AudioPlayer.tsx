@@ -60,10 +60,13 @@ export default function AudioPlayer() {
     }
   }, []);
 
-  // Try to start on the first user gesture (browsers require this).
-  // Cinematic entry: start audio at volume 0, then fade up to TARGET_VOLUME
-  // over FADE_IN_SECONDS so it dissolves into the experience instead of
-  // snapping on.
+  // Music starts ONLY when the gate's ENTER is pressed. Per Anthony
+  // 2026-05-16: "the music should not start before the enter is clicked."
+  // The gate dispatches a custom `aj-music-start` event on enter; that's
+  // our trigger. (Previously: any first gesture started music — meant
+  // music played the moment user tapped anywhere on the gate, before
+  // they'd committed to entering.) Cinematic entry: start at volume 0,
+  // fade up over FADE_IN_SECONDS.
   useEffect(() => {
     const tryStart = () => {
       if (typeof window === "undefined") return;
@@ -85,14 +88,9 @@ export default function AudioPlayer() {
         });
     };
 
-    window.addEventListener("touchstart", tryStart, { once: true, passive: true });
-    window.addEventListener("click", tryStart, { once: true });
-    window.addEventListener("scroll", tryStart, { once: true, passive: true });
-
+    window.addEventListener("aj-music-start", tryStart, { once: true });
     return () => {
-      window.removeEventListener("touchstart", tryStart);
-      window.removeEventListener("click", tryStart);
-      window.removeEventListener("scroll", tryStart);
+      window.removeEventListener("aj-music-start", tryStart);
     };
   }, []);
 

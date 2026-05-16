@@ -224,6 +224,9 @@ export default function VerseGate() {
     if (phase !== "gate") return;
     if (typeof window !== "undefined") {
       sessionStorage.setItem(SESSION_KEY, "true");
+      // Trigger music — AudioPlayer listens for this event only,
+      // not generic clicks, so music NEVER starts before ENTER.
+      window.dispatchEvent(new Event("aj-music-start"));
     }
     setPhase("exiting");
 
@@ -326,38 +329,35 @@ export default function VerseGate() {
         }}
       />
 
-      {/* Content layer — verse takes the CENTER as the dominant element,
-          names + ENTER sit small at the bottom. Per Anthony 2026-05-16:
-          "the verse should be the main thing on the page, and the names
-          smaller at the bottom with the enter, without an arrow. enter
-          only not tap to enter, and a more cinematic and elegant font." */}
-      <div className="relative z-10 flex flex-col items-center text-center min-h-[100lvh] px-6 pt-14 pb-8 sm:pb-12">
+      {/* Content layer — STRIPPED per Anthony 2026-05-16: 'keep only
+          the verse on the first page and the enter button, but raise it,
+          it is very at the bottom cant even click it.' Names + date +
+          venue removed from gate; they live on the Hero card. ENTER
+          moved up so it sits comfortably below the verse, easily tappable. */}
+      <div className="relative z-10 flex flex-col items-center text-center min-h-[100lvh] px-6 pt-20 pb-20 sm:pb-24">
         {/* Top spacer */}
         <div className="flex-1" />
 
-        {/* THE VERSE — DOMINANT center element. Display serif italic
-            (Cormorant Garamond) as Anthony originally had — NOT a font
-            swap. Larger + bolder weight + tighter line-height + strong
-            text-shadow does the cinematic work. Per Anthony 2026-05-16
-            (fourth pass): "you changed fonts, i dont recall i allowed
-            you to do this." Italianno script swap reverted. */}
-        {/* Verse wrapper — NOT gate-fade-out (children animate independently
-            via .verse-word stagger; wrapper stays at opacity 1 so children
-            can show through). */}
+        {/* THE VERSE — display serif (Cormorant Garamond) at a more
+            readable weight (400 vs 300) + slightly larger + cream-white
+            with stacked text-shadow halo so the strokes don't disappear
+            into the watercolor. Per Anthony 2026-05-16: 'the font on
+            the first page of the verse is very much not readable.' */}
         <div className="flex flex-col items-center max-w-[18ch] sm:max-w-[32ch] lg:max-w-[40ch]">
           {/* Verse — each word kept whole inside an inline-block wrapper
               (cannot break mid-character), each WORD revealed in sequence
               via .verse-word stagger. Char-level stagger felt jittery for
               a serif italic at this size; word-level reads as breath. */}
           <p
-            className="italic leading-[1.18] text-cream"
+            className="italic leading-[1.2]"
             style={{
               fontFamily: "var(--font-display), 'Cormorant Garamond', serif",
-              fontWeight: 300,
-              fontSize: "clamp(34px, 6vw, 72px)",
-              letterSpacing: "0.005em",
+              fontWeight: 400, // bumped from 300 — strokes now hold against the watercolor
+              fontSize: "clamp(32px, 5.5vw, 64px)",
+              letterSpacing: "0.01em",
+              color: "#ffffff", // pure white (was warm cream — bled into the olive watercolor)
               textShadow:
-                "0 6px 36px rgba(0,0,0,0.78), 0 0 14px rgba(0,0,0,0.55)",
+                "0 0 24px rgba(0,0,0,0.95), 0 0 12px rgba(0,0,0,0.9), 0 4px 28px rgba(0,0,0,0.85), 0 2px 8px rgba(0,0,0,0.65)",
             }}
           >
             <span className="verse-word inline-block" style={{ opacity: 0 }}>&ldquo;I</span>{" "}
@@ -389,77 +389,50 @@ export default function VerseGate() {
           </p>
         </div>
 
-        {/* Bottom spacer — pushes names + ENTER to the bottom */}
-        <div className="flex-1" />
-
-        {/* THE COUPLE — small, intimate, at the bottom near the ENTER. */}
-        <div className="hero-name-anchor flex flex-col items-center mt-auto">
-          <p
-            className="hero-name-text font-display text-cream"
+        {/* ELEGANT ENTER directly under the verse — NOT at the bottom edge.
+            Per Anthony 2026-05-16: 'raise it, it is very at the bottom
+            cant even click it.' Sits ~60-80px below the verse so the
+            thumb lands on it naturally. */}
+        <div
+          aria-hidden
+          className="gate-cta-enter mt-16 sm:mt-20 flex items-center gap-4 pointer-events-none"
+          style={{ animation: "enter-breathe 2.6s ease-in-out infinite" }}
+        >
+          <span
+            className="h-px"
             style={{
-              fontSize: "clamp(20px, 3.2vw, 32px)",
-              letterSpacing: "0.06em",
-              fontWeight: 300,
-              textShadow:
-                "0 3px 22px rgba(0,0,0,0.78), 0 0 10px rgba(0,0,0,0.5)",
+              width: 40,
+              background: "#d4b87a",
+              boxShadow: "0 0 8px rgba(212,184,122,0.4)",
+            }}
+          />
+          <span
+            style={{
+              fontFamily: "var(--font-display)",
+              fontSize: "clamp(12px, 1.3vw, 15px)",
+              letterSpacing: "0.6em",
+              textTransform: "uppercase",
+              color: "#ffffff",
+              textShadow: "0 2px 14px rgba(0,0,0,0.85), 0 0 8px rgba(0,0,0,0.6)",
+              paddingLeft: "0.3em",
+              fontWeight: 400,
             }}
           >
-            Anthony &amp; Jennifer
-          </p>
-
-          <p
-            className="mt-2 text-cream/70 text-[9px] sm:text-[10px] uppercase"
+            Enter
+          </span>
+          <span
+            className="h-px"
             style={{
-              letterSpacing: "0.4em",
-              textShadow: "0 2px 14px rgba(0,0,0,0.7)",
+              width: 40,
+              background: "#d4b87a",
+              boxShadow: "0 0 8px rgba(212,184,122,0.4)",
             }}
-          >
-            18 &middot; 07 &middot; 2026 &nbsp;·&nbsp; Couvent Saint Jean
-          </p>
-
-          {/* ELEGANT ENTER — refined gold rule + ENTER caps + gold rule.
-              Per Anthony 2026-05-16: "enter only not tap to enter… more
-              elegant." No chevron, no pill background, no halo ring — just
-              the word ENTER framed by two thin gold lines, with a subtle
-              opacity pulse so the eye lands on it.
-
-              The whole gate is clickable; this is just the visible cue. */}
-          <div
-            aria-hidden
-            className="gate-cta-enter mt-8 sm:mt-10 flex items-center gap-4 pointer-events-none"
-            style={{ animation: "enter-breathe 2.6s ease-in-out infinite" }}
-          >
-            <span
-              className="h-px"
-              style={{
-                width: 36,
-                background: "#d4b87a",
-                boxShadow: "0 0 8px rgba(212,184,122,0.4)",
-              }}
-            />
-            <span
-              className="text-cream"
-              style={{
-                fontFamily: "var(--font-display)",
-                fontSize: "clamp(11px, 1.2vw, 14px)",
-                letterSpacing: "0.6em",
-                textTransform: "uppercase",
-                textShadow: "0 2px 14px rgba(0,0,0,0.75)",
-                paddingLeft: "0.3em", // visual balance with letter-spacing
-              }}
-            >
-              Enter
-            </span>
-            <span
-              className="h-px"
-              style={{
-                width: 36,
-                background: "#d4b87a",
-                boxShadow: "0 0 8px rgba(212,184,122,0.4)",
-              }}
-            />
-          </div>
+          />
         </div>
+
+        {/* Bottom spacer — keeps the verse+ENTER block balanced in the
+            upper-to-middle band instead of crowding the bottom edge. */}
+        <div className="flex-[1.4]" />
       </div>
 
       <style>{`

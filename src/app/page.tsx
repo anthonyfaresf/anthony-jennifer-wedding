@@ -100,15 +100,15 @@ export default function Home() {
         </section>
         <section className="paper-slot" data-paper="7"><FAQ /></section>
         <section className="paper-slot" data-paper="8"><Venue /></section>
-        {/* Footer slot — content is short (3 lines), so don't pad to
-            100svh or the user sees a sea of empty cream below it.
-            min-h-0 lets the slot size to its actual content. Per Anthony
-            2026-05-16: 'after the photo and text at the bottom, they're
-            not stacking up correctly.' */}
+        {/* Footer slot — full 100svh so it can fully cover the Venue
+            paper underneath when the user reaches the bottom (otherwise
+            the cream edge cuts mid-screen with map visible above —
+            the bug Anthony screenshotted 2026-05-16). Content is
+            vertically centered inside so the empty cream feels
+            intentional, not negligent. */}
         <section
           className="paper-slot flex items-center justify-center"
           data-paper="9"
-          style={{ minHeight: "auto" }}
         >
           <Footer />
         </section>

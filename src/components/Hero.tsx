@@ -50,22 +50,34 @@ export default function Hero() {
         },
       });
 
-      // 2. CANVAS SCALE PULL-IN + blur-clear — 1.07 → 1.0, blur(8) → blur(0)
+      // 2. CANVAS PULL-IN — ON-MOUNT one-shot (was scroll-scrubbed).
+      // Per Anthony 2026-05-16: 'hero section, there's no animation at
+      // the start of the experience it should have some movement.' Now
+      // the watercolor breathes into focus on arrival: scale 1.10 →
+      // 1.0 + blur(12px) → 0 over 2.4s with sine.out easing. Reads as
+      // a slow camera dolly into the scene, paired with the existing
+      // text entrance timeline.
       gsap.fromTo(
         ".hero-frame-wrap",
-        { scale: 1.07, filter: "blur(8px)" },
+        { scale: 1.1, filter: "blur(12px)" },
         {
           scale: 1.0,
           filter: "blur(0px)",
-          ease: "power2.out",
-          scrollTrigger: {
-            trigger: sectionEl,
-            start: "top bottom",
-            end: "top 30%",
-            scrub: 0.4,
-          },
+          duration: 2.4,
+          ease: "sine.out",
         }
       );
+      // Ambient post-entrance — slow continuous breath on the watercolor
+      // (1.0 ↔ 1.025 over 12s), giving the scene a living quality
+      // throughout the time the user lingers on hero.
+      gsap.to(".hero-frame-wrap", {
+        scale: 1.025,
+        duration: 12,
+        ease: "sine.inOut",
+        yoyo: true,
+        repeat: -1,
+        delay: 2.6,
+      });
 
       // 3. INVITATION CARD ENTRY — plays on mount (no scroll trigger because
       //    the hero is the first section and is in view from frame 0).
