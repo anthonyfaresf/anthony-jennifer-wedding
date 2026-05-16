@@ -28,11 +28,14 @@
 
 import { useEffect, useRef, useState } from "react";
 import gsap from "gsap";
+import CurtainReveal from "./CurtainReveal";
 
 // Collapsed 2026-05-15 per Anthony — single-tap entrance, no intermediate
 // "ENTER" pause state. One click on the seal runs the full open animation,
-// holds the invite card on-screen for absorption, then fades to hero.
-type Phase = "sealed" | "opening" | "dismissed";
+// holds the invite card on-screen for absorption, then hands off to the
+// CurtainReveal which plays the wine-cheers clink and parts as curtains
+// to reveal the hero (Anthony 2026-05-16).
+type Phase = "sealed" | "opening" | "curtain" | "dismissed";
 
 const SESSION_KEY = "envelope-opened-v1";
 
@@ -76,14 +79,15 @@ export default function Envelope() {
       if (typeof window !== "undefined") {
         sessionStorage.setItem(SESSION_KEY, "true");
       }
+      // Mount the curtain underneath, then fade the envelope so the cheers
+      // sequence is already playing as the invite lifts away.
+      setPhase("curtain");
       gsap.to(overlayRef.current, {
         opacity: 0,
-        duration: 0.7,
+        duration: 0.55,
         ease: "power2.inOut",
-        onComplete: () => {
-          setPhase("dismissed");
-          document.body.style.overflow = "";
-        },
+        // body overflow stays locked — CurtainReveal manages its own lock
+        // and releases it when the split completes.
       });
     };
 
@@ -166,7 +170,15 @@ export default function Envelope() {
   if (phase === "dismissed") return null;
 
   return (
-    <div
+    <>
+      {/* Wine-cheers curtain reveal — mounts the moment the envelope begins
+          its dismissal. Plays the cheers, holds at the touch, parts as
+          curtains to unveil the hero. Lives at z-55, underneath the
+          fading envelope (z-60). */}
+      {phase === "curtain" && (
+        <CurtainReveal onComplete={() => setPhase("dismissed")} />
+      )}
+      <div
       ref={overlayRef}
       className="fixed inset-0 z-[60] bg-cream flex items-center justify-center px-6"
       role="dialog"
@@ -589,6 +601,7 @@ export default function Envelope() {
           AF&amp;U
         </a>
       </p>
-    </div>
+      </div>
+    </>
   );
 }

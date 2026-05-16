@@ -48,3 +48,7 @@ assets/design-refs/website references/
 .idea/
 .vercel
 .env*.local
+
+_*.mjs
+_audit*.mjs
+_*.mjs
