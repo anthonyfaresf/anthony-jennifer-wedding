@@ -152,35 +152,49 @@ export default function Venue() {
               "linear-gradient(to top, rgba(20,18,14,0.92) 0%, rgba(20,18,14,0.85) 15%, rgba(20,18,14,0.6) 40%, rgba(20,18,14,0.25) 70%, transparent 100%)",
           }}
         />
-        <div className="absolute bottom-10 sm:bottom-14 left-0 right-0 px-6 text-center pointer-events-none z-30">
+        {/* Pure white + heavy stacked text-shadow halo. Lifted higher
+            (bottom-32 mobile) so it sits in the densest part of the
+            bottom gradient. Per Anthony 2026-05-16: no box, contrast
+            still needs to read clearly. */}
+        <div className="absolute bottom-28 sm:bottom-32 left-0 right-0 px-6 text-center pointer-events-none z-30">
           <p
-            className="text-[11px] sm:text-xs uppercase tracking-[0.5em] mb-3 text-cream/90"
-            style={{ textShadow: "0 3px 18px rgba(0,0,0,0.85)" }}
+            className="text-[11px] sm:text-xs uppercase tracking-[0.5em] mb-3"
+            style={{
+              color: "#ffffff",
+              textShadow:
+                "0 0 18px rgba(0,0,0,0.95), 0 3px 18px rgba(0,0,0,0.9)",
+            }}
           >
             Where
           </p>
           <h2
-            className="leading-none text-cream"
+            className="leading-none"
             style={{
               fontFamily: "var(--font-display)",
               fontSize: "clamp(40px, 6vw, 88px)",
               letterSpacing: "0.015em",
+              color: "#ffffff",
               textShadow:
-                "0 4px 32px rgba(0,0,0,0.9), 0 2px 14px rgba(0,0,0,0.7), 0 0 8px rgba(0,0,0,0.5)",
+                "0 0 28px rgba(0,0,0,0.98), 0 0 14px rgba(0,0,0,0.95), 0 4px 22px rgba(0,0,0,0.9), 0 2px 8px rgba(0,0,0,0.7)",
             }}
           >
             Couvent Saint Jean
           </h2>
           <div
-            className="w-12 h-px bg-gold mx-auto my-4"
-            style={{ boxShadow: "0 0 12px rgba(0,0,0,0.55)" }}
+            className="w-12 h-px mx-auto my-4"
+            style={{
+              background: "#d4b87a",
+              boxShadow: "0 0 12px rgba(0,0,0,0.55)",
+            }}
           />
           <p
-            className="italic text-cream/95"
+            className="italic"
             style={{
               fontFamily: "var(--font-display)",
               fontSize: "clamp(16px, 1.7vw, 22px)",
-              textShadow: "0 2px 14px rgba(0,0,0,0.85)",
+              color: "#ffffff",
+              textShadow:
+                "0 0 16px rgba(0,0,0,0.95), 0 2px 14px rgba(0,0,0,0.9)",
             }}
           >
             Okaibe · Lebanon

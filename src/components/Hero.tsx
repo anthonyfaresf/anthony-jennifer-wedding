@@ -280,7 +280,14 @@ export default function Hero() {
               className="text-[10px] sm:text-xs uppercase tracking-[0.45em] text-cream/85 mb-6"
               style={{ textShadow: "0 2px 14px rgba(0,0,0,0.7)" }}
             >
-              {splitChars("Together with their families", "hero-tagline-char")}
+              {"Together with their families".split(" ").map((word, wi, arr) => (
+                <span key={wi} className="inline-block whitespace-nowrap">
+                  {splitChars(word, "hero-tagline-char")}
+                  {wi < arr.length - 1 && (
+                    <span className="hero-tagline-char inline-block">&nbsp;</span>
+                  )}
+                </span>
+              ))}
             </p>
 
             <h1 className="sr-only">
@@ -294,17 +301,23 @@ export default function Hero() {
                 OUT (scale down) instead of fading away — per Anthony
                 2026-05-16: "anthony & jennifer should be as if they're
                 zooming out not disappear when we're scrolling." */}
+            {/* Names — words kept whole inside inline-block wrappers so they
+                cannot break mid-character (splitChars wraps each char in a
+                breakable span; without grouping, the browser wraps at any
+                char boundary on narrow viewports). */}
             <p
               aria-hidden
-              className="hero-name-text font-display leading-none mb-6 text-cream"
+              className="hero-name-text font-display leading-[1.05] mb-6 text-cream"
               style={{
-                fontSize: "clamp(40px, 7vw, 88px)",
+                fontSize: "clamp(32px, 7vw, 84px)",
                 letterSpacing: "0.025em",
                 fontWeight: 300,
                 textShadow: "0 4px 32px rgba(0,0,0,0.65), 0 0 12px rgba(0,0,0,0.4)",
               }}
             >
-              {splitChars("Anthony", "hero-name-char")}
+              <span className="inline-block whitespace-nowrap">
+                {splitChars("Anthony", "hero-name-char")}
+              </span>
               <span
                 className="inline-block mx-3 sm:mx-4 align-middle"
                 style={{
@@ -315,14 +328,27 @@ export default function Hero() {
               >
                 &amp;
               </span>
-              {splitChars("Jennifer", "hero-name-char")}
+              <span className="inline-block whitespace-nowrap">
+                {splitChars("Jennifer", "hero-name-char")}
+              </span>
             </p>
 
+            {/* Tagline — group each word so wraps fall on word boundaries
+                (still character-staggered by GSAP via hero-tagline-char). */}
             <p
               className="text-[11px] sm:text-sm uppercase tracking-[0.4em] text-cream/85 mb-6"
               style={{ textShadow: "0 2px 14px rgba(0,0,0,0.65)" }}
             >
-              {splitChars("request the pleasure of your company", "hero-tagline-char")}
+              {"request the pleasure of your company"
+                .split(" ")
+                .map((word, wi, arr) => (
+                  <span key={wi} className="inline-block whitespace-nowrap">
+                    {splitChars(word, "hero-tagline-char")}
+                    {wi < arr.length - 1 && (
+                      <span className="hero-tagline-char inline-block">&nbsp;</span>
+                    )}
+                  </span>
+                ))}
             </p>
 
             <div
