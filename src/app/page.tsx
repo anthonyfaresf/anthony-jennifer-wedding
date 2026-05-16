@@ -1,5 +1,12 @@
-import Hero from "@/components/Hero";
-import Envelope from "@/components/Envelope";
+// Envelope + Hero archived 2026-05-16 — replaced by VerseOpener (Song of
+// Solomon 3:4 + Anthony & Jennifer + date + venue on full-bleed watercolor).
+// Per Anthony 2026-05-16 + 4-brain consensus (Codex AGREE / Gemini AGREE /
+// Claude subagent AGREE): envelope/letter is cliché + skeuomorphic; verse
+// is personal + culturally fitting (Lebanese Christian Couvent Saint Jean).
+// The wine-cheers curtain reveal is also killed (Codex AGREE) — it only
+// justified the envelope's existence; without envelope it would feel like
+// orphan animation logic, not intentional storytelling.
+import VerseOpener from "@/components/VerseOpener";
 import Countdown from "@/components/Countdown";
 import Story from "@/components/Story";
 import Venue from "@/components/Venue";
@@ -18,11 +25,7 @@ export default function Home() {
       {/* Skip-to-RSVP — first focusable for keyboard/screen-reader users.
           Per 2026 a11y research (Knot Marble pattern). */}
       <SkipLink />
-      {/* Envelope — single-tap entrance. Tap the wax seal → envelope opens
-          + invite holds ~1.4s → fades to hero. Music starts on that same
-          gesture. SessionStorage skip on subsequent visits. */}
-      <Envelope />
-      {/* Sticky pill nav — appears after hero scrolls past, IntersectionObserver
+      {/* Sticky pill nav — appears after opener scrolls past, IntersectionObserver
           highlights active section. */}
       <StickyNav />
       <AudioPlayer />
@@ -43,7 +46,7 @@ export default function Home() {
           stack reads as physical depth (next paper rises over previous,
           previous visibly recedes underneath). */}
       <PaperStackScale />
-      <Hero />
+      <VerseOpener />
       <Story />
       <div className="paper-stack-root">
         <section className="paper-slot" data-paper="1"><Countdown /></section>
