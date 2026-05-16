@@ -214,13 +214,23 @@ html {
   will-change: transform;
   transform-origin: 50% 50%;
 }
-.paper-slot[data-paper="1"] { z-index: 1; }
-.paper-slot[data-paper="2"] { z-index: 2; }
-.paper-slot[data-paper="3"] { z-index: 3; }
-.paper-slot[data-paper="4"] { z-index: 4; }
-.paper-slot[data-paper="5"] { z-index: 5; }
-.paper-slot[data-paper="6"] { z-index: 6; }
-.paper-slot[data-paper="7"] { z-index: 7; }
+.paper-slot[data-paper="1"]  { z-index: 1; }
+.paper-slot[data-paper="2"]  { z-index: 2; }
+.paper-slot[data-paper="3"]  { z-index: 3; }
+.paper-slot[data-paper="4"]  { z-index: 4; }
+.paper-slot[data-paper="5"]  { z-index: 5; }
+.paper-slot[data-paper="6"]  { z-index: 6; }
+.paper-slot[data-paper="7"]  { z-index: 7; }
+.paper-slot[data-paper="8"]  { z-index: 8; }
+.paper-slot[data-paper="9"]  { z-index: 9; }
+.paper-slot[data-paper="10"] { z-index: 10; }
+.paper-slot[data-paper="11"] { z-index: 11; }
+.paper-slot[data-paper="12"] { z-index: 12; }
+/* Scene slots: hold a 200vh Story scene that needs scroll-range for the
+   FrameSequence scrub. The slot sticky-pins at top:0 while the user
+   scrolls through the 200vh, then the next paper-slot rises over it
+   (PaperStackScale animates the scale-down). */
+.paper-slot--scene { min-height: 200vh; }
 /* Nested <section> child (e.g. Countdown, Venue) fills the slot. */
 .paper-slot > section,
 .paper-slot > footer {

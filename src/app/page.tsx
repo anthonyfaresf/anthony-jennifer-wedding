@@ -51,24 +51,38 @@ export default function Home() {
         moves the info cards EARLIER in the scroll so they're not all
         dumped at the end — partial fix while the refactor lands.
       */}
-      {/* INTERLEAVED scroll — story photo → info card → photo → info card.
-          Each Story scene is followed by an info card that paper-stacks on
-          top per the existing paper-stack pattern. */}
-      <Story only="intro" />
-      <Story only={0} />
+      {/* INTERLEAVED PAPER STACK — per Anthony 2026-05-16:
+          "after every photo animation plays it lays to the back a bit,
+          and then another section stacks on top of it with info, and it locks."
+
+          One paper-stack-root holds EVERYTHING after Hero. Each scene is
+          its own paper-slot (with --scene modifier = 200vh for FrameSequence
+          scrub). When the next paper-slot rises over a scene, PaperStackScale
+          shrinks the scene to 0.88 + dims to brightness 0.82 + lifts y:-24,
+          and the rising paper locks on top via sticky + higher z-index.
+
+          Order: intro → Scene1 → Countdown → Scene2 → Venue → Scene3 →
+          Schedule → RSVP → FAQ → Footer. Z-indexes 1→10 ascending so each
+          new paper covers the previous. */}
       <div className="paper-stack-root">
-        <section className="paper-slot" data-paper="1"><Countdown /></section>
-      </div>
-      <Story only={1} />
-      <div className="paper-stack-root">
-        <section className="paper-slot" data-paper="1"><Venue /></section>
-      </div>
-      <Story only={2} />
-      <div className="paper-stack-root">
-        <section className="paper-slot" data-paper="1"><Schedule /></section>
-        <section className="paper-slot" data-paper="2"><RSVP /></section>
-        <section className="paper-slot" data-paper="3"><FAQ /></section>
-        <section className="paper-slot" data-paper="4"><Footer /></section>
+        <section className="paper-slot" data-paper="1">
+          <Story only="intro" />
+        </section>
+        <section className="paper-slot paper-slot--scene" data-paper="2">
+          <Story only={0} />
+        </section>
+        <section className="paper-slot" data-paper="3"><Countdown /></section>
+        <section className="paper-slot paper-slot--scene" data-paper="4">
+          <Story only={1} />
+        </section>
+        <section className="paper-slot" data-paper="5"><Venue /></section>
+        <section className="paper-slot paper-slot--scene" data-paper="6">
+          <Story only={2} />
+        </section>
+        <section className="paper-slot" data-paper="7"><Schedule /></section>
+        <section className="paper-slot" data-paper="8"><RSVP /></section>
+        <section className="paper-slot" data-paper="9"><FAQ /></section>
+        <section className="paper-slot" data-paper="10"><Footer /></section>
       </div>
     </main>
   );
