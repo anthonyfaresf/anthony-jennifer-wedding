@@ -312,7 +312,7 @@ export default function VerseGate() {
             text-shadow does the cinematic work. Per Anthony 2026-05-16
             (fourth pass): "you changed fonts, i dont recall i allowed
             you to do this." Italianno script swap reverted. */}
-        <div className="gate-fade-out flex flex-col items-center max-w-[20ch] sm:max-w-[28ch]">
+        <div className="gate-fade-out flex flex-col items-center max-w-[18ch] sm:max-w-[32ch] lg:max-w-[40ch]">
           <p
             className="italic leading-[1.18] text-cream"
             style={{
