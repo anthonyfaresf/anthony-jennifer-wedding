@@ -174,22 +174,47 @@ export default function VerseGate() {
     if (reduceMotion) return;
 
     const ctx = gsap.context(() => {
-      const tl = gsap.timeline({ delay: 0.15 });
+      const tl = gsap.timeline({ delay: 0.2 });
       // 1. Overlay scrims start CLEAR (bright photo visible) and darken
-      //    over ~1.6s. Pre-set to 0 then animate to 1.
-      tl.set([".gate-fade-out", ".gate-scrim-base", ".gate-scrim-radial"], {
-        opacity: 0,
-      })
+      //    over ~1.8s — gives the eye time to register the watercolor
+      //    before the darkness settles.
+      tl.set(
+        [
+          ".gate-fade-out",
+          ".gate-scrim-base",
+          ".gate-scrim-radial",
+          ".verse-word",
+        ],
+        { opacity: 0 }
+      )
         .to([".gate-scrim-base", ".gate-scrim-radial"], {
           opacity: 1,
-          duration: 1.6,
+          duration: 1.8,
           ease: "sine.out",
         })
-        // 2. Verse + attribution rise after the overlay is mostly set
+        // 2. The verse-WORD-by-WORD reveal — each word rises + un-blurs in
+        //    sequence. Cinematic per Anthony 2026-05-16: 'more cinematic
+        //    or dynamic animation with the texts.' Word-by-word reads as
+        //    deliberate breath, not a block paste.
+        .fromTo(
+          ".verse-word",
+          { y: 18, filter: "blur(6px)" },
+          {
+            opacity: 1,
+            y: 0,
+            filter: "blur(0px)",
+            duration: 1.0,
+            ease: "power2.out",
+            stagger: 0.18,
+          },
+          "-=1.2"
+        )
+        // 3. Attribution + names + ENTER fade in as a unified bottom block
+        //    after the verse settles.
         .to(
           ".gate-fade-out",
-          { opacity: 1, duration: 1.2, ease: "power2.out", stagger: 0.18 },
-          "-=0.6"
+          { opacity: 1, duration: 1.0, ease: "power2.out", stagger: 0.22 },
+          "-=0.5"
         );
     }, overlayRef);
     return () => ctx.revert();
@@ -312,7 +337,14 @@ export default function VerseGate() {
             text-shadow does the cinematic work. Per Anthony 2026-05-16
             (fourth pass): "you changed fonts, i dont recall i allowed
             you to do this." Italianno script swap reverted. */}
-        <div className="gate-fade-out flex flex-col items-center max-w-[18ch] sm:max-w-[32ch] lg:max-w-[40ch]">
+        {/* Verse wrapper — NOT gate-fade-out (children animate independently
+            via .verse-word stagger; wrapper stays at opacity 1 so children
+            can show through). */}
+        <div className="flex flex-col items-center max-w-[18ch] sm:max-w-[32ch] lg:max-w-[40ch]">
+          {/* Verse — each word kept whole inside an inline-block wrapper
+              (cannot break mid-character), each WORD revealed in sequence
+              via .verse-word stagger. Char-level stagger felt jittery for
+              a serif italic at this size; word-level reads as breath. */}
           <p
             className="italic leading-[1.18] text-cream"
             style={{
@@ -324,10 +356,26 @@ export default function VerseGate() {
                 "0 6px 36px rgba(0,0,0,0.78), 0 0 14px rgba(0,0,0,0.55)",
             }}
           >
-            &ldquo;I have found the one whom my soul loves.&rdquo;
+            <span className="verse-word inline-block">&ldquo;I</span>{" "}
+            {[
+              "have",
+              "found",
+              "the",
+              "one",
+              "whom",
+              "my",
+              "soul",
+              "loves.",
+            ].map((w, i, arr) => (
+              <span key={i} className="verse-word inline-block">
+                {w}
+                {i === arr.length - 1 ? "”" : ""}
+                {i < arr.length - 1 ? " " : ""}
+              </span>
+            ))}
           </p>
           <p
-            className="mt-7 sm:mt-9 text-cream/80 text-[10px] sm:text-xs uppercase"
+            className="gate-fade-out mt-7 sm:mt-9 text-cream/80 text-[10px] sm:text-xs uppercase"
             style={{
               letterSpacing: "0.55em",
               textShadow: "0 2px 14px rgba(0,0,0,0.75)",

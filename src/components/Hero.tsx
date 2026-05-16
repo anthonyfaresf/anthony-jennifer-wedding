@@ -85,16 +85,28 @@ export default function Hero() {
           { y: 0, opacity: 1, ease: "power3.out", duration: 0.5, stagger: 0.018 },
           "-=0.6"
         )
+        // Names — slower + more dramatic. Each char enters with a film-
+        // title blur-clear (8px → 0), rotateX flip, opacity 0 → 1, lift
+        // y:36 → 0. Stagger 0.06s + per-char 1.1s = the names take ~1.8s
+        // to fully reveal. Cinematic per Anthony's 'more cinematic or
+        // dynamic animation with the texts.'
         .fromTo(
           ".hero-name-char",
-          { y: 36, opacity: 0, rotateX: -45 },
+          {
+            y: 44,
+            opacity: 0,
+            rotateX: -55,
+            filter: "blur(8px)",
+            transformPerspective: 600,
+          },
           {
             y: 0,
             opacity: 1,
             rotateX: 0,
+            filter: "blur(0px)",
             ease: "power3.out",
-            duration: 0.85,
-            stagger: 0.04,
+            duration: 1.1,
+            stagger: 0.07,
           },
           "-=0.45"
         )
@@ -122,6 +134,18 @@ export default function Hero() {
           { y: 0, opacity: 1, ease: "power3.out", duration: 0.55, stagger: 0.06 },
           "-=0.3"
         );
+
+      // AMBIENT BREATH — subtle 6s scale loop on names after entrance
+      // settles. Adds the slow living-photograph feel of cinema title
+      // cards. Imperceptible per-frame, palpable over time.
+      gsap.to(".hero-name-text", {
+        scale: 1.012,
+        duration: 6,
+        ease: "sine.inOut",
+        yoyo: true,
+        repeat: -1,
+        delay: 4,
+      });
 
       // VIGNETTE softens as scroll deepens
       gsap.to(".hero-vignette", {
