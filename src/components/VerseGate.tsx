@@ -360,7 +360,7 @@ export default function VerseGate() {
                 "0 6px 36px rgba(0,0,0,0.78), 0 0 14px rgba(0,0,0,0.55)",
             }}
           >
-            <span className="verse-word inline-block">&ldquo;I</span>{" "}
+            <span className="verse-word inline-block" style={{ opacity: 0 }}>&ldquo;I</span>{" "}
             {[
               "have",
               "found",
@@ -371,7 +371,7 @@ export default function VerseGate() {
               "soul",
               "loves.",
             ].map((w, i, arr) => (
-              <span key={i} className="verse-word inline-block">
+              <span key={i} className="verse-word inline-block" style={{ opacity: 0 }}>
                 {w}
                 {i === arr.length - 1 ? "”" : ""}
                 {i < arr.length - 1 ? " " : ""}
