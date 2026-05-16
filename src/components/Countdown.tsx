@@ -134,8 +134,41 @@ export default function Countdown() {
           The countdown
         </p>
 
-        {/* 4 digit clusters — mobile 2×2, desktop single row */}
-        <div className="grid grid-cols-2 sm:grid-cols-4 gap-y-10 gap-x-4 sm:gap-x-8">
+        {/* MOBILE — single elegant line: "47d · 13h · 22m"
+            Per 4-brain 2026-05-16: drops seconds (battery + clutter),
+            collapses 4 unit cards to 3 tape units that fit any phone
+            without text-wrap. The split-flap aesthetic moves to desktop
+            only — the mobile readout is calm + restrained, not anxious. */}
+        <div className="sm:hidden cd-cluster">
+          <p
+            className="font-display text-olive-deep leading-none tabular-nums"
+            style={{
+              fontSize: "clamp(38px, 11vw, 60px)",
+              letterSpacing: "-0.005em",
+              whiteSpace: "nowrap",
+            }}
+          >
+            <span>{tick?.days ?? 0}</span>
+            <span className="text-olive-deep/55 px-2" style={{ fontSize: "0.75em" }}>·</span>
+            <span>{pad(tick?.hours ?? 0)}</span>
+            <span className="text-olive-deep/55 px-2" style={{ fontSize: "0.75em" }}>·</span>
+            <span>{pad(tick?.minutes ?? 0)}</span>
+          </p>
+          <p
+            className="mt-4 text-olive-deep/70 italic"
+            style={{
+              fontFamily: "var(--font-italianno), 'Italianno', cursive",
+              fontSize: "26px",
+              letterSpacing: "0.06em",
+            }}
+          >
+            days · hours · minutes
+          </p>
+        </div>
+
+        {/* DESKTOP — 4 digit clusters with split-flap aesthetic.
+            Hidden on mobile (< 640px). */}
+        <div className="hidden sm:grid sm:grid-cols-4 gap-y-10 gap-x-4 sm:gap-x-8">
           {[
             { value: tick?.days ?? 0, label: "days", padTo: 3 },
             { value: tick?.hours ?? 0, label: "hours", padTo: 2 },

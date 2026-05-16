@@ -91,10 +91,14 @@ export default function Venue() {
           Full-width cinematic 16:9 establishing shot, scroll-scrubbed. The
           cream-fade-edges-light gives soft top + bottom transitions into
           the surrounding paper. */}
+      {/* Hero strip — desktop keeps cinematic 16:9. Mobile fills 78svh
+          so the Couvent watercolor is a hero, not a letterbox. The frame
+          sequence inside uses object-cover with center framing, so the
+          facade stays composed regardless of crop. (Anthony 2026-05-16:
+          "zoom in to be full screen even if it crops from the sides.") */}
       <div
         ref={heroRef}
-        className="venue-hero relative w-full overflow-hidden bg-cream cream-fade-edges-light"
-        style={{ aspectRatio: "16 / 9" }}
+        className="venue-hero relative w-full overflow-hidden bg-cream cream-fade-edges-light min-h-[78svh] sm:min-h-0 sm:aspect-[16/9]"
       >
         <div className="venue-hero-wrap absolute inset-0">
           <FrameSequence

@@ -85,8 +85,12 @@ export default function StickyNav() {
         top: "max(env(safe-area-inset-top), 16px)",
       }}
     >
+      {/* Mobile: tighter tracking + smaller font so all 5 items fit a
+          320–414px viewport without scroll. Desktop unchanged.
+          Per 4-brain 2026-05-16: discoverability beats hamburger drawer
+          for a single-page wedding site — all items visible, zero clicks. */}
       <ul
-        className="flex items-center gap-0.5 sm:gap-1 px-1.5 sm:px-2 py-1.5 rounded-full max-w-[calc(100vw-2rem)] overflow-x-auto"
+        className="flex items-center gap-0.5 sm:gap-1 px-1.5 sm:px-2 py-1.5 rounded-full max-w-[calc(100vw-1rem)] sm:max-w-[calc(100vw-2rem)] overflow-x-auto"
         style={{
           background: "rgba(244, 236, 224, 0.94)",
           backdropFilter: "blur(14px) saturate(1.1)",
@@ -105,12 +109,12 @@ export default function StickyNav() {
                 type="button"
                 onClick={() => handleJump(s.id)}
                 aria-current={isActive ? "true" : undefined}
-                className={`px-3 sm:px-4 py-2 text-[11px] sm:text-xs uppercase tracking-[0.22em] rounded-full transition-colors whitespace-nowrap focus:outline-none focus-visible:ring-2 focus-visible:ring-gold/60 focus-visible:ring-offset-2 focus-visible:ring-offset-cream ${
+                className={`px-2 sm:px-4 py-1.5 sm:py-2 text-[9.5px] sm:text-xs uppercase tracking-[0.10em] sm:tracking-[0.22em] rounded-full transition-colors whitespace-nowrap focus:outline-none focus-visible:ring-2 focus-visible:ring-gold/60 focus-visible:ring-offset-2 focus-visible:ring-offset-cream ${
                   isActive
                     ? "text-cream bg-olive-deep"
                     : "text-olive-deep hover:bg-olive-deep/10"
                 }`}
-                style={{ minHeight: 36 }}
+                style={{ minHeight: 32 }}
               >
                 {s.label}
               </button>
