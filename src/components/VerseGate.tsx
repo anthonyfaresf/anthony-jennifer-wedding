@@ -305,12 +305,16 @@ export default function VerseGate() {
           background so the text is visible." Was readable but soft;
           now opaque enough that the verse + names pop clearly while the
           watercolor sits as atmospheric texture, not competing content. */}
+      {/* Scrim balanced: strong enough for cream text to read everywhere,
+          light enough that the watercolor breathes through as atmospheric
+          texture (not a black screen). Both layers composite to ~0.7
+          combined alpha at the verse center — text contrasted, photo visible. */}
       <div
         aria-hidden
         className="gate-scrim-base absolute inset-0 pointer-events-none"
         style={{
           background:
-            "linear-gradient(to bottom, rgba(20,18,14,0.72) 0%, rgba(20,18,14,0.62) 35%, rgba(20,18,14,0.68) 65%, rgba(20,18,14,0.88) 100%)",
+            "linear-gradient(to bottom, rgba(20,18,14,0.55) 0%, rgba(20,18,14,0.42) 35%, rgba(20,18,14,0.48) 65%, rgba(20,18,14,0.72) 100%)",
         }}
       />
       <div
@@ -318,7 +322,7 @@ export default function VerseGate() {
         className="gate-scrim-radial absolute inset-0 pointer-events-none"
         style={{
           background:
-            "radial-gradient(ellipse 75% 55% at 50% 38%, rgba(20,18,14,0.55) 0%, rgba(20,18,14,0.2) 55%, transparent 85%)",
+            "radial-gradient(ellipse 70% 50% at 50% 42%, rgba(20,18,14,0.35) 0%, rgba(20,18,14,0.1) 55%, transparent 85%)",
         }}
       />
 
