@@ -51,14 +51,24 @@ export default function Home() {
         moves the info cards EARLIER in the scroll so they're not all
         dumped at the end — partial fix while the refactor lands.
       */}
-      <Story />
+      {/* INTERLEAVED scroll — story photo → info card → photo → info card.
+          Each Story scene is followed by an info card that paper-stacks on
+          top per the existing paper-stack pattern. */}
+      <Story only="intro" />
+      <Story only={0} />
       <div className="paper-stack-root">
         <section className="paper-slot" data-paper="1"><Countdown /></section>
-        <section className="paper-slot" data-paper="2"><Venue /></section>
-        <section className="paper-slot" data-paper="3"><Schedule /></section>
-        <section className="paper-slot" data-paper="4"><RSVP /></section>
-        <section className="paper-slot" data-paper="5"><FAQ /></section>
-        <section className="paper-slot" data-paper="6"><Footer /></section>
+      </div>
+      <Story only={1} />
+      <div className="paper-stack-root">
+        <section className="paper-slot" data-paper="1"><Venue /></section>
+      </div>
+      <Story only={2} />
+      <div className="paper-stack-root">
+        <section className="paper-slot" data-paper="1"><Schedule /></section>
+        <section className="paper-slot" data-paper="2"><RSVP /></section>
+        <section className="paper-slot" data-paper="3"><FAQ /></section>
+        <section className="paper-slot" data-paper="4"><Footer /></section>
       </div>
     </main>
   );

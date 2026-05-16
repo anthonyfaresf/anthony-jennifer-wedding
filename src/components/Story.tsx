@@ -117,7 +117,24 @@ function PhaseDivider({ text }: { text: string }) {
   );
 }
 
-export default function Story() {
+/**
+ * Optional `only` prop — slices the component into renderable pieces so
+ * info cards (Countdown / Venue / Schedule / RSVP / FAQ) can be stacked
+ * BETWEEN scenes per Anthony 2026-05-16 ("instead of all story up front
+ * and all info at the end, a card stacks on top of each photo").
+ *
+ *   <Story />              — backwards-compatible: full intro + all 3 scenes
+ *   <Story only="intro" /> — just the intro block
+ *   <Story only={0} />     — just scene 0 (Meeting)
+ *   <Story only={1} />     — just scene 1 (Promise)
+ *   <Story only={2} />     — just scene 2 (Wedding)
+ *
+ * GSAP useEffect queries `.scene-${i}` selectors, so it naturally only
+ * binds to whichever scene is rendered.
+ */
+type StoryProps = { only?: number | "intro" };
+
+export default function Story({ only }: StoryProps = {}) {
   const sectionRef = useRef<HTMLElement>(null);
   const isDesktop = useMediaQuery("(min-width: 768px)");
   const [mounted, setMounted] = useState(false);
@@ -261,33 +278,52 @@ export default function Story() {
       </span>
     ));
 
+  // `only` slicing helpers
+  const showIntro = only === undefined || only === "intro";
+  const showScenes = only !== "intro";
+  const showScene = (i: number) => only === undefined || only === i;
+  // When sliced (only is a number), suppress narrative dividers — the
+  // info card stacked after the scene serves as the breather.
+  const showDividers = only === undefined;
+  const sectionId =
+    only === undefined
+      ? "story"
+      : only === "intro"
+      ? "story-intro"
+      : `story-scene-${only}`;
+
   return (
     <section
       ref={sectionRef}
-      id="story"
+      id={sectionId}
       className="relative bg-cream paper-grain"
     >
-      {/* Intro — unpinned, on cream paper */}
-      <div className="py-32 px-6 text-center relative z-10">
-        <p className="text-xs uppercase tracking-[0.4em] text-olive-deep mb-4">
-          Our story
-        </p>
-        <h2 className="font-display text-5xl md:text-6xl text-ink">
-          How we got here
-        </h2>
-        <div className="w-16 h-px bg-gold mx-auto mt-8" />
-        <p className="text-xs uppercase tracking-[0.3em] text-olive-deep/80 mt-12">
-          Scroll to begin
-        </p>
-        <p className="text-sm text-olive-deep/70 mt-2" aria-hidden>↓</p>
-      </div>
+      {/* Intro — unpinned, on cream paper. Only renders for the default
+          full Story or when explicitly sliced to "intro". */}
+      {showIntro && (
+        <div className="py-32 px-6 text-center relative z-10">
+          <p className="text-xs uppercase tracking-[0.4em] text-olive-deep mb-4">
+            Our story
+          </p>
+          <h2 className="font-display text-5xl md:text-6xl text-ink">
+            How we got here
+          </h2>
+          <div className="w-16 h-px bg-gold mx-auto mt-8" />
+          <p className="text-xs uppercase tracking-[0.3em] text-olive-deep/80 mt-12">
+            Scroll to begin
+          </p>
+          <p className="text-sm text-olive-deep/70 mt-2" aria-hidden>↓</p>
+        </div>
+      )}
 
-      {/* === 3-SCENE VERTICAL TIMELINE === */}
+      {/* === SCENES — full set (3) when un-sliced, single scene when only={n} === */}
+      {showScenes && (
       <div className="story-scenes relative">
         {scenes.map((s, i) => (
+          !showScene(i) ? null : (
           <Fragment key={s.n}>
-            {i === 1 && <PhaseDivider text="Three years pass" />}
-            {i === 2 && <PhaseDivider text="And the day arrives" />}
+            {i === 1 && showDividers && <PhaseDivider text="Three years pass" />}
+            {i === 2 && showDividers && <PhaseDivider text="And the day arrives" />}
 
             <div
               className={`scene-${i} relative w-full`}
@@ -398,18 +434,17 @@ export default function Story() {
               </div>
             </div>
           </Fragment>
+          )
         ))}
 
         {/*
-          Closing phase divider — matches the rhythm of the two
-          inter-scene dividers ("Three years pass" before scene 2,
-          "And the day arrives" before scene 3). Without this, scene 3
-          ended abruptly into the paper stack. Per Anthony 2026-05-15:
-          "the space between the wedding slide and the church is super
-          close, they should have the same spacing like the rest".
+          Closing phase divider — only renders for the full un-sliced
+          Story. When sliced (only={n}), the info card stacked after the
+          scene serves as the breather.
         */}
-        <PhaseDivider text="The day is near" />
+        {showDividers && <PhaseDivider text="The day is near" />}
       </div>
+      )}
     </section>
   );
 }
