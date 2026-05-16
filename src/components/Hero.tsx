@@ -123,32 +123,6 @@ export default function Hero() {
           "-=0.3"
         );
 
-      // Card lifts + fades as the camera pushes deeper into the cheers ECU
-      gsap.to(".hero-card", {
-        opacity: 0,
-        y: -40,
-        scale: 0.97,
-        ease: "none",
-        scrollTrigger: {
-          trigger: sectionEl,
-          start: "top -25%",
-          end: "top -65%",
-          scrub: 0.5,
-        },
-      });
-
-      // Scroll indicator fades out
-      gsap.to(".hero-scroll-cue", {
-        opacity: 0,
-        ease: "none",
-        scrollTrigger: {
-          trigger: sectionEl,
-          start: "top top",
-          end: "top -20%",
-          scrub: 0.5,
-        },
-      });
-
       // VIGNETTE softens as scroll deepens
       gsap.to(".hero-vignette", {
         opacity: 0.55,
@@ -161,24 +135,17 @@ export default function Hero() {
         },
       });
 
-      // GENTLE zoom-out on scroll — Anthony 2026-05-16 (third pass):
-      // "you're immediately making the text disappear when people start
-      // scrolling, this is bad." Was scale → 0.62 + opacity → 0.35
-      // (too aggressive — names vanished by 20% of scroll). Pushed to
-      // a much subtler scale → 0.82 + opacity → 0.65, and the timeline
-      // starts later (top 30%) + ends later (50% past top) so the
-      // names stay readable through most of the hero's exit.
-      gsap.to(".hero-card", {
-        scale: 0.82,
-        opacity: 0.65,
-        ease: "none",
-        scrollTrigger: {
-          trigger: sectionEl,
-          start: "top -30%",
-          end: "bottom -10%",
-          scrub: 0.6,
-        },
-      });
+      // The hero card STAYS fully visible during scroll through the hero
+      // section. Anthony 2026-05-16 (fourth pass) called both prior
+      // scroll-fade tweens "still disappears" — the harsh (opacity → 0
+      // at top -25%) tween was the killer; even with a softer overlay
+      // tween, the harsh one took priority. Both REMOVED.
+      //
+      // The hero is min-h-100svh + the next paper-slot (Countdown)
+      // sticks at top:0 with higher z-index. So the next section will
+      // physically rise OVER the hero card via the existing paper-stack
+      // pattern — no opacity fade needed on the card itself. Names
+      // stay 100% visible until covered by the next paper.
     }, sectionRef);
 
     return () => ctx.revert();

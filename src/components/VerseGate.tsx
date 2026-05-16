@@ -306,23 +306,25 @@ export default function VerseGate() {
         {/* Top spacer */}
         <div className="flex-1" />
 
-        {/* THE VERSE — DOMINANT center element. Italianno cursive script
-            for the verse text itself (the most cinematic + elegant choice
-            for a wedding-invitation Bible quote — reads as handwritten
-            calligraphy on parchment), Cormorant for the attribution. */}
-        <div className="gate-fade-out flex flex-col items-center max-w-[28ch] sm:max-w-[34ch]">
+        {/* THE VERSE — DOMINANT center element. Display serif italic
+            (Cormorant Garamond) as Anthony originally had — NOT a font
+            swap. Larger + bolder weight + tighter line-height + strong
+            text-shadow does the cinematic work. Per Anthony 2026-05-16
+            (fourth pass): "you changed fonts, i dont recall i allowed
+            you to do this." Italianno script swap reverted. */}
+        <div className="gate-fade-out flex flex-col items-center max-w-[20ch] sm:max-w-[28ch]">
           <p
-            className="leading-[1.05] text-cream"
+            className="italic leading-[1.18] text-cream"
             style={{
-              fontFamily: "var(--font-italianno), 'Italianno', cursive",
-              fontWeight: 400,
-              fontSize: "clamp(48px, 8.5vw, 104px)",
+              fontFamily: "var(--font-display), 'Cormorant Garamond', serif",
+              fontWeight: 300,
+              fontSize: "clamp(34px, 6vw, 72px)",
               letterSpacing: "0.005em",
               textShadow:
                 "0 6px 36px rgba(0,0,0,0.78), 0 0 14px rgba(0,0,0,0.55)",
             }}
           >
-            I have found the one whom my soul loves.
+            &ldquo;I have found the one whom my soul loves.&rdquo;
           </p>
           <p
             className="mt-7 sm:mt-9 text-cream/80 text-[10px] sm:text-xs uppercase"
