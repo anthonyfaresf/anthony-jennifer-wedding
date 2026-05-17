@@ -8,9 +8,8 @@ import Hero from "@/components/Hero";
 import Countdown from "@/components/Countdown";
 import Story from "@/components/Story";
 import Venue from "@/components/Venue";
-import Schedule from "@/components/Schedule";
 import RSVP from "@/components/RSVP";
-import FAQ from "@/components/FAQ";
+import Gifts from "@/components/Gifts";
 import Footer from "@/components/Footer";
 import AudioPlayer from "@/components/AudioPlayer";
 import StickyNav from "@/components/StickyNav";
@@ -22,9 +21,12 @@ export default function Home() {
     <main className="bg-cream text-body">
       {/* Skip-to-RSVP — first focusable for keyboard/screen-reader users. */}
       <SkipLink />
-      {/* Cinematic verse gate — animated olive/wine/Couvent watercolor +
-          Song of Solomon 3:4 + couple + date + venue. Tap to enter →
-          fades to hero. Skipped on second visit via sessionStorage. */}
+      {/* SSR-rendered prepaint cover — opaque wax-seal frame visible from
+          the very first paint so hero never flashes through. Hidden by
+          .aj-gate-passed class (set inline in layout when session flag
+          already exists, OR by VideoGate on dismount). */}
+      <div className="aj-prepaint-cover" aria-hidden />
+      {/* Cinematic video gate — tap the wax seal to open. */}
       <VideoGate />
       {/* Sticky pill nav — appears after hero scrolls past */}
       <StickyNav />
@@ -85,45 +87,32 @@ export default function Home() {
           Every photo (watercolor scene OR venue) is followed by one
           white info card. No back-to-back whites, no back-to-back
           photos. Story intro removed (was redundant white). */}
+      {/* v15 simplified order per Anthony 2026-05-17:
+          - Schedule moved INTO Story scene 0 as an overlay on the ceremony
+            photo (no standalone Schedule slot anymore).
+          - FAQ slot replaced with Gifts (registry message + Whish details).
+          - Venue collapsed to ONE slot — photo with map-pin overlay link;
+            details slot dropped.
+          - Story scene 2 (Dress & Travel) removed — info embedded under
+            the Venue pin so the slot count stays clean and the photo/white
+            alternation holds.
+          Strict alternation: white (countdown) → photo (ceremony) → white
+          (RSVP) → photo (reception) → white (gifts) → photo (venue) →
+          white (footer). 7 slots. */}
       <div className="paper-stack-root">
         <section className="paper-slot" data-paper="1"><Countdown /></section>
         <section className="paper-slot paper-slot--scene" data-paper="2">
-          <Story only={0} /> {/* Photo — Ceremony */}
+          <Story only={0} /> {/* Photo — Ceremony + schedule overlay */}
         </section>
-        <section className="paper-slot" data-paper="3"><Schedule /></section>
+        <section className="paper-slot" data-paper="3"><RSVP /></section>
         <section className="paper-slot paper-slot--scene" data-paper="4">
           <Story only={1} /> {/* Photo — Reception */}
         </section>
-        <section className="paper-slot" data-paper="5"><RSVP /></section>
-        <section className="paper-slot paper-slot--scene" data-paper="6">
-          <Story only={2} /> {/* Photo — Dress & Travel */}
-        </section>
-        <section className="paper-slot" data-paper="7"><FAQ /></section>
-        {/* Venue split into two slots per Anthony 2026-05-16: 'you feel
-            it gets stuck when scrolling the couvent saint jean section.'
-            Was ONE 200vh slot — the sticky pin held the hero on screen
-            for ~100vh of scroll before releasing to show calendar/address.
-            Now: hero is its own 100svh photo slot, details (calendar +
-            address + map) are a separate 100svh+ white slot. Strict
-            paper-stack motion through both. */}
-        {/* Venue hero + details — back to sticky paper-slots per Anthony
-            2026-05-17: "couvent saint jean does not lock at the same place
-            like the rest of the sections... there's a page behind it which
-            is not visible." Non-sticky broke the lock-then-cover paper-stack
-            pattern. Both slots are now sticky 100svh like everyone else.
-            Venue.tsx compacts the details content aggressively to fit
-            within one viewport on mobile so nothing is hidden by the pin. */}
-        <section className="paper-slot" data-paper="8"><Venue slice="hero" /></section>
-        <section className="paper-slot" data-paper="9"><Venue slice="details" /></section>
-        {/* Footer slot — full 100svh so it can fully cover the Venue
-            paper underneath when the user reaches the bottom (otherwise
-            the cream edge cuts mid-screen with map visible above —
-            the bug Anthony screenshotted 2026-05-16). Content is
-            vertically centered inside so the empty cream feels
-            intentional, not negligent. */}
+        <section className="paper-slot" data-paper="5"><Gifts /></section>
+        <section className="paper-slot" data-paper="6"><Venue slice="hero" /></section>
         <section
           className="paper-slot flex items-center justify-center"
-          data-paper="10"
+          data-paper="7"
         >
           <Footer />
         </section>

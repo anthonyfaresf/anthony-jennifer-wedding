@@ -27,10 +27,9 @@ import { useEffect, useState } from "react";
 const SECTIONS = [
   { id: "countdown", label: "Date" },
   { id: "story-scene-0", label: "Day" },
-  { id: "schedule", label: "Schedule" },
   { id: "rsvp", label: "RSVP" },
+  { id: "gifts", label: "Gifts" },
   { id: "venue", label: "Venue" },
-  { id: "faq", label: "FAQ" },
 ];
 
 export default function StickyNav() {

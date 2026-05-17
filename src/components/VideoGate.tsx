@@ -60,6 +60,7 @@ export default function VideoGate() {
     if (sessionStorage.getItem(FLAG) === "1") {
       setSkip(true);
       setRemoved(true);
+      document.documentElement.classList.add("aj-gate-passed");
       return;
     }
 
@@ -190,6 +191,8 @@ export default function VideoGate() {
   function cleanup() {
     sessionStorage.setItem(FLAG, "1");
     document.body.style.overflow = "";
+    document.documentElement.classList.remove("aj-prepaint-gate");
+    document.documentElement.classList.add("aj-gate-passed");
     setRemoved(true);
   }
 

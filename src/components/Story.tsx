@@ -38,26 +38,37 @@ if (typeof window !== "undefined") gsap.registerPlugin(ScrollTrigger);
 // (ceremony → reception → dress/travel) — useful logistics, not
 // relationship history. Watercolors stay; only the copy + section
 // labels change.
+// Schedule overlay shown on Scene 0 (Ceremony) — replaces the old standalone
+// Schedule section per Anthony 2026-05-17 ("the schedule should be on the
+// photo of the ceremony, not a separate section"). Single source of truth
+// for times — every other place on the site that references times reads
+// from here.
+const schedule = [
+  { time: "18:00", label: "Ceremony" },
+  { time: "19:00", label: "Welcome drink" },
+  { time: "20:00", label: "Dinner & party", suffix: "until late" },
+];
+
 const scenes = [
   {
     n: "01",
     title: "The Ceremony",
-    year: "17:00",
-    body: "Catholic mass at the Couvent Saint Jean chapel. Doors open at 16:30 — please be seated by 16:55.",
+    year: "18:00",
+    body: "",
     sceneFolder: "scene-01-meeting",
   },
   {
     n: "02",
     title: "The Reception",
-    year: "19:00",
-    body: "Cocktails on the convent terrace at golden hour, dinner under the stars, dancing until late.",
+    year: "20:00",
+    body: "Welcome drink on the convent terrace at golden hour, dinner and party under the stars.",
     sceneFolder: "scene-02-promise",
   },
   {
     n: "03",
     title: "Dress & Travel",
     year: "Black tie",
-    body: "Formal attire. Beirut → Okaibe is a 40-minute drive; parking on-site. Hotel suggestions in the FAQ.",
+    body: "Formal attire. Beirut → Okaibe is a 40-minute drive; parking on-site.",
     sceneFolder: "scene-03-wedding",
   },
 ];
@@ -424,12 +435,40 @@ export default function Story({ only }: StoryProps = {}) {
                       className="w-10 h-px bg-gold/70 mx-auto mb-3"
                       style={{ boxShadow: "0 0 8px rgba(0,0,0,0.45)" }}
                     />
-                    <p
-                      className="text-cream text-xs sm:text-sm leading-relaxed max-w-sm sm:max-w-md mx-auto"
-                      style={{ textShadow: "0 2px 14px rgba(0,0,0,0.8)" }}
-                    >
-                      {splitChars(s.body)}
-                    </p>
+                    {i === 0 ? (
+                      /* Schedule overlay on the Ceremony scene per Anthony
+                         2026-05-17 — replaces the standalone Schedule
+                         section so the times read against the chapel
+                         watercolor. */
+                      <ul
+                        className="text-cream/95 space-y-1.5 text-xs sm:text-sm leading-tight"
+                        style={{ textShadow: "0 2px 14px rgba(0,0,0,0.8)" }}
+                      >
+                        {schedule.map((row, ri) => (
+                          <li
+                            key={ri}
+                            className="flex items-baseline justify-center gap-2 sm:gap-3"
+                          >
+                            <span className="text-gold tabular-nums tracking-wider">
+                              {row.time}
+                            </span>
+                            <span className="text-cream">{row.label}</span>
+                            {row.suffix && (
+                              <span className="text-cream/65 italic">
+                                · {row.suffix}
+                              </span>
+                            )}
+                          </li>
+                        ))}
+                      </ul>
+                    ) : (
+                      <p
+                        className="text-cream text-xs sm:text-sm leading-relaxed max-w-sm sm:max-w-md mx-auto"
+                        style={{ textShadow: "0 2px 14px rgba(0,0,0,0.8)" }}
+                      >
+                        {splitChars(s.body)}
+                      </p>
+                    )}
                   </div>
                 </div>
 

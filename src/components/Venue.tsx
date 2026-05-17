@@ -165,7 +165,7 @@ export default function Venue({ slice }: VenueProps = {}) {
             (bottom-32 mobile) so it sits in the densest part of the
             bottom gradient. Per Anthony 2026-05-16: no box, contrast
             still needs to read clearly. */}
-        <div className="absolute bottom-28 sm:bottom-32 left-0 right-0 px-6 text-center pointer-events-none z-30">
+        <div className="absolute bottom-20 sm:bottom-24 left-0 right-0 px-6 text-center pointer-events-none z-30">
           <p
             className="text-[11px] sm:text-xs uppercase tracking-[0.5em] mb-3"
             style={{
@@ -208,6 +208,26 @@ export default function Venue({ slice }: VenueProps = {}) {
           >
             Okaibe · Lebanon
           </p>
+          {/* Map pin button — clickable overlay link to Google Maps per
+              Anthony 2026-05-17 ("keep the photo of the church, but add an
+              overlay with the pin for the maps that is hyperlinked to the
+              location"). Pointer-events restored on this element only. */}
+          <a
+            href="https://www.google.com/maps/search/?api=1&query=Couvent+Saint+Jean+Okaibe+Lebanon"
+            target="_blank"
+            rel="noopener noreferrer"
+            className="venue-pin pointer-events-auto inline-flex items-center gap-2 mt-6 px-5 py-3 text-xs uppercase tracking-[0.3em] text-white bg-black/30 hover:bg-black/45 border border-white/30 hover:border-white/55 transition-colors backdrop-blur-sm"
+            style={{
+              textShadow: "0 1px 6px rgba(0,0,0,0.6)",
+            }}
+            aria-label="Open Couvent Saint Jean in Google Maps"
+          >
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round" aria-hidden>
+              <path d="M12 21s-7-6.5-7-11a7 7 0 0 1 14 0c0 4.5-7 11-7 11z" />
+              <circle cx="12" cy="10" r="2.5" />
+            </svg>
+            <span>Open in Maps</span>
+          </a>
         </div>
       </div>
       </>)}

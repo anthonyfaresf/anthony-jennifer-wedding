@@ -62,6 +62,41 @@ export default function RootLayout({
         */}
         <link rel="preload" as="image" href={`${bp}/frames/hero-wine-cheers/f-01.jpg`} fetchPriority="high" />
         <link rel="preload" as="image" href={`${bp}/frames/scene-01-meeting/f-01.jpg`} />
+        <link rel="preload" as="image" href={`${bp}/video/opener-poster.jpg`} fetchPriority="high" />
+        <link rel="preload" as="video" href={`${bp}/video/opener.mp4`} />
+        {/*
+          Pre-paint gate cover. SSR renders an opaque black wall + paused
+          wax-seal frame above everything from the very first paint, so the
+          hero never flashes through before <VideoGate> hydrates. Cleared by
+          VideoGate.tsx once the gate dismounts (sessionStorage flag OR fade
+          complete). Inline so it ships in the first HTML byte.
+        */}
+        <style
+          dangerouslySetInnerHTML={{
+            __html: `
+              html.aj-prepaint-gate, html.aj-prepaint-gate body { overflow: hidden !important; }
+              .aj-prepaint-cover {
+                position: fixed; inset: 0; z-index: 99;
+                background: #000 url(${bp}/video/opener-poster.jpg) center/cover no-repeat;
+                pointer-events: none;
+              }
+              html.aj-gate-passed .aj-prepaint-cover { display: none; }
+            `,
+          }}
+        />
+        <script
+          dangerouslySetInnerHTML={{
+            __html: `(function(){
+              try {
+                if (sessionStorage.getItem('video-gate-passed-v1') === '1') {
+                  document.documentElement.classList.add('aj-gate-passed');
+                } else {
+                  document.documentElement.classList.add('aj-prepaint-gate');
+                }
+              } catch (e) {}
+            })();`,
+          }}
+        />
       </head>
       <body className="min-h-full flex flex-col">{children}</body>
     </html>

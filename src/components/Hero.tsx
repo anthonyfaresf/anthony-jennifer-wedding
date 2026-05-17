@@ -244,26 +244,21 @@ export default function Hero() {
             do contrast work. */}
         <div
           className="hero-cream-veil absolute inset-0 pointer-events-none z-10"
-          style={{ background: "var(--cream)", opacity: 0.4 }}
+          style={{ background: "var(--cream)", opacity: 0.22 }}
           aria-hidden
         />
 
-        {/* Vignette — darker centered behind the names so cream text always
-            sits on a dark patch regardless of watercolor luminance. Strengthened
-            2026-05-15 per Anthony contrast feedback. */}
+        {/* Vignette — lighter pass per Anthony 2026-05-17 "the overlay on
+            the hero is veryyy dark, fix it a bit while making sure the text
+            appears properly and there's a nice contrast." Halved the center
+            alpha + softened the bottom band. Still gives cream text a darker
+            patch to sit on, but the watercolor reads through now. */}
         <div
           aria-hidden
           className="hero-vignette absolute inset-0 pointer-events-none z-20"
           style={{
-            // Boosted 2026-05-15 — center alpha 0.55 → 0.68 + tightened
-            // falloff so the names ALWAYS land on dark patch regardless of
-            // which watercolor frame is showing through.
-            // Pushed harder for desktop — the watercolor shows more bright
-            // edge area on wide viewports, washing out the names. Center
-            // 0.68 → 0.78, mid 0.45 → 0.55, plus a tighter mid-section
-            // band that holds even when the watercolor is bright olive.
             background:
-              "radial-gradient(ellipse 70% 55% at center, rgba(20,18,14,0.78) 0%, rgba(20,18,14,0.55) 40%, rgba(20,18,14,0.25) 70%, rgba(20,18,14,0.05) 100%), linear-gradient(180deg, rgba(20,18,14,0.62) 0%, rgba(20,18,14,0.2) 25%, rgba(20,18,14,0.2) 65%, rgba(20,18,14,0.82) 100%)",
+              "radial-gradient(ellipse 70% 55% at center, rgba(20,18,14,0.42) 0%, rgba(20,18,14,0.26) 45%, rgba(20,18,14,0.10) 75%, rgba(20,18,14,0) 100%), linear-gradient(180deg, rgba(20,18,14,0.30) 0%, rgba(20,18,14,0.05) 30%, rgba(20,18,14,0.05) 70%, rgba(20,18,14,0.45) 100%)",
             opacity: 1,
           }}
         />
@@ -363,35 +358,15 @@ export default function Hero() {
             </p>
 
             <div
-              className="hero-rule h-px mx-auto my-5"
+              className="hero-rule h-px mx-auto my-2"
               style={{
                 background: "var(--gold)",
                 width: 0,
                 boxShadow: "0 0 12px rgba(0,0,0,0.4)",
               }}
             />
-
-            <p
-              className="hero-date-line font-display italic leading-none mb-3 text-cream"
-              style={{
-                fontSize: "clamp(22px, 2.6vw, 34px)",
-                letterSpacing: "0.02em",
-                fontWeight: 300,
-                opacity: 0,
-                textShadow: "0 3px 18px rgba(0,0,0,0.65)",
-              }}
-            >
-              Saturday, 18 July 2026
-            </p>
-            <p
-              className="hero-date-line text-[10px] sm:text-xs uppercase tracking-[0.4em] text-cream/90"
-              style={{
-                opacity: 0,
-                textShadow: "0 2px 12px rgba(0,0,0,0.65)",
-              }}
-            >
-              Couvent Saint Jean · Okaibe · Lebanon
-            </p>
+            {/* Date + place removed per Anthony 2026-05-17 — they live on
+                the Countdown + Venue slots already; hero stays clean. */}
           </div>
         </div>
         {/* Scroll arrows REMOVED per Anthony 2026-05-16. */}
