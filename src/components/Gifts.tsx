@@ -107,7 +107,15 @@ export default function Gifts() {
           Your Presence Is The Gift
         </h2>
         <div className="gifts-rule w-16 h-px bg-gold mx-auto mt-5 mb-7" />
-        <p className="gifts-body text-body leading-relaxed sm:text-lg mb-8">
+        <p
+          className="gifts-body text-body uppercase mb-8"
+          style={{
+            fontFamily: "var(--font-tenor), system-ui, sans-serif",
+            fontSize: "clamp(12px, 1.3vw, 15px)",
+            letterSpacing: "0.18em",
+            lineHeight: 1.7,
+          }}
+        >
           We are so excited to have you join our special day, and your presence
           at our wedding is the best gift we could ask for.
         </p>

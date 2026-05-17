@@ -25,7 +25,7 @@ export default function Footer() {
         </p>
         <div className="w-28 h-px bg-gold mx-auto mb-9 opacity-70" />
         <p
-          className="italic text-body/75 mb-12"
+          className="text-body/75 mb-12"
           style={{
             fontFamily: "var(--font-display)",
             fontSize: "clamp(20px, 2.4vw, 30px)",
