@@ -423,16 +423,22 @@ export default function Story({ only }: StoryProps = {}) {
                     {/* Scene number "01 / 02 / 03" removed per Anthony
                         2026-05-16 (third pass) — caption now leads with
                         the chapter title + time directly. */}
-                    <p
-                      className="font-display text-cream leading-none mb-3"
-                      style={{
-                        fontSize: "clamp(28px, 4vw, 44px)",
-                        letterSpacing: "0.02em",
-                        textShadow: "0 4px 22px rgba(0,0,0,0.75)",
-                      }}
-                    >
-                      {splitChars(s.title)}
-                    </p>
+                    {/* Scene 1 (Reception) hides its title per Anthony
+                        2026-05-17 v20 — the Matthew 19:9 verse IS the
+                        whole point of the slide, no "The Reception"
+                        header needed. */}
+                    {i !== 1 && (
+                      <p
+                        className="font-display text-cream leading-none mb-3"
+                        style={{
+                          fontSize: "clamp(28px, 4vw, 44px)",
+                          letterSpacing: "0.02em",
+                          textShadow: "0 4px 22px rgba(0,0,0,0.75)",
+                        }}
+                      >
+                        {splitChars(s.title)}
+                      </p>
+                    )}
                     {s.year && (
                       <p
                         className="text-[10px] sm:text-xs uppercase tracking-[0.4em] text-cream/85 mb-3"
@@ -441,10 +447,14 @@ export default function Story({ only }: StoryProps = {}) {
                         {splitChars(s.year)}
                       </p>
                     )}
-                    <div
-                      className="w-10 h-px bg-gold/70 mx-auto mb-3"
-                      style={{ boxShadow: "0 0 8px rgba(0,0,0,0.45)" }}
-                    />
+                    {/* Gold rule — hide on the verse scene since there's
+                        nothing above it to separate from. */}
+                    {i !== 1 && (
+                      <div
+                        className="w-10 h-px bg-gold/70 mx-auto mb-3"
+                        style={{ boxShadow: "0 0 8px rgba(0,0,0,0.45)" }}
+                      />
+                    )}
                     {i === 0 ? (
                       /* Schedule overlay on the Ceremony scene per Anthony
                          2026-05-17 — vertical-rail timeline (gold hairline
@@ -494,11 +504,20 @@ export default function Story({ only }: StoryProps = {}) {
                         ))}
                       </ol>
                     ) : (
+                      /* Reception body = Matthew 19:9 verse — rendered in
+                         the cinematic display font, italic, larger, so it
+                         reads as scripture, not body copy. Per Anthony
+                         2026-05-17 v20: "make the verse the cinematic
+                         font we're using." */
                       <p
-                        className="text-cream text-xs sm:text-sm leading-relaxed max-w-sm sm:max-w-md mx-auto"
-                        style={{ textShadow: "0 2px 14px rgba(0,0,0,0.8)" }}
+                        className="font-display italic text-cream leading-snug max-w-sm sm:max-w-md mx-auto"
+                        style={{
+                          fontSize: "clamp(18px, 2.6vw, 26px)",
+                          letterSpacing: "0.005em",
+                          textShadow: "0 2px 14px rgba(0,0,0,0.85)",
+                        }}
                       >
-                        {splitChars(s.body)}
+                        {s.body}
                       </p>
                     )}
                   </div>

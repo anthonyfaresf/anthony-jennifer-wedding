@@ -48,37 +48,30 @@ export default function StickyNav() {
     return () => window.removeEventListener("scroll", onScroll);
   }, []);
 
-  // Track active section by scroll position — more reliable than
-  // IntersectionObserver under the paper-stack sticky layout (multiple
-  // slots can overlap during transitions and confuse IO). Per Anthony
-  // 2026-05-17 v19: "double check and fix the navigation while going
-  // down and while going up."
-  //
-  // Strategy: pick the section whose top is closest to (and not past)
-  // the viewport's center line. This is direction-agnostic — works
-  // identically scrolling up or down.
+  // Active-section detection per Anthony 2026-05-17 v20 (fix nav up+down).
+  // Simple + correct: pick the section whose document offsetTop is the
+  // LARGEST value still ≤ the current scrollY (plus a small probe so the
+  // section activates as soon as its top hits the viewport top). This
+  // works identically scrolling up and down, and handles the gap slots
+  // (story-scene-1 isn't in the nav list — when the user is reading the
+  // reception verse, the previously-active "RSVP" stays lit until the
+  // next nav-listed section's top crosses the line).
   useEffect(() => {
-    const els = SECTIONS.map((s) => ({
+    const items = SECTIONS.map((s) => ({
       id: s.id,
       el: document.getElementById(s.id),
     })).filter((s) => s.el) as { id: string; el: HTMLElement }[];
-    if (!els.length) return;
+    if (!items.length) return;
 
     let raf = 0;
     const measure = () => {
       raf = 0;
-      const probe = window.innerHeight * 0.4; // 40% from top = active line
-      let best: { id: string; dist: number } | null = null;
-      for (const { id, el } of els) {
-        const r = el.getBoundingClientRect();
-        // Section is "active" if its top has passed the probe line and
-        // its bottom hasn't yet. Pick the one whose top is closest to
-        // the probe line (largest top <= probe).
-        if (r.top <= probe && r.bottom > probe) {
-          const dist = probe - r.top;
-          if (!best || dist < best.dist) {
-            best = { id, dist };
-          }
+      const line = window.scrollY + 4;
+      let best: { id: string; top: number } | null = null;
+      for (const { id, el } of items) {
+        const top = el.getBoundingClientRect().top + window.scrollY;
+        if (top <= line && (!best || top > best.top)) {
+          best = { id, top };
         }
       }
       if (best) setActive(best.id);
