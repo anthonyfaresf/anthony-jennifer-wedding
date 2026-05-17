@@ -16,11 +16,20 @@ import { useEffect, useState } from "react";
  * uses z-40 + appears below hero scroll trigger, which is gated behind the
  * envelope being dismissed via sessionStorage).
  */
+/**
+ * Section IDs must match what's actually rendered in page.tsx. Old list
+ * pointed at id="story" which no longer exists (Story now slices into
+ * story-scene-0 / 1 / 2). Per Anthony 2026-05-16: 'the navigation is
+ * not in sync with the rest of the website.' Active-state highlight
+ * was firing on the wrong slot because the IntersectionObserver
+ * couldn't find the old IDs.
+ */
 const SECTIONS = [
-  { id: "story", label: "Story" },
-  { id: "venue", label: "Venue" },
+  { id: "countdown", label: "Date" },
+  { id: "story-scene-0", label: "Day" },
   { id: "schedule", label: "Schedule" },
   { id: "rsvp", label: "RSVP" },
+  { id: "venue", label: "Venue" },
   { id: "faq", label: "FAQ" },
 ];
 

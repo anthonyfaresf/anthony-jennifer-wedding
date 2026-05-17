@@ -23,7 +23,11 @@ if (typeof window !== "undefined") gsap.registerPlugin(ScrollTrigger);
  *   the text band gives it a proper cinematic moment, then the text reads
  *   cleanly on plain cream paper.
  */
-export default function Venue() {
+type VenueProps = { slice?: "hero" | "details" };
+
+export default function Venue({ slice }: VenueProps = {}) {
+  const showHero = !slice || slice === "hero";
+  const showDetails = !slice || slice === "details";
   const sectionRef = useRef<HTMLElement>(null);
   const heroRef = useRef<HTMLDivElement>(null);
 
@@ -81,23 +85,29 @@ export default function Venue() {
     return () => ctx.revert();
   }, []);
 
+  /**
+   * `slice` prop — Venue is split into TWO paper-slots so the user
+   * doesn't get the 100+vh of "stuck" scroll seen in Anthony's
+   * 2026-05-16 audit (the slot was 200vh tall + sticky-pinned, which
+   * means the user scrolled ~100vh seeing the same hero before the
+   * calendar/address even came into view).
+   *
+   *   <Venue slice="hero" />     — just the Couvent watercolor (photo slot)
+   *   <Venue slice="details" /> — calendar band + address grid + map (white slot)
+   *   <Venue />                  — full layout (backwards-compatible)
+   */
   return (
     <section
       ref={sectionRef}
-      id="venue"
+      id={slice === "hero" ? "venue" : slice === "details" ? "venue-details" : "venue"}
       className="relative overflow-hidden bg-cream paper-grain"
     >
+      {showHero && (<>
       {/* === HERO STRIP — animated watercolor of Couvent Saint Jean ===
-          Full-width cinematic 16:9 establishing shot, scroll-scrubbed. The
-          cream-fade-edges-light gives soft top + bottom transitions into
-          the surrounding paper. */}
-      {/* Hero strip — FULLSCREEN on both mobile + desktop per Anthony
-          2026-05-16: "make sure the couvent st. jean with the photo are
-          full screen not like you did on mobile" → desktop was previously
-          16:9 letterbox, now matches mobile's immersive 100svh fill. */}
+          Full-width cinematic full-screen establishing shot, scroll-scrubbed. */}
       <div
         ref={heroRef}
-        className="venue-hero relative w-full overflow-hidden bg-cream cream-fade-edges-light min-h-[100svh]"
+        className="venue-hero relative w-full overflow-hidden bg-cream cream-fade-edges-light h-[90svh]"
       >
         <div className="venue-hero-wrap absolute inset-0">
           <FrameSequence
@@ -201,19 +211,21 @@ export default function Venue() {
           </p>
         </div>
       </div>
+      </>)}
 
+      {showDetails && (<>
       {/* === CALENDAR MARK — small July 2026 grid, day 18 ringed in gold ===
-          Per SYNTHESIS-v3 TIER 1 #2 (yallamabrook ref). Sits between the
-          watercolor hero strip and the address grid, on its own breathing
-          band so it reads as a physical save-the-date detail. */}
-      <div className="venue-calendar-band py-16 sm:py-20 px-6 relative z-10">
+          Tighter padding so calendar + address + map all read in one viewport
+          on mobile per 2026-05-17 audit (was overflowing the sticky-pinned
+          window; now slot is `paper-slot--natural` and content is compact). */}
+      <div className="venue-calendar-band py-10 sm:py-16 px-6 relative z-10">
         <CalendarMark />
       </div>
 
       {/* === ADDRESS / ARRIVAL / MAP === */}
-      <div className="venue-content pb-24 sm:pb-32 px-6 relative z-10">
+      <div className="venue-content pb-16 sm:pb-24 px-6 relative z-10">
         <div className="max-w-5xl mx-auto">
-          <div className="grid md:grid-cols-2 gap-12 items-start">
+          <div className="grid md:grid-cols-2 gap-8 sm:gap-12 items-start">
             <div className="venue-reveal space-y-8">
               <div>
                 <p className="text-xs uppercase tracking-[0.3em] text-olive-deep mb-2">
@@ -261,8 +273,9 @@ export default function Venue() {
               </div>
             </div>
 
-            {/* Map */}
-            <div className="venue-reveal aspect-square md:aspect-[4/5] bg-parchment rounded-sm overflow-hidden border border-ink/10">
+            {/* Map — mobile 16:9 to fit one-viewport read (was aspect-square
+                = 390×390 on iPhone, overflowed). Desktop keeps 4/5 portrait. */}
+            <div className="venue-reveal aspect-[16/10] md:aspect-[4/5] bg-parchment rounded-sm overflow-hidden border border-ink/10">
               <iframe
                 src="https://www.google.com/maps?q=Okaibe,+Lebanon&output=embed"
                 className="w-full h-full grayscale"
@@ -274,6 +287,7 @@ export default function Venue() {
           </div>
         </div>
       </div>
+      </>)}
     </section>
   );
 }

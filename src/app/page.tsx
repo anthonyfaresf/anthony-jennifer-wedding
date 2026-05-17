@@ -99,7 +99,23 @@ export default function Home() {
           <Story only={2} /> {/* Photo — Dress & Travel */}
         </section>
         <section className="paper-slot" data-paper="7"><FAQ /></section>
-        <section className="paper-slot" data-paper="8"><Venue /></section>
+        {/* Venue split into two slots per Anthony 2026-05-16: 'you feel
+            it gets stuck when scrolling the couvent saint jean section.'
+            Was ONE 200vh slot — the sticky pin held the hero on screen
+            for ~100vh of scroll before releasing to show calendar/address.
+            Now: hero is its own 100svh photo slot, details (calendar +
+            address + map) are a separate 100svh+ white slot. Strict
+            paper-stack motion through both. */}
+        {/* Venue hero + details both `paper-slot--natural` (non-sticky)
+            per 2026-05-17 fix. Sticky-pin was making Couvent feel "stuck"
+            (FrameSequence had no scrub progress) AND was hiding the
+            calendar/address/map below the fold (content overflowed the
+            pinned 100svh window). Going natural: both scroll through
+            normally, user reads everything end-to-end, then Footer
+            (next sticky slot, z=10) rises over the page bottom as the
+            paper-stack motion resumes. */}
+        <section className="paper-slot paper-slot--natural" data-paper="8"><Venue slice="hero" /></section>
+        <section className="paper-slot paper-slot--natural" data-paper="9"><Venue slice="details" /></section>
         {/* Footer slot — full 100svh so it can fully cover the Venue
             paper underneath when the user reaches the bottom (otherwise
             the cream edge cuts mid-screen with map visible above —
@@ -108,7 +124,7 @@ export default function Home() {
             intentional, not negligent. */}
         <section
           className="paper-slot flex items-center justify-center"
-          data-paper="9"
+          data-paper="10"
         >
           <Footer />
         </section>

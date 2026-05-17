@@ -231,10 +231,28 @@ html {
    scrolls through the 200vh, then the next paper-slot rises over it
    (PaperStackScale animates the scale-down). */
 .paper-slot--scene { min-height: 200vh; }
+/* Snug slot — for content-heavy slots that need to scroll naturally
+   (no sticky-pin) so all content reads through before next slot covers.
+   Used on Venue hero + Venue details per 2026-05-17 audit: the sticky-
+   pin on a 100svh slot containing 1000+px of mobile content (calendar +
+   address + aspect-square map) was making the content invisible because
+   the slot pinned at top:0 and content couldn't scroll into view before
+   the next slot (Footer) covered it. Going non-sticky here lets the
+   content flow naturally; the NEXT sticky slot still rises over it. */
+.paper-slot--natural {
+  position: relative;
+  min-height: auto;
+  box-shadow: none;
+  will-change: auto;
+}
 /* Nested <section> child (e.g. Countdown, Venue) fills the slot. */
 .paper-slot > section,
 .paper-slot > footer {
   min-height: inherit;
+}
+.paper-slot--natural > section,
+.paper-slot--natural > footer {
+  min-height: auto;
 }
 
 @media (prefers-reduced-motion: reduce) {
