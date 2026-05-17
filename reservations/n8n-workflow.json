@@ -1,12 +1,12 @@
 {
   "id": "oji3wqrZEHuCRIBX",
-  "name": "Wedding RSVP - Sheet + Telegram (Jennifer)",
-  "description": "Webhook -> normalize -> validate -> upsert to Google Sheet (key=phone_e164) -> Telegram message to Jennifer with full guest details.",
+  "name": "Wedding RSVP",
+  "description": "Form POST → normalize → validate → Sheet append → Telegram → 200 OK. Receiver currently Anthony (6552806860), swap to Jennifer's chat ID when she messages bot.",
   "active": true,
   "nodes": [
     {
-      "id": "5d79f70c-4be1-4265-a2bf-ba82f93d06a1",
-      "name": "Sticky Note 32e09bef",
+      "id": "20edc172-5d7e-40a6-b1a6-e66781767fff",
+      "name": "Sticky Note 5465020d",
       "type": "n8n-nodes-base.stickyNote",
       "typeVersion": 1,
       "position": [
@@ -14,7 +14,7 @@
         256
       ],
       "parameters": {
-        "content": "## Wedding RSVP — Sheet + Telegram (Jennifer)\n\nWebhook → normalize → validate → upsert Sheet → notify Jennifer → respond.\n\nCurrent state: WORKFLOW ACTIVE + receiving live submissions from website.\n\nRemaining setup: (1) pick Google Sheet in Upsert node, (2) auto-paste Jennifer chat ID once she messages the bot.",
+        "content": "## Wedding RSVP\n\nForm POST → normalize → validate → Sheet → Telegram → 200.\n\nTelegram chatId = Anthony (6552806860). Swap to Jenni once she messages the bot.\n\nSheet: https://docs.google.com/spreadsheets/d/1Ige6BMG48UHsNUb4Qgz5SJ4GY2o4wqfnpREoNJMVq0c/edit",
         "color": 5,
         "width": 1400,
         "height": 460
@@ -37,7 +37,7 @@
           "allowedOrigins": "*"
         }
       },
-      "webhookId": "8f7f8834-8959-4383-afab-a8882b369a71"
+      "webhookId": "d4d83fef-2a0b-4410-a089-85d75675ed31"
     },
     {
       "id": "fdc05c62-1972-4252-ab32-ef85102c7105",
@@ -83,22 +83,10 @@
               "value": "={{ (($json.body?.first_name ?? \"\").trim() + \" \" + ($json.body?.last_name ?? \"\").trim()).trim() }}"
             },
             {
-              "id": "phone_raw",
-              "name": "phone_raw",
+              "id": "phone",
+              "name": "phone",
               "type": "string",
               "value": "={{ ($json.body?.phone ?? \"\").trim() }}"
-            },
-            {
-              "id": "phone_e164",
-              "name": "phone_e164",
-              "type": "string",
-              "value": "={{ ($json.body?.phone ?? \"\").replace(/[^0-9+]/g, \"\") }}"
-            },
-            {
-              "id": "email",
-              "name": "email",
-              "type": "string",
-              "value": "={{ ($json.body?.email ?? \"\").trim().toLowerCase() }}"
             },
             {
               "id": "attending",
@@ -119,22 +107,10 @@
               "value": "={{ Number($json.body?.party_size ?? 1) >= 2 ? (($json.body?.plus_one_first_name ?? \"\") + \" \" + ($json.body?.plus_one_last_name ?? \"\")).trim() : \"\" }}"
             },
             {
-              "id": "dietary",
-              "name": "dietary",
+              "id": "sections",
+              "name": "sections",
               "type": "string",
-              "value": "={{ ($json.body?.dietary ?? \"\").trim() }}"
-            },
-            {
-              "id": "song_request",
-              "name": "song_request",
-              "type": "string",
-              "value": "={{ ($json.body?.song_request ?? \"\").trim() }}"
-            },
-            {
-              "id": "message",
-              "name": "message",
-              "type": "string",
-              "value": "={{ ($json.body?.message ?? \"\").trim() }}"
+              "value": "={{ String($json.body?.sections ?? \"\").toLowerCase() }}"
             },
             {
               "id": "honeypot",
@@ -207,7 +183,7 @@
             },
             {
               "id": "phone-valid",
-              "leftValue": "={{ $json.phone_e164.length }}",
+              "leftValue": "={{ $json.phone.length }}",
               "rightValue": 6,
               "operator": {
                 "type": "number",
@@ -219,8 +195,8 @@
       }
     },
     {
-      "id": "90c14065-f648-4a2d-b25a-85da8ae249a8",
-      "name": "Upsert Row in Sheet",
+      "id": "18ed43f0-56d2-4168-bdfe-2c0dbc19cbf5",
+      "name": "Save to Sheet",
       "type": "n8n-nodes-base.googleSheets",
       "typeVersion": 4.7,
       "position": [
@@ -229,7 +205,7 @@
       ],
       "parameters": {
         "resource": "sheet",
-        "operation": "appendOrUpdate",
+        "operation": "append",
         "authentication": "oAuth2",
         "documentId": {
           "__rl": true,
@@ -245,11 +221,14 @@
           "cachedResultName": "RSVPs",
           "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1Ige6BMG48UHsNUb4Qgz5SJ4GY2o4wqfnpREoNJMVq0c/edit#gid=1780220527"
         },
+        "options": {
+          "cellFormat": "USER_ENTERED"
+        },
         "columns": {
           "mappingMode": "autoMapInputData",
           "value": {},
           "matchingColumns": [
-            "phone_e164"
+            "phone"
           ],
           "schema": [
             {
@@ -298,28 +277,10 @@
               "canBeUsedToMatch": true
             },
             {
-              "id": "phone_e164",
-              "displayName": "phone_e164",
+              "id": "phone",
+              "displayName": "phone",
               "required": true,
               "defaultMatch": true,
-              "display": true,
-              "type": "string",
-              "canBeUsedToMatch": true
-            },
-            {
-              "id": "phone_raw",
-              "displayName": "phone_raw",
-              "required": false,
-              "defaultMatch": false,
-              "display": true,
-              "type": "string",
-              "canBeUsedToMatch": true
-            },
-            {
-              "id": "email",
-              "displayName": "email",
-              "required": false,
-              "defaultMatch": false,
               "display": true,
               "type": "string",
               "canBeUsedToMatch": true
@@ -352,26 +313,8 @@
               "canBeUsedToMatch": true
             },
             {
-              "id": "dietary",
-              "displayName": "dietary",
-              "required": false,
-              "defaultMatch": false,
-              "display": true,
-              "type": "string",
-              "canBeUsedToMatch": true
-            },
-            {
-              "id": "song_request",
-              "displayName": "song_request",
-              "required": false,
-              "defaultMatch": false,
-              "display": true,
-              "type": "string",
-              "canBeUsedToMatch": true
-            },
-            {
-              "id": "message",
-              "displayName": "message",
+              "id": "sections",
+              "displayName": "sections",
               "required": false,
               "defaultMatch": false,
               "display": true,
@@ -399,9 +342,6 @@
           ],
           "attemptToConvertTypes": false,
           "convertFieldsToString": false
-        },
-        "options": {
-          "cellFormat": "USER_ENTERED"
         }
       },
       "credentials": {
@@ -412,8 +352,8 @@
       }
     },
     {
-      "id": "23fb4ac1-d713-4ac0-90c2-a74d24b68d02",
-      "name": "Notify Jennifer (Telegram)",
+      "id": "d26f03cb-b1c3-428c-9ddb-07e47d9b1a4b",
+      "name": "Notify Telegram",
       "type": "n8n-nodes-base.telegram",
       "typeVersion": 1.2,
       "position": [
@@ -423,8 +363,8 @@
       "parameters": {
         "resource": "message",
         "operation": "sendMessage",
-        "chatId": "<__PLACEHOLDER_VALUE__Jennifer Telegram chat ID - I will auto-fill once she sends /start to the bot__>",
-        "text": "={{ $(\"Normalize Fields\").item.json.attending === \"yes\" ? \"💚 <b>New RSVP — ACCEPT</b>\" : \"❌ <b>New RSVP — DECLINE</b>\" }}\n\n<b>{{ $(\"Normalize Fields\").item.json.full_name }}</b>{{ $(\"Normalize Fields\").item.json.party_size >= 2 ? \" + <b>\" + $(\"Normalize Fields\").item.json.plus_one_name + \"</b>\" : \"\" }}{{ $(\"Normalize Fields\").item.json.party_size >= 2 ? \" (party \" + $(\"Normalize Fields\").item.json.party_size + \")\" : ($(\"Normalize Fields\").item.json.attending === \"yes\" ? \" (solo)\" : \"\") }}\n📱 <code>{{ $(\"Normalize Fields\").item.json.phone_e164 }}</code>{{ $(\"Normalize Fields\").item.json.email ? \"\\n✉️ \" + $(\"Normalize Fields\").item.json.email : \"\" }}\n{{ $(\"Normalize Fields\").item.json.dietary ? \"\\n🥗 <i>\" + $(\"Normalize Fields\").item.json.dietary + \"</i>\" : \"\" }}{{ $(\"Normalize Fields\").item.json.song_request ? \"\\n🎵 \" + $(\"Normalize Fields\").item.json.song_request : \"\" }}{{ $(\"Normalize Fields\").item.json.message ? \"\\n💬 \"\" + $(\"Normalize Fields\").item.json.message + \"\"\" : \"\" }}\n\n<i>⏱ {{ $now.toFormat(\"dd LLL HH:mm\") }}</i>",
+        "chatId": "5473832909",
+        "text": "={{ $(\"Normalize Fields\").item.json.attending === \"yes\" ? \"💚 <b>New RSVP — ACCEPT</b>\" : \"❌ <b>New RSVP — DECLINE</b>\" }}\n\n<b>{{ $(\"Normalize Fields\").item.json.full_name }}</b>{{ $(\"Normalize Fields\").item.json.party_size >= 2 ? \" + <b>\" + $(\"Normalize Fields\").item.json.plus_one_name + \"</b> (party 2)\" : ($(\"Normalize Fields\").item.json.attending === \"yes\" ? \" (solo)\" : \"\") }}\n📱 <code>{{ $(\"Normalize Fields\").item.json.phone }}</code>\n{{ $(\"Normalize Fields\").item.json.sections ? \"🎉 Attending: \" + $(\"Normalize Fields\").item.json.sections : \"\" }}\n\n<i>⏱ {{ $now.toFormat(\"dd LLL HH:mm\") }}</i>",
         "additionalFields": {
           "parse_mode": "HTML",
           "appendAttribution": false,
@@ -437,12 +377,12 @@
           "name": "Jennifer Wedding Bot"
         }
       },
-      "webhookId": "fab3c004-9eef-4786-9288-eeb0f2cba725",
+      "webhookId": "929842cd-78a2-4c26-b655-cc53d8f7b0cd",
       "onError": "continueRegularOutput"
     },
     {
-      "id": "84300f32-7af4-494d-8a3e-a9d2036f9bb1",
-      "name": "Respond 200 OK",
+      "id": "913b649f-4a6f-48db-8881-3071ee918f63",
+      "name": "Respond 200",
       "type": "n8n-nodes-base.respondToWebhook",
       "typeVersion": 1.5,
       "position": [
@@ -451,7 +391,7 @@
       ],
       "parameters": {
         "respondWith": "json",
-        "responseBody": "={{ JSON.stringify({ ok: true, rsvp_id: $(\"Normalize Fields\").item.json.rsvp_id, message: \"RSVP received\" }) }}",
+        "responseBody": "={{ JSON.stringify({ ok: true, rsvp_id: $(\"Normalize Fields\").item.json.rsvp_id }) }}",
         "options": {
           "responseCode": 200,
           "responseHeaders": {
@@ -470,8 +410,8 @@
       }
     },
     {
-      "id": "27909bbf-24c8-4372-bedc-163a4485eb0d",
-      "name": "Respond 400 Invalid",
+      "id": "20bcd282-e74b-4b00-8ca6-422965dfd609",
+      "name": "Respond 400",
       "type": "n8n-nodes-base.respondToWebhook",
       "typeVersion": 1.5,
       "position": [
@@ -526,36 +466,36 @@
       "main": [
         [
           {
-            "node": "Upsert Row in Sheet",
+            "node": "Save to Sheet",
             "type": "main",
             "index": 0
           }
         ],
         [
           {
-            "node": "Respond 400 Invalid",
+            "node": "Respond 400",
             "type": "main",
             "index": 0
           }
         ]
       ]
     },
-    "Upsert Row in Sheet": {
+    "Save to Sheet": {
       "main": [
         [
           {
-            "node": "Notify Jennifer (Telegram)",
+            "node": "Notify Telegram",
             "type": "main",
             "index": 0
           }
         ]
       ]
     },
-    "Notify Jennifer (Telegram)": {
+    "Notify Telegram": {
       "main": [
         [
           {
-            "node": "Respond 200 OK",
+            "node": "Respond 200",
             "type": "main",
             "index": 0
           }

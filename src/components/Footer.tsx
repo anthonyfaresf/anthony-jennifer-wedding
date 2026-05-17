@@ -5,11 +5,14 @@ export default function Footer() {
         {/* Gold rule above signature — gives the empty cream around the
             block visual weight without filling it with content. */}
         <div className="w-20 h-px bg-gold mx-auto mb-10 opacity-70" />
+        {/* Monogram — gold cormorant garamond ampersand to match the hero
+            and gate (Anthony 2026-05-17 flagged the prior italianno cursive
+            as "another font you used please fix it"). */}
         <div
           className="font-display leading-none mb-4 text-ink"
           style={{ fontSize: "clamp(56px, 10vw, 96px)", letterSpacing: "0.01em" }}
         >
-          A <span className="text-gold mx-2" style={{ fontFamily: "var(--font-italianno), 'Italianno', cursive", fontSize: "0.9em" }}>&amp;</span> J
+          A <span className="text-gold mx-2 align-middle" style={{ fontSize: "0.85em" }}>&amp;</span> J
         </div>
         <p
           className="uppercase text-olive-deep/85 mb-3"

@@ -114,6 +114,9 @@ export default function RSVP() {
     setSubmitting(true);
     setDone(null);
     const fd = new FormData(e.currentTarget);
+    // Per Anthony 2026-05-17 — drop companion name fields entirely. We
+    // just send party_size (1 or 2). Name capture for the +1 happens
+    // closer to the day via WhatsApp.
     const payload: Record<string, string | number> = {
       first_name: String(fd.get("first_name") || "").trim(),
       last_name: String(fd.get("last_name") || "").trim(),
@@ -123,10 +126,6 @@ export default function RSVP() {
       sections: attending === "yes" && sections ? sections : "",
       honeypot: String(fd.get("honeypot") || ""),
     };
-    if (attending === "yes" && partySize === 2) {
-      payload.plus_one_first_name = String(fd.get("plus_one_first_name") || "").trim();
-      payload.plus_one_last_name = String(fd.get("plus_one_last_name") || "").trim();
-    }
     try {
       const r = await fetch(WEBHOOK_URL, {
         method: "POST",
@@ -344,41 +343,8 @@ export default function RSVP() {
             </div>
           )}
 
-          {/* Companion name fields */}
-          {attending === "yes" && partySize === 2 && (
-            <>
-              <div className="rsvp-field">
-                <label
-                  htmlFor="rsvp-po-first"
-                  className="block text-[10px] uppercase tracking-[0.3em] text-olive-deep mb-1"
-                >
-                  Companion&apos;s first name
-                </label>
-                <input
-                  id="rsvp-po-first"
-                  name="plus_one_first_name"
-                  type="text"
-                  required
-                  className="w-full bg-transparent border-b border-ink/20 focus:border-olive-deep py-1.5 text-ink text-base outline-none transition-colors"
-                />
-              </div>
-              <div className="rsvp-field">
-                <label
-                  htmlFor="rsvp-po-last"
-                  className="block text-[10px] uppercase tracking-[0.3em] text-olive-deep mb-1"
-                >
-                  Companion&apos;s family name
-                </label>
-                <input
-                  id="rsvp-po-last"
-                  name="plus_one_last_name"
-                  type="text"
-                  required
-                  className="w-full bg-transparent border-b border-ink/20 focus:border-olive-deep py-1.5 text-ink text-base outline-none transition-colors"
-                />
-              </div>
-            </>
-          )}
+          {/* Companion name fields removed per Anthony 2026-05-17. Just
+              party_size 1|2 — names captured later via WhatsApp. */}
 
           <div ref={bottomRef} className="rsvp-field pt-2">
             <button

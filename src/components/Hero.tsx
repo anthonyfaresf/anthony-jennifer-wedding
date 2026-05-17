@@ -38,19 +38,10 @@ export default function Hero() {
       const sectionEl = sectionRef.current;
       if (!sectionEl) return;
 
-      // 1. CREAM PAGE-TURN — fades from 0.75 → 0
-      gsap.to(".hero-cream-veil", {
-        opacity: 0,
-        ease: "power2.out",
-        scrollTrigger: {
-          trigger: sectionEl,
-          start: "top bottom",
-          end: "top 60%",
-          scrub: 0.4,
-        },
-      });
+      // Cream-veil tween REMOVED — the cream-veil element was deleted
+      // per Anthony 2026-05-17 ("remove the white completely").
 
-      // 2. CANVAS PULL-IN — ON-MOUNT one-shot (was scroll-scrubbed).
+      // CANVAS PULL-IN — ON-MOUNT one-shot (was scroll-scrubbed).
       // Per Anthony 2026-05-16: 'hero section, there's no animation at
       // the start of the experience it should have some movement.' Now
       // the watercolor breathes into focus on arrival: scale 1.10 →
@@ -217,7 +208,7 @@ export default function Hero() {
         build time per next.config.ts (empty for Cloudflare, repo prefix
         for GitHub Pages).
       */}
-      <div className="cream-fade-edges sticky top-0 h-[100svh] supports-[height:100dvh]:h-[100dvh] w-full overflow-hidden bg-cream">
+      <div className="sticky top-0 h-[100svh] supports-[height:100dvh]:h-[100dvh] w-full overflow-hidden bg-cream">
         {/* Frame canvas */}
         <div
           className="hero-frame-wrap absolute inset-0 w-full h-full"
@@ -242,11 +233,9 @@ export default function Hero() {
             text + cream-tinted watercolor + cream veil into mush. 0.4 keeps
             the "page-turn" feel while letting the dark vignette + name shadow
             do contrast work. */}
-        <div
-          className="hero-cream-veil absolute inset-0 pointer-events-none z-10"
-          style={{ background: "var(--cream)", opacity: 0.22 }}
-          aria-hidden
-        />
+        {/* Cream veil + edge-fade shades REMOVED per Anthony 2026-05-17
+            ("remove the shades from around the hero section, it is very
+            weird and ugly, remove the white completely"). */}
 
         {/* Vignette — lighter pass per Anthony 2026-05-17 "the overlay on
             the hero is veryyy dark, fix it a bit while making sure the text

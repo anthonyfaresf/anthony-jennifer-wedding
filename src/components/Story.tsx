@@ -45,17 +45,19 @@ if (typeof window !== "undefined") gsap.registerPlugin(ScrollTrigger);
 // from here. Structure mirrors the old Schedule component's vertical-rail
 // pattern (gold line + dots + time/label/note) so the timeline still reads
 // as a timeline, just compactly overlaid on the photo.
+// Per Anthony 2026-05-17 — keep just time + label, drop notes (no chapel /
+// garden terrace / until late suffixes).
 const schedule = [
-  { time: "18:00", label: "Ceremony", note: "Couvent Saint Jean" },
-  { time: "19:00", label: "Welcome drink", note: "Garden terrace" },
-  { time: "20:00", label: "Dinner & party", note: "Until late" },
+  { time: "18:00", label: "Ceremony" },
+  { time: "19:00", label: "Welcome Drink" },
+  { time: "20:00", label: "Dinner & Party" },
 ];
 
 const scenes = [
   {
     n: "01",
-    title: "The Ceremony",
-    year: "18:00",
+    title: "The Day",
+    year: "",
     body: "",
     sceneFolder: "scene-01-meeting",
   },
@@ -68,9 +70,9 @@ const scenes = [
   },
   {
     n: "03",
-    title: "Dress & Travel",
-    year: "Black tie",
-    body: "Formal attire. Beirut → Okaibe is a 40-minute drive; parking on-site.",
+    title: "Celebrate with us",
+    year: "",
+    body: "We can't wait to celebrate this day with you.",
     sceneFolder: "scene-03-wedding",
   },
 ];
@@ -348,38 +350,60 @@ export default function Story({ only }: StoryProps = {}) {
                 {/* Full-bleed canvas — vertical 9:16 on mobile, horizontal
                     16:9 on desktop. FrameSequence default vertical scrub. */}
                 <div className="scene-frame-wrap absolute inset-0">
-                  {mounted && (
-                    <FrameSequence
-                      scene={isDesktop ? `${s.sceneFolder}-h` : s.sceneFolder}
-                      frameCount={31}
-                      triggerSelector={`.scene-${i}`}
-                      className="scene-frame absolute inset-0 w-full h-full"
+                  {i === 0 ? (
+                    /* Scene 0 (Ceremony / The Day) uses a static proposal
+                       photo from Positano per Anthony 2026-05-17, NOT a
+                       FrameSequence watercolor scrub. Drop the real file
+                       at public/photos/positano.jpg (a single high-res JPG
+                       is enough — no scrub frames needed). Until the file
+                       is added, the bg-cream paper-grain shows through
+                       which still reads as a deliberately blank slide. */
+                    <img
+                      src="/photos/positano.jpg"
+                      alt=""
+                      aria-hidden
+                      className="scene-frame absolute inset-0 w-full h-full object-cover"
+                      onError={(e) => {
+                        // Hide gracefully if the file isn't there yet
+                        (e.currentTarget as HTMLImageElement).style.display = "none";
+                      }}
                     />
+                  ) : (
+                    mounted && (
+                      <FrameSequence
+                        scene={isDesktop ? `${s.sceneFolder}-h` : s.sceneFolder}
+                        frameCount={31}
+                        triggerSelector={`.scene-${i}`}
+                        className="scene-frame absolute inset-0 w-full h-full"
+                      />
+                    )
                   )}
                 </div>
 
-                {/* Year marker overlaid on the watercolor */}
-                <div
-                  aria-hidden
-                  className="year-marker absolute z-10 pointer-events-none mix-blend-multiply select-none"
-                  style={{
-                    left: "max(4vw, 24px)",
-                    bottom: "max(22vh, 180px)",
-                    opacity: 0,
-                  }}
-                >
-                  <span
+                {/* Year marker — only renders when scene has a year value */}
+                {s.year && (
+                  <div
+                    aria-hidden
+                    className="year-marker absolute z-10 pointer-events-none mix-blend-multiply select-none"
                     style={{
-                      fontFamily: "var(--font-display)",
-                      fontSize: "clamp(72px, 11vw, 200px)",
-                      lineHeight: "0.85",
-                      color: "var(--olive-deep)",
-                      letterSpacing: "0.02em",
+                      left: "max(4vw, 24px)",
+                      bottom: "max(22vh, 180px)",
+                      opacity: 0,
                     }}
                   >
-                    {s.year}
-                  </span>
-                </div>
+                    <span
+                      style={{
+                        fontFamily: "var(--font-display)",
+                        fontSize: "clamp(72px, 11vw, 200px)",
+                        lineHeight: "0.85",
+                        color: "var(--olive-deep)",
+                        letterSpacing: "0.02em",
+                      }}
+                    >
+                      {s.year}
+                    </span>
+                  </div>
+                )}
 
                 {/* === CAPTION SCRIM — soft darkening gradient behind the
                     caption text so cream text is readable on bright watercolor
@@ -427,12 +451,14 @@ export default function Story({ only }: StoryProps = {}) {
                     >
                       {splitChars(s.title)}
                     </p>
-                    <p
-                      className="text-[10px] sm:text-xs uppercase tracking-[0.4em] text-cream/85 mb-3"
-                      style={{ textShadow: "0 2px 12px rgba(0,0,0,0.75)" }}
-                    >
-                      {splitChars(s.year)}
-                    </p>
+                    {s.year && (
+                      <p
+                        className="text-[10px] sm:text-xs uppercase tracking-[0.4em] text-cream/85 mb-3"
+                        style={{ textShadow: "0 2px 12px rgba(0,0,0,0.75)" }}
+                      >
+                        {splitChars(s.year)}
+                      </p>
+                    )}
                     <div
                       className="w-10 h-px bg-gold/70 mx-auto mb-3"
                       style={{ boxShadow: "0 0 8px rgba(0,0,0,0.45)" }}
@@ -481,11 +507,6 @@ export default function Story({ only }: StoryProps = {}) {
                             </span>
                             <span className="text-cream text-xs sm:text-sm leading-tight">
                               {row.label}
-                              {row.note && (
-                                <span className="text-cream/65 italic ml-1.5">
-                                  · {row.note}
-                                </span>
-                              )}
                             </span>
                           </li>
                         ))}
