@@ -1,0 +1,411 @@
+{
+  "id": "oji3wqrZEHuCRIBX",
+  "name": "Wedding RSVP - Sheet + Telegram (Jennifer)",
+  "description": "Webhook -> normalize -> validate -> upsert to Google Sheet (key=phone_e164) -> Telegram message to Jennifer with full guest details. Wedding RSVP capture, ready for website webhook.",
+  "active": false,
+  "nodes": [
+    {
+      "id": "9f35ac0b-2b0c-4946-bfcb-9a88dc116be7",
+      "name": "Sticky Note ea5925c9",
+      "type": "n8n-nodes-base.stickyNote",
+      "typeVersion": 1,
+      "position": [
+        560,
+        256
+      ],
+      "parameters": {
+        "content": "## Wedding RSVP — Sheet + Telegram (Jennifer)\n\nTrigger: POST /webhook/wedding-rsvp (responseNode mode)\n\nBody fields: first_name, last_name, phone (required) + email, attending (yes|no), party_size (1|2), plus_one_first_name, plus_one_last_name, dietary, song_request, message (optional) + honeypot (must be empty).\n\nStorage: Google Sheet upsert keyed on phone_e164 — re-submissions overwrite, accept/reject flips handled.\n\nNotification: Telegram message to Jennifer (HTML formatting with emoji status badge). Uses her bot credential.\n\nColorful Sheet setup: see reservations/README.md for the 4 conditional-formatting rules to paste once (green rows = accepted, red = declined, gold = pending, plus header styling).",
+        "color": 5,
+        "width": 1400,
+        "height": 460
+      }
+    },
+    {
+      "id": "006bb248-6484-4f82-80f1-35916ecbf277",
+      "name": "RSVP Submission",
+      "type": "n8n-nodes-base.webhook",
+      "typeVersion": 2.1,
+      "position": [
+        0,
+        96
+      ],
+      "parameters": {
+        "httpMethod": "POST",
+        "path": "wedding-rsvp",
+        "responseMode": "responseNode",
+        "options": {
+          "allowedOrigins": "*"
+        }
+      },
+      "webhookId": "0d26eba0-5b4a-47a9-bbb8-e900ab8bd3f8"
+    },
+    {
+      "id": "fdc05c62-1972-4252-ab32-ef85102c7105",
+      "name": "Normalize Fields",
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        224,
+        96
+      ],
+      "parameters": {
+        "mode": "manual",
+        "assignments": {
+          "assignments": [
+            {
+              "id": "rsvp_id",
+              "name": "rsvp_id",
+              "type": "string",
+              "value": "={{ $execution.id + \"-\" + $now.toMillis() }}"
+            },
+            {
+              "id": "submitted_at",
+              "name": "submitted_at",
+              "type": "string",
+              "value": "={{ $now.toISO() }}"
+            },
+            {
+              "id": "first_name",
+              "name": "first_name",
+              "type": "string",
+              "value": "={{ ($json.body?.first_name ?? \"\").trim() }}"
+            },
+            {
+              "id": "last_name",
+              "name": "last_name",
+              "type": "string",
+              "value": "={{ ($json.body?.last_name ?? \"\").trim() }}"
+            },
+            {
+              "id": "full_name",
+              "name": "full_name",
+              "type": "string",
+              "value": "={{ (($json.body?.first_name ?? \"\").trim() + \" \" + ($json.body?.last_name ?? \"\").trim()).trim() }}"
+            },
+            {
+              "id": "phone_raw",
+              "name": "phone_raw",
+              "type": "string",
+              "value": "={{ ($json.body?.phone ?? \"\").trim() }}"
+            },
+            {
+              "id": "phone_e164",
+              "name": "phone_e164",
+              "type": "string",
+              "value": "={{ ($json.body?.phone ?? \"\").replace(/[^0-9+]/g, \"\") }}"
+            },
+            {
+              "id": "email",
+              "name": "email",
+              "type": "string",
+              "value": "={{ ($json.body?.email ?? \"\").trim().toLowerCase() }}"
+            },
+            {
+              "id": "attending",
+              "name": "attending",
+              "type": "string",
+              "value": "={{ String($json.body?.attending ?? \"\").toLowerCase() === \"yes\" ? \"yes\" : \"no\" }}"
+            },
+            {
+              "id": "party_size",
+              "name": "party_size",
+              "type": "number",
+              "value": "={{ String($json.body?.attending ?? \"\").toLowerCase() === \"yes\" ? Math.max(1, Math.min(2, Number($json.body?.party_size ?? 1))) : 0 }}"
+            },
+            {
+              "id": "plus_one_name",
+              "name": "plus_one_name",
+              "type": "string",
+              "value": "={{ Number($json.body?.party_size ?? 1) >= 2 ? (($json.body?.plus_one_first_name ?? \"\") + \" \" + ($json.body?.plus_one_last_name ?? \"\")).trim() : \"\" }}"
+            },
+            {
+              "id": "dietary",
+              "name": "dietary",
+              "type": "string",
+              "value": "={{ ($json.body?.dietary ?? \"\").trim() }}"
+            },
+            {
+              "id": "song_request",
+              "name": "song_request",
+              "type": "string",
+              "value": "={{ ($json.body?.song_request ?? \"\").trim() }}"
+            },
+            {
+              "id": "message",
+              "name": "message",
+              "type": "string",
+              "value": "={{ ($json.body?.message ?? \"\").trim() }}"
+            },
+            {
+              "id": "honeypot",
+              "name": "honeypot",
+              "type": "string",
+              "value": "={{ String($json.body?.honeypot ?? \"\") }}"
+            },
+            {
+              "id": "ip",
+              "name": "ip",
+              "type": "string",
+              "value": "={{ $json.headers?.[\"cf-connecting-ip\"] ?? $json.headers?.[\"x-forwarded-for\"] ?? \"\" }}"
+            },
+            {
+              "id": "user_agent",
+              "name": "user_agent",
+              "type": "string",
+              "value": "={{ $json.headers?.[\"user-agent\"] ?? \"\" }}"
+            }
+          ]
+        },
+        "includeOtherFields": false
+      }
+    },
+    {
+      "id": "56700382-eab2-47e9-a9dd-fd6e45fbcaf4",
+      "name": "Valid Submission?",
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.3,
+      "position": [
+        448,
+        96
+      ],
+      "parameters": {
+        "conditions": {
+          "combinator": "and",
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict",
+            "version": 2
+          },
+          "conditions": [
+            {
+              "id": "honeypot-empty",
+              "leftValue": "={{ $json.honeypot }}",
+              "rightValue": "",
+              "operator": {
+                "type": "string",
+                "operation": "equals"
+              }
+            },
+            {
+              "id": "first-name-present",
+              "leftValue": "={{ $json.first_name.length }}",
+              "rightValue": 1,
+              "operator": {
+                "type": "number",
+                "operation": "gte"
+              }
+            },
+            {
+              "id": "last-name-present",
+              "leftValue": "={{ $json.last_name.length }}",
+              "rightValue": 1,
+              "operator": {
+                "type": "number",
+                "operation": "gte"
+              }
+            },
+            {
+              "id": "phone-valid",
+              "leftValue": "={{ $json.phone_e164.length }}",
+              "rightValue": 6,
+              "operator": {
+                "type": "number",
+                "operation": "gte"
+              }
+            }
+          ]
+        }
+      }
+    },
+    {
+      "id": "90c14065-f648-4a2d-b25a-85da8ae249a8",
+      "name": "Upsert Row in Sheet",
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4.7,
+      "position": [
+        672,
+        0
+      ],
+      "parameters": {
+        "resource": "sheet",
+        "operation": "appendOrUpdate",
+        "authentication": "oAuth2",
+        "documentId": {
+          "__rl": true,
+          "mode": "list",
+          "value": ""
+        },
+        "sheetName": {
+          "__rl": true,
+          "mode": "list",
+          "value": ""
+        },
+        "columns": "={{ ({ mappingMode: \"defineBelow\", matchingColumns: [\"phone_e164\"], schema: [], value: { rsvp_id: $json.rsvp_id, submitted_at: $json.submitted_at, first_name: $json.first_name, last_name: $json.last_name, full_name: $json.full_name, phone_e164: $json.phone_e164, phone_raw: $json.phone_raw, email: $json.email, attending: $json.attending, party_size: $json.party_size, plus_one_name: $json.plus_one_name, dietary: $json.dietary, song_request: $json.song_request, message: $json.message, ip: $json.ip, user_agent: $json.user_agent } }) }}",
+        "options": {
+          "cellFormat": "USER_ENTERED"
+        }
+      },
+      "credentials": {
+        "googleSheetsOAuth2Api": {
+          "id": "uwAVD6OXYPEscnOx",
+          "name": "Google Sheets account"
+        }
+      }
+    },
+    {
+      "id": "23fb4ac1-d713-4ac0-90c2-a74d24b68d02",
+      "name": "Notify Jennifer (Telegram)",
+      "type": "n8n-nodes-base.telegram",
+      "typeVersion": 1.2,
+      "position": [
+        896,
+        0
+      ],
+      "parameters": {
+        "resource": "message",
+        "operation": "sendMessage",
+        "chatId": "<__PLACEHOLDER_VALUE__Jennifer Telegram chat ID - she DMs @userinfobot to get hers__>",
+        "text": "={{ $(\"Normalize Fields\").item.json.attending === \"yes\" ? \"💚 <b>New RSVP — ACCEPT</b>\" : \"❌ <b>New RSVP — DECLINE</b>\" }}\n\n<b>{{ $(\"Normalize Fields\").item.json.full_name }}</b>{{ $(\"Normalize Fields\").item.json.party_size >= 2 ? \" + <b>\" + $(\"Normalize Fields\").item.json.plus_one_name + \"</b>\" : \"\" }}{{ $(\"Normalize Fields\").item.json.party_size >= 2 ? \" (party \" + $(\"Normalize Fields\").item.json.party_size + \")\" : ($(\"Normalize Fields\").item.json.attending === \"yes\" ? \" (solo)\" : \"\") }}\n📱 <code>{{ $(\"Normalize Fields\").item.json.phone_e164 }}</code>{{ $(\"Normalize Fields\").item.json.email ? \"\\n✉️ \" + $(\"Normalize Fields\").item.json.email : \"\" }}\n{{ $(\"Normalize Fields\").item.json.dietary ? \"\\n🥗 <i>\" + $(\"Normalize Fields\").item.json.dietary + \"</i>\" : \"\" }}{{ $(\"Normalize Fields\").item.json.song_request ? \"\\n🎵 \" + $(\"Normalize Fields\").item.json.song_request : \"\" }}{{ $(\"Normalize Fields\").item.json.message ? \"\\n💬 \"\" + $(\"Normalize Fields\").item.json.message + \"\"\" : \"\" }}\n\n<i>⏱ {{ $now.toFormat(\"dd LLL HH:mm\") }}</i>",
+        "additionalFields": {
+          "parse_mode": "HTML",
+          "appendAttribution": false,
+          "disable_web_page_preview": true,
+          "disable_notification": false
+        }
+      },
+      "credentials": {
+        "telegramApi": {
+          "id": "6Dt14fujwtYhjKxq",
+          "name": "Jennifer Wedding Bot"
+        }
+      },
+      "webhookId": "22fdb45e-0c8d-45af-afce-085afd5b192f"
+    },
+    {
+      "id": "84300f32-7af4-494d-8a3e-a9d2036f9bb1",
+      "name": "Respond 200 OK",
+      "type": "n8n-nodes-base.respondToWebhook",
+      "typeVersion": 1.5,
+      "position": [
+        1120,
+        0
+      ],
+      "parameters": {
+        "respondWith": "json",
+        "responseBody": "={{ JSON.stringify({ ok: true, rsvp_id: $(\"Normalize Fields\").item.json.rsvp_id, message: \"RSVP received\" }) }}",
+        "options": {
+          "responseCode": 200,
+          "responseHeaders": {
+            "entries": [
+              {
+                "name": "Access-Control-Allow-Origin",
+                "value": "*"
+              },
+              {
+                "name": "Content-Type",
+                "value": "application/json"
+              }
+            ]
+          }
+        }
+      }
+    },
+    {
+      "id": "27909bbf-24c8-4372-bedc-163a4485eb0d",
+      "name": "Respond 400 Invalid",
+      "type": "n8n-nodes-base.respondToWebhook",
+      "typeVersion": 1.5,
+      "position": [
+        672,
+        192
+      ],
+      "parameters": {
+        "respondWith": "json",
+        "responseBody": "{ \"ok\": false, \"error\": \"Missing or invalid required fields\" }",
+        "options": {
+          "responseCode": 400,
+          "responseHeaders": {
+            "entries": [
+              {
+                "name": "Access-Control-Allow-Origin",
+                "value": "*"
+              },
+              {
+                "name": "Content-Type",
+                "value": "application/json"
+              }
+            ]
+          }
+        }
+      }
+    }
+  ],
+  "connections": {
+    "RSVP Submission": {
+      "main": [
+        [
+          {
+            "node": "Normalize Fields",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Normalize Fields": {
+      "main": [
+        [
+          {
+            "node": "Valid Submission?",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Valid Submission?": {
+      "main": [
+        [
+          {
+            "node": "Upsert Row in Sheet",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Respond 400 Invalid",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Upsert Row in Sheet": {
+      "main": [
+        [
+          {
+            "node": "Notify Jennifer (Telegram)",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Notify Jennifer (Telegram)": {
+      "main": [
+        [
+          {
+            "node": "Respond 200 OK",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "settings": {
+    "executionOrder": "v1"
+  }
+}

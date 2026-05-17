@@ -107,7 +107,7 @@ export default function Venue({ slice }: VenueProps = {}) {
           Full-width cinematic full-screen establishing shot, scroll-scrubbed. */}
       <div
         ref={heroRef}
-        className="venue-hero relative w-full overflow-hidden bg-cream cream-fade-edges-light h-[90svh]"
+        className="venue-hero relative w-full overflow-hidden bg-cream cream-fade-edges-light h-[100svh]"
       >
         <div className="venue-hero-wrap absolute inset-0">
           <FrameSequence
@@ -214,19 +214,25 @@ export default function Venue({ slice }: VenueProps = {}) {
       </>)}
 
       {showDetails && (<>
-      {/* === CALENDAR MARK — small July 2026 grid, day 18 ringed in gold ===
-          Tighter padding so calendar + address + map all read in one viewport
-          on mobile per 2026-05-17 audit (was overflowing the sticky-pinned
-          window; now slot is `paper-slot--natural` and content is compact). */}
-      <div className="venue-calendar-band py-10 sm:py-16 px-6 relative z-10">
-        <CalendarMark />
-      </div>
+      {/* Slot fills exactly 100svh so the sticky paper-stack pin shows ALL
+          content during its lock (per Anthony 2026-05-17: "you only see it
+          when scrolling but you dont get to see the page"). Mobile is the
+          binding constraint — 664px iPhone viewport. Calendar + address +
+          map fit by aggressively compacting padding + dropping the [TBD]
+          arrival block (placeholder copy; will be restored when times are
+          locked). Desktop gets restored breathing room via sm: breakpoints. */}
+      <div className="venue-details-fill min-h-[100svh] flex flex-col justify-center px-6 py-8 sm:py-16 relative z-10">
+        <div className="max-w-5xl mx-auto w-full">
+          {/* Calendar — desktop only. On mobile it pushes the address+map
+              out of the sticky pin window; the date is already shown on
+              the Gate, Hero card, and Countdown so removing it from
+              mobile loses nothing. */}
+          <div className="venue-calendar-band hidden sm:block pb-12">
+            <CalendarMark />
+          </div>
 
-      {/* === ADDRESS / ARRIVAL / MAP === */}
-      <div className="venue-content pb-16 sm:pb-24 px-6 relative z-10">
-        <div className="max-w-5xl mx-auto">
-          <div className="grid md:grid-cols-2 gap-8 sm:gap-12 items-start">
-            <div className="venue-reveal space-y-8">
+          <div className="grid md:grid-cols-2 gap-6 sm:gap-12 items-center">
+            <div className="venue-reveal space-y-4 sm:space-y-8">
               <div>
                 <p className="text-xs uppercase tracking-[0.3em] text-olive-deep mb-2">
                   Address
@@ -238,22 +244,9 @@ export default function Venue({ slice }: VenueProps = {}) {
                   <br />
                   Lebanon
                 </p>
-                <p className="text-xs text-body/60 mt-2 italic">
-                  Full address + Google Maps pin arriving soon
-                </p>
               </div>
 
-              <div>
-                <p className="text-xs uppercase tracking-[0.3em] text-olive-deep mb-2">
-                  Arrival
-                </p>
-                <p className="text-body leading-relaxed">
-                  Ceremony begins at [time TBD]. We recommend arriving 20
-                  minutes early. Parking is available on-site.
-                </p>
-              </div>
-
-              <div className="flex flex-wrap gap-3 pt-2">
+              <div className="flex flex-wrap gap-3">
                 <a
                   href="https://maps.google.com/?q=Couvent+Saint+Jean+Okaibe+Lebanon"
                   target="_blank"
@@ -273,9 +266,9 @@ export default function Venue({ slice }: VenueProps = {}) {
               </div>
             </div>
 
-            {/* Map — mobile 16:9 to fit one-viewport read (was aspect-square
-                = 390×390 on iPhone, overflowed). Desktop keeps 4/5 portrait. */}
-            <div className="venue-reveal aspect-[16/10] md:aspect-[4/5] bg-parchment rounded-sm overflow-hidden border border-ink/10">
+            {/* Map — mobile 16:9 so the whole pin window stays in viewport.
+                Desktop 4/5 portrait for the editorial column feel. */}
+            <div className="venue-reveal aspect-[16/9] md:aspect-[4/5] bg-parchment rounded-sm overflow-hidden border border-ink/10">
               <iframe
                 src="https://www.google.com/maps?q=Okaibe,+Lebanon&output=embed"
                 className="w-full h-full grayscale"
