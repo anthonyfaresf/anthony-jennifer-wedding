@@ -61,6 +61,12 @@ export default function VideoGate() {
       setSkip(true);
       setRemoved(true);
       document.documentElement.classList.add("aj-gate-passed");
+      // Returning visitor — gate was already passed earlier in this
+      // session. Still dispatch aj-music-start so the audio resumes
+      // when the FIRST user interaction this load happens (browser
+      // autoplay-policy permitting). AudioPlayer handles the play()-
+      // rejected fallback via first-gesture listener.
+      window.dispatchEvent(new Event("aj-music-start"));
       return;
     }
 

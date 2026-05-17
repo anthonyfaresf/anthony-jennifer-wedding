@@ -99,23 +99,23 @@ export default function Home() {
           Strict alternation: white (countdown) → photo (ceremony) → white
           (RSVP) → photo (reception) → white (gifts) → photo (venue) →
           white (footer). 7 slots. */}
+      {/* v19 — Celebrate-with-us scene dropped per Anthony 2026-05-17.
+          Slots now: countdown · The Day · RSVP · Reception (verse) ·
+          Gifts · Venue · Footer (7 total, clean alternation). */}
       <div className="paper-stack-root">
         <section className="paper-slot" data-paper="1"><Countdown /></section>
         <section className="paper-slot paper-slot--scene" data-paper="2">
-          <Story only={0} /> {/* Photo — Ceremony + timeline overlay */}
+          <Story only={0} /> {/* Photo — The Day + timeline overlay */}
         </section>
         <section className="paper-slot" data-paper="3"><RSVP /></section>
         <section className="paper-slot paper-slot--scene" data-paper="4">
-          <Story only={1} /> {/* Photo — Reception */}
+          <Story only={1} /> {/* Photo — Reception + Matthew 19:9 */}
         </section>
         <section className="paper-slot" data-paper="5"><Gifts /></section>
-        <section className="paper-slot paper-slot--scene" data-paper="6">
-          <Story only={2} /> {/* Photo — Wedding (restored 2026-05-17) */}
-        </section>
-        <section className="paper-slot" data-paper="7"><Venue slice="hero" /></section>
+        <section className="paper-slot" data-paper="6"><Venue slice="hero" /></section>
         <section
           className="paper-slot flex items-center justify-center"
-          data-paper="8"
+          data-paper="7"
         >
           <Footer />
         </section>

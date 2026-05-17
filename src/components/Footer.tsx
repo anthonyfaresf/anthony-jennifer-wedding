@@ -1,46 +1,41 @@
 export default function Footer() {
   return (
-    <footer className="px-6 py-12 text-center w-full">
-      <div className="max-w-md mx-auto">
-        {/* Gold rule above signature — gives the empty cream around the
-            block visual weight without filling it with content. */}
-        <div className="w-20 h-px bg-gold mx-auto mb-10 opacity-70" />
-        {/* Monogram — gold cormorant garamond ampersand to match the hero
-            and gate (Anthony 2026-05-17 flagged the prior italianno cursive
-            as "another font you used please fix it"). */}
+    <footer className="px-6 py-16 sm:py-20 text-center w-full">
+      <div className="max-w-2xl mx-auto">
+        {/* Bigger / more breathing per Anthony 2026-05-17 v19 — fills the
+            slot so the empty cream feels intentional. */}
+        <div className="w-28 h-px bg-gold mx-auto mb-14 opacity-70" />
         <div
-          className="font-display leading-none mb-4 text-ink"
-          style={{ fontSize: "clamp(56px, 10vw, 96px)", letterSpacing: "0.01em" }}
+          className="font-display leading-none mb-7 text-ink"
+          style={{ fontSize: "clamp(88px, 16vw, 168px)", letterSpacing: "0.01em" }}
         >
           A <span className="text-gold mx-2 align-middle" style={{ fontSize: "0.85em" }}>&amp;</span> J
         </div>
         <p
-          className="uppercase text-olive-deep/85 mb-3"
-          style={{ fontSize: "clamp(11px, 1.2vw, 14px)", letterSpacing: "0.5em" }}
+          className="uppercase text-olive-deep/90 mb-4"
+          style={{ fontSize: "clamp(16px, 1.9vw, 22px)", letterSpacing: "0.5em" }}
         >
           18 &middot; 07 &middot; 2026
         </p>
         <p
-          className="uppercase text-olive-deep/65 mb-10"
-          style={{ fontSize: "clamp(9px, 1vw, 11px)", letterSpacing: "0.4em" }}
+          className="uppercase text-olive-deep/75 mb-14"
+          style={{ fontSize: "clamp(12px, 1.4vw, 16px)", letterSpacing: "0.4em" }}
         >
           Couvent Saint Jean &middot; Okaibe &middot; Lebanon
         </p>
-        <div className="w-20 h-px bg-gold mx-auto mb-6 opacity-70" />
+        <div className="w-28 h-px bg-gold mx-auto mb-9 opacity-70" />
         <p
-          className="italic text-body/70 mb-8"
+          className="italic text-body/75 mb-12"
           style={{
             fontFamily: "var(--font-display)",
-            fontSize: "clamp(13px, 1.3vw, 16px)",
+            fontSize: "clamp(20px, 2.4vw, 30px)",
           }}
         >
           With love, Anthony &amp; Jennifer
         </p>
-        {/* AF&U credit per Anthony 2026-05-17 — small, restrained,
-            tonal with the cream paper. Subscribe to opening in a new tab. */}
         <p
-          className="text-body/40 uppercase"
-          style={{ fontSize: "10px", letterSpacing: "0.32em" }}
+          className="text-body/45 uppercase"
+          style={{ fontSize: "clamp(11px, 1.1vw, 13px)", letterSpacing: "0.32em" }}
         >
           Designed &amp; developed by{" "}
           <a

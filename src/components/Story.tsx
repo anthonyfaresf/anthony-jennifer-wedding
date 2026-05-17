@@ -58,6 +58,10 @@ const schedule = [
 //   The Day            → scene-02-promise frames (was the reception watercolor)
 //   The Reception      → scene-03-wedding frames (was the wedding watercolor)
 //   Celebrate with us  → scene-01-meeting frames (the original meeting/reception watercolor)
+// "Celebrate with us" scene dropped entirely per Anthony 2026-05-17 v19.
+// Reception body replaced with Matthew 19:9 (KJV) — verse text in italic
+// rendered like a quotation; year/time removed (the 20:00 is already on
+// "The Day" timeline overlay).
 const scenes = [
   {
     n: "01",
@@ -69,16 +73,9 @@ const scenes = [
   {
     n: "02",
     title: "The Reception",
-    year: "20:00",
-    body: "Welcome drink on the convent terrace at golden hour, dinner and party under the stars.",
-    sceneFolder: "scene-03-wedding",
-  },
-  {
-    n: "03",
-    title: "Celebrate with us",
     year: "",
-    body: "We can't wait to celebrate this day with you.",
-    sceneFolder: "scene-01-meeting",
+    body: "“They are no more two, but one flesh. What therefore God hath joined together, let not man put asunder.” — Matthew 19:9 (KJV)",
+    sceneFolder: "scene-03-wedding",
   },
 ];
 

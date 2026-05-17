@@ -60,19 +60,20 @@ export default function AudioPlayer() {
     }
   }, []);
 
-  // Music starts ONLY when the gate's ENTER is pressed. Per Anthony
-  // 2026-05-16: "the music should not start before the enter is clicked."
-  // The gate dispatches a custom `aj-music-start` event on enter; that's
-  // our trigger. (Previously: any first gesture started music — meant
-  // music played the moment user tapped anywhere on the gate, before
-  // they'd committed to entering.) Cinematic entry: start at volume 0,
-  // fade up over FADE_IN_SECONDS.
+  // Music starts automatically once the gate dispatches `aj-music-start`
+  // (or, for returning-visitor reloads where the gate is skipped, on the
+  // first user gesture after the dispatch). Default: ON unless explicitly
+  // muted via the toggle. Per Anthony 2026-05-17 v19: "make sure the
+  // music automatically starts playing unless someone mutes it, both on
+  // mobile and desktop."
   useEffect(() => {
+    if (typeof window === "undefined") return;
+    let started = false;
+
     const tryStart = () => {
-      if (typeof window === "undefined") return;
+      if (started) return;
       const stored = localStorage.getItem("aj-audio-on");
-      // Default ON — only stay silent if user explicitly muted before
-      if (stored === "0") return;
+      if (stored === "0") return; // explicitly muted by user
 
       const a = audioRef.current;
       if (!a) return;
@@ -80,17 +81,41 @@ export default function AudioPlayer() {
       a.muted = false;
       a.play()
         .then(() => {
+          started = true;
           setIsPlaying(true);
           fadeVolume(0, TARGET_VOLUME, FADE_IN_SECONDS);
+          // Once playing, drop the first-gesture fallback listeners.
+          detachGestureFallback();
         })
         .catch(() => {
-          // Some browsers still refuse — user can click the toggle
+          // Autoplay rejected — wait for ANY user gesture and retry.
+          attachGestureFallback();
         });
     };
 
-    window.addEventListener("aj-music-start", tryStart, { once: true });
+    // First-gesture fallback — if play() is blocked, retry on the next
+    // tap / click / keypress / scroll. Once it succeeds, we detach.
+    const onGesture = () => {
+      if (started) return;
+      tryStart();
+    };
+    const attachGestureFallback = () => {
+      window.addEventListener("pointerdown", onGesture, { passive: true });
+      window.addEventListener("keydown", onGesture);
+      window.addEventListener("scroll", onGesture, { passive: true });
+      window.addEventListener("touchstart", onGesture, { passive: true });
+    };
+    const detachGestureFallback = () => {
+      window.removeEventListener("pointerdown", onGesture);
+      window.removeEventListener("keydown", onGesture);
+      window.removeEventListener("scroll", onGesture);
+      window.removeEventListener("touchstart", onGesture);
+    };
+
+    window.addEventListener("aj-music-start", tryStart);
     return () => {
       window.removeEventListener("aj-music-start", tryStart);
+      detachGestureFallback();
     };
   }, []);
 

@@ -126,35 +126,10 @@ export default function Venue({ slice }: VenueProps = {}) {
         {/* Bottom scrim — soft dark wash behind the venue title for stable
             contrast across watercolor brightness variations (per 2026-05-15
             contrast pass). */}
-        <div
-          aria-hidden
-          className="absolute inset-x-0 bottom-0 pointer-events-none z-25"
-          style={{
-            height: "45%",
-            background:
-              "linear-gradient(to top, rgba(20,18,14,0.55) 0%, rgba(20,18,14,0.30) 40%, rgba(20,18,14,0.10) 75%, transparent 100%)",
-          }}
-        />
-
-        {/* Title overlay — no card, text floats over the watercolor with
-            mix-blend-multiply (the olive numerals darken whatever they sit
-            over without competing for color, the way they did before). */}
-        {/* Title overlay — cream text on watercolor with strong text-shadow
-            for stable legibility (replaces the mix-blend-multiply approach
-            which read unpredictably across watercolor light/dark patches). */}
-        {/* Title — no box. Per Anthony 2026-05-16: "remove the box or
-            change the color because the contrast is not visible."
-            Cream-on-watercolor with strong text-shadow + a dedicated
-            bottom dark-gradient scrim does the work. Box gone. */}
-        <div
-          aria-hidden
-          className="absolute inset-x-0 bottom-0 pointer-events-none z-20"
-          style={{
-            height: "65%",
-            background:
-              "linear-gradient(to top, rgba(20,18,14,0.92) 0%, rgba(20,18,14,0.85) 15%, rgba(20,18,14,0.6) 40%, rgba(20,18,14,0.25) 70%, transparent 100%)",
-          }}
-        />
+        {/* Dark bottom scrims REMOVED per Anthony 2026-05-17 v19 "remove
+            the dark overlay from the bottom of the couvent saint jean."
+            Title relies on its stacked text-shadow halo alone for
+            contrast. */}
         {/* Pure white + heavy stacked text-shadow halo. Lifted higher
             (bottom-32 mobile) so it sits in the densest part of the
             bottom gradient. Per Anthony 2026-05-16: no box, contrast

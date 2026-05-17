@@ -48,31 +48,55 @@ export default function StickyNav() {
     return () => window.removeEventListener("scroll", onScroll);
   }, []);
 
-  // Track active section via IntersectionObserver
+  // Track active section by scroll position — more reliable than
+  // IntersectionObserver under the paper-stack sticky layout (multiple
+  // slots can overlap during transitions and confuse IO). Per Anthony
+  // 2026-05-17 v19: "double check and fix the navigation while going
+  // down and while going up."
+  //
+  // Strategy: pick the section whose top is closest to (and not past)
+  // the viewport's center line. This is direction-agnostic — works
+  // identically scrolling up or down.
   useEffect(() => {
-    const els = SECTIONS.map((s) => document.getElementById(s.id)).filter(
-      Boolean
-    ) as HTMLElement[];
+    const els = SECTIONS.map((s) => ({
+      id: s.id,
+      el: document.getElementById(s.id),
+    })).filter((s) => s.el) as { id: string; el: HTMLElement }[];
     if (!els.length) return;
 
-    const io = new IntersectionObserver(
-      (entries) => {
-        // Pick the entry with the largest intersection ratio
-        const top = entries
-          .filter((e) => e.isIntersecting)
-          .sort((a, b) => b.intersectionRatio - a.intersectionRatio)[0];
-        if (top?.target?.id) setActive(top.target.id);
-      },
-      {
-        // Bias toward the middle of the viewport so the active section is
-        // the one the eye is actually reading.
-        rootMargin: "-40% 0px -45% 0px",
-        threshold: [0, 0.25, 0.5, 0.75, 1],
+    let raf = 0;
+    const measure = () => {
+      raf = 0;
+      const probe = window.innerHeight * 0.4; // 40% from top = active line
+      let best: { id: string; dist: number } | null = null;
+      for (const { id, el } of els) {
+        const r = el.getBoundingClientRect();
+        // Section is "active" if its top has passed the probe line and
+        // its bottom hasn't yet. Pick the one whose top is closest to
+        // the probe line (largest top <= probe).
+        if (r.top <= probe && r.bottom > probe) {
+          const dist = probe - r.top;
+          if (!best || dist < best.dist) {
+            best = { id, dist };
+          }
+        }
       }
-    );
+      if (best) setActive(best.id);
+    };
 
-    els.forEach((el) => io.observe(el));
-    return () => io.disconnect();
+    const onScroll = () => {
+      if (raf) return;
+      raf = requestAnimationFrame(measure);
+    };
+
+    measure();
+    window.addEventListener("scroll", onScroll, { passive: true });
+    window.addEventListener("resize", onScroll);
+    return () => {
+      window.removeEventListener("scroll", onScroll);
+      window.removeEventListener("resize", onScroll);
+      if (raf) cancelAnimationFrame(raf);
+    };
   }, []);
 
   const handleJump = (id: string) => {
