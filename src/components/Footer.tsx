@@ -25,13 +25,29 @@ export default function Footer() {
         </p>
         <div className="w-20 h-px bg-gold mx-auto mb-6 opacity-70" />
         <p
-          className="italic text-body/70"
+          className="italic text-body/70 mb-8"
           style={{
             fontFamily: "var(--font-display)",
             fontSize: "clamp(13px, 1.3vw, 16px)",
           }}
         >
           With love, Anthony &amp; Jennifer
+        </p>
+        {/* AF&U credit per Anthony 2026-05-17 — small, restrained,
+            tonal with the cream paper. Subscribe to opening in a new tab. */}
+        <p
+          className="text-body/40 uppercase"
+          style={{ fontSize: "10px", letterSpacing: "0.32em" }}
+        >
+          Designed &amp; developed by{" "}
+          <a
+            href="https://www.afandu.com"
+            target="_blank"
+            rel="noopener noreferrer"
+            className="text-olive-deep/70 hover:text-olive-deep underline-offset-4 hover:underline transition-colors"
+          >
+            AF&amp;U
+          </a>
         </p>
       </div>
     </footer>

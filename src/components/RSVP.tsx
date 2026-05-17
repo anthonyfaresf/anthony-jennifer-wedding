@@ -1,42 +1,112 @@
 "use client";
 
-import { useState } from "react";
+import { useEffect, useRef, useState } from "react";
+import gsap from "gsap";
+import { ScrollTrigger } from "gsap/ScrollTrigger";
 import Confetti from "./Confetti";
 
+if (typeof window !== "undefined") gsap.registerPlugin(ScrollTrigger);
+
+/**
+ * RSVP — Minimal 3-field form per Anthony 2026-05-17.
+ *
+ * Posts directly to the n8n webhook at `n8n.srv1295871.hstgr.cloud/webhook/wedding-rsvp`
+ * (workflow: "Wedding RSVP - Sheet + Telegram (Jennifer)"). The webhook
+ * declares `allowedOrigins: "*"` + CORS headers, so browser → n8n direct.
+ *
+ * Fields submitted:
+ *   first_name (required, ≥1 char)
+ *   last_name  (required, ≥1 char)
+ *   phone      (any format — n8n strips to E.164)
+ *   attending  (defaults to "yes" — the form copy is "Will you join us?")
+ *   honeypot   (hidden — must stay empty)
+ */
+const WEBHOOK_URL = "https://n8n.srv1295871.hstgr.cloud/webhook/wedding-rsvp";
+
 export default function RSVP() {
-  const [attending, setAttending] = useState<"yes" | "no" | null>(null);
+  const sectionRef = useRef<HTMLElement>(null);
   const [submitting, setSubmitting] = useState(false);
   const [done, setDone] = useState<null | "ok" | "err">(null);
   const [errMsg, setErrMsg] = useState("");
-  const [cancelToken, setCancelToken] = useState<string | null>(null);
+
+  useEffect(() => {
+    const ctx = gsap.context(() => {
+      gsap.from(".rsvp-eyebrow", {
+        y: 12,
+        opacity: 0,
+        duration: 0.7,
+        ease: "power2.out",
+        scrollTrigger: {
+          trigger: sectionRef.current,
+          start: "top 75%",
+          toggleActions: "play none none reverse",
+        },
+      });
+      gsap.from(".rsvp-title", {
+        y: 18,
+        opacity: 0,
+        scale: 0.97,
+        duration: 1.0,
+        ease: "power3.out",
+        delay: 0.1,
+        scrollTrigger: {
+          trigger: sectionRef.current,
+          start: "top 75%",
+          toggleActions: "play none none reverse",
+        },
+      });
+      gsap.from(".rsvp-rule", {
+        scaleX: 0,
+        transformOrigin: "center",
+        duration: 0.8,
+        ease: "power2.out",
+        delay: 0.3,
+        scrollTrigger: {
+          trigger: sectionRef.current,
+          start: "top 75%",
+          toggleActions: "play none none reverse",
+        },
+      });
+      gsap.from(".rsvp-field", {
+        y: 16,
+        opacity: 0,
+        duration: 0.7,
+        stagger: 0.1,
+        ease: "power2.out",
+        delay: 0.35,
+        scrollTrigger: {
+          trigger: sectionRef.current,
+          start: "top 75%",
+          toggleActions: "play none none reverse",
+        },
+      });
+    }, sectionRef);
+    ScrollTrigger.refresh();
+    return () => ctx.revert();
+  }, []);
 
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
-    if (!attending) return;
     setSubmitting(true);
     setDone(null);
     const fd = new FormData(e.currentTarget);
     const payload = {
-      full_name: fd.get("full_name"),
-      phone: fd.get("phone"),
-      email: fd.get("email") || null,
-      attending: attending === "yes",
-      party_size: Number(fd.get("party_size") || 1),
-      plus_one_name: fd.get("plus_one_name") || null,
-      dietary: fd.get("dietary") || null,
-      message: fd.get("message") || null,
+      first_name: String(fd.get("first_name") || "").trim(),
+      last_name: String(fd.get("last_name") || "").trim(),
+      phone: String(fd.get("phone") || "").trim(),
+      attending: "yes",
+      honeypot: String(fd.get("honeypot") || ""),
     };
     try {
-      const r = await fetch("/api/rsvp", {
+      const r = await fetch(WEBHOOK_URL, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify(payload),
       });
       const j = await r.json().catch(() => ({}));
-      if (!r.ok) {
+      if (!r.ok || j?.ok === false) {
         throw new Error(j?.error || `HTTP ${r.status}`);
       }
-      if (j?.cancel_token) setCancelToken(j.cancel_token);
       setDone("ok");
     } catch (err) {
       setDone("err");
@@ -48,193 +118,125 @@ export default function RSVP() {
 
   if (done === "ok") {
     return (
-      <section id="rsvp" className="py-32 px-6 relative overflow-hidden">
-        {/* Petal-drift confetti burst on success — per SYNTHESIS-v3 TIER 1 #5 */}
-        <Confetti play={true} count={attending === "yes" ? 32 : 0} fullViewport={false} />
+      <section
+        ref={sectionRef}
+        id="rsvp"
+        className="min-h-[100svh] flex flex-col justify-center px-6 py-10 sm:py-20 relative overflow-hidden bg-cream"
+      >
+        <Confetti play={true} count={32} fullViewport={false} />
         <div className="max-w-md mx-auto text-center relative z-10">
-          <p className="text-xs uppercase tracking-[0.4em] text-olive-deep mb-6">
-            {attending === "yes" ? "See you there" : "Thank you"}
+          <p className="text-xs uppercase tracking-[0.4em] text-olive-deep mb-4">
+            See you there
           </p>
-          <h2 className="font-display text-5xl text-ink mb-6">
-            {attending === "yes" ? "We can't wait." : "Your reply is saved."}
+          <h2 className="font-display text-4xl sm:text-5xl text-ink mb-4">
+            We can&apos;t wait.
           </h2>
-          <div className="w-16 h-px bg-gold mx-auto my-8" />
+          <div className="w-16 h-px bg-gold mx-auto my-6" />
           <p className="text-body leading-relaxed">
-            If anything changes, send Anthony or Jennifer a WhatsApp directly
-            and we&apos;ll update your details.
+            Your RSVP is saved. If anything changes, send Anthony or Jennifer a
+            WhatsApp directly and we&apos;ll update your details.
           </p>
-          {cancelToken && (
-            <p className="text-xs text-body/60 mt-8">
-              Need to cancel?{" "}
-              <a
-                href={`/cancel/${cancelToken}`}
-                className="underline decoration-olive-deep/40 hover:decoration-olive"
-              >
-                Use this link
-              </a>
-              .
-            </p>
-          )}
         </div>
       </section>
     );
   }
 
   return (
-    <section id="rsvp" className="py-32 px-6">
-      <div className="max-w-xl mx-auto">
-        <div className="text-center mb-12">
-          <p className="text-xs uppercase tracking-[0.4em] text-olive-deep mb-4">
+    <section
+      ref={sectionRef}
+      id="rsvp"
+      className="min-h-[100svh] flex flex-col justify-center px-6 py-10 sm:py-20 bg-cream"
+    >
+      <div className="max-w-md mx-auto w-full">
+        <div className="text-center mb-6 sm:mb-10">
+          <p className="rsvp-eyebrow text-xs uppercase tracking-[0.4em] text-olive-deep mb-3">
             RSVP
           </p>
-          <h2 className="font-display text-5xl md:text-6xl text-ink">
+          <h2 className="rsvp-title font-display text-3xl sm:text-5xl md:text-6xl text-ink">
             Will you join us?
           </h2>
-          <div className="w-16 h-px bg-gold mx-auto mt-8" />
-          <p className="text-body/70 mt-6 text-sm">
-            Kindly reply by [deadline TBD].
-          </p>
+          <div className="rsvp-rule w-16 h-px bg-gold mx-auto mt-5" />
         </div>
 
-        <form onSubmit={handleSubmit} className="space-y-6">
-          {/* Yes / No toggle */}
-          <div>
-            <p className="text-xs uppercase tracking-[0.3em] text-olive-deep mb-3">
-              Will you attend?
-            </p>
-            <div className="grid grid-cols-2 gap-3">
-              <button
-                type="button"
-                onClick={() => setAttending("yes")}
-                className={`py-4 px-6 text-sm uppercase tracking-[0.3em] border transition-colors ${
-                  attending === "yes"
-                    ? "bg-olive-deep text-cream border-olive-deep"
-                    : "bg-cream text-ink border-ink/15 hover:border-olive-deep"
-                }`}
-              >
-                I&apos;ll be there
-              </button>
-              <button
-                type="button"
-                onClick={() => setAttending("no")}
-                className={`py-4 px-6 text-sm uppercase tracking-[0.3em] border transition-colors ${
-                  attending === "no"
-                    ? "bg-ink text-cream border-ink"
-                    : "bg-cream text-ink border-ink/15 hover:border-ink"
-                }`}
-              >
-                Sadly, no
-              </button>
-            </div>
+        <form onSubmit={handleSubmit} className="space-y-4 relative">
+          {/* Honeypot — bots fill it, humans don't see it */}
+          <div className="absolute -left-[9999px]" aria-hidden>
+            <label>
+              Don&apos;t fill this:
+              <input type="text" name="honeypot" tabIndex={-1} autoComplete="off" />
+            </label>
           </div>
 
-          {attending && (
-            <>
-              <Field label="Full name" name="full_name" required />
-              <Field
-                label="WhatsApp number (with country code)"
-                name="phone"
-                type="tel"
-                placeholder="+961 ..."
-                required
-              />
-              <Field label="Email (optional)" name="email" type="email" />
+          <div className="rsvp-field">
+            <label
+              htmlFor="rsvp-first"
+              className="block text-xs uppercase tracking-[0.3em] text-olive-deep mb-2"
+            >
+              First name
+            </label>
+            <input
+              id="rsvp-first"
+              name="first_name"
+              type="text"
+              required
+              autoComplete="given-name"
+              className="w-full bg-transparent border-b border-ink/20 focus:border-olive-deep py-2 text-ink text-base outline-none transition-colors"
+            />
+          </div>
 
-              {attending === "yes" && (
-                <>
-                  <div>
-                    <label className="block text-xs uppercase tracking-[0.3em] text-olive-deep mb-2">
-                      Party size
-                    </label>
-                    <select
-                      name="party_size"
-                      defaultValue="1"
-                      className="w-full bg-cream border border-ink/15 px-4 py-3 text-body focus:outline-none focus:border-olive-deep transition-colors"
-                    >
-                      <option value="1">Just me</option>
-                      <option value="2">Me and my +1</option>
-                    </select>
-                  </div>
-                  <Field
-                    label="+1 name (if applicable)"
-                    name="plus_one_name"
-                  />
-                  <Field
-                    label="Dietary needs / allergies"
-                    name="dietary"
-                    multiline
-                  />
-                </>
-              )}
+          <div className="rsvp-field">
+            <label
+              htmlFor="rsvp-last"
+              className="block text-xs uppercase tracking-[0.3em] text-olive-deep mb-2"
+            >
+              Family name
+            </label>
+            <input
+              id="rsvp-last"
+              name="last_name"
+              type="text"
+              required
+              autoComplete="family-name"
+              className="w-full bg-transparent border-b border-ink/20 focus:border-olive-deep py-2 text-ink text-base outline-none transition-colors"
+            />
+          </div>
 
-              <Field
-                label="A note for the couple (optional)"
-                name="message"
-                multiline
-              />
+          <div className="rsvp-field">
+            <label
+              htmlFor="rsvp-phone"
+              className="block text-xs uppercase tracking-[0.3em] text-olive-deep mb-2"
+            >
+              Phone
+            </label>
+            <input
+              id="rsvp-phone"
+              name="phone"
+              type="tel"
+              required
+              autoComplete="tel"
+              inputMode="tel"
+              placeholder="+961 ..."
+              className="w-full bg-transparent border-b border-ink/20 focus:border-olive-deep py-2 text-ink text-base outline-none transition-colors placeholder:text-ink/30"
+            />
+          </div>
 
-              <button
-                type="submit"
-                disabled={submitting}
-                className="w-full bg-olive-deep text-cream py-5 text-xs uppercase tracking-[0.4em] hover:bg-olive transition-colors disabled:opacity-60"
-              >
-                {submitting ? "Sending..." : attending === "yes" ? "Lock it in" : "Send reply"}
-              </button>
+          <div className="rsvp-field pt-4">
+            <button
+              type="submit"
+              disabled={submitting}
+              className="w-full text-xs uppercase tracking-[0.3em] text-cream bg-olive-deep hover:bg-olive disabled:opacity-50 px-5 py-3.5 transition-colors"
+            >
+              {submitting ? "Sending..." : "Confirm RSVP"}
+            </button>
+          </div>
 
-              {done === "err" && (
-                <p className="text-sm text-red-700 text-center">
-                  Something went wrong: {errMsg}. Please try again or message
-                  Anthony directly.
-                </p>
-              )}
-            </>
+          {done === "err" && (
+            <p className="text-xs text-red-700 text-center pt-2">
+              Couldn&apos;t send: {errMsg}. Please try again or WhatsApp Anthony directly.
+            </p>
           )}
         </form>
       </div>
     </section>
-  );
-}
-
-function Field({
-  label,
-  name,
-  type = "text",
-  required = false,
-  multiline = false,
-  placeholder,
-}: {
-  label: string;
-  name: string;
-  type?: string;
-  required?: boolean;
-  multiline?: boolean;
-  placeholder?: string;
-}) {
-  const cls =
-    "w-full bg-cream border border-ink/15 px-4 py-3 text-body focus:outline-none focus:border-olive-deep transition-colors";
-  return (
-    <div>
-      <label className="block text-xs uppercase tracking-[0.3em] text-olive-deep mb-2">
-        {label}
-        {required && <span className="text-gold ml-1">·</span>}
-      </label>
-      {multiline ? (
-        <textarea
-          name={name}
-          required={required}
-          placeholder={placeholder}
-          rows={3}
-          className={cls}
-        />
-      ) : (
-        <input
-          name={name}
-          type={type}
-          required={required}
-          placeholder={placeholder}
-          className={cls}
-        />
-      )}
-    </div>
   );
 }

@@ -82,12 +82,50 @@ export default function Schedule() {
 
   useEffect(() => {
     const ctx = gsap.context(() => {
+      // Header reveal — eyebrow rises + title scales + rule grows
+      gsap.from(".sched-eyebrow", {
+        y: 12,
+        opacity: 0,
+        duration: 0.7,
+        ease: "power2.out",
+        scrollTrigger: {
+          trigger: sectionRef.current,
+          start: "top 75%",
+          toggleActions: "play none none reverse",
+        },
+      });
+      gsap.from(".sched-title", {
+        y: 18,
+        opacity: 0,
+        scale: 0.97,
+        duration: 1.0,
+        ease: "power3.out",
+        delay: 0.1,
+        scrollTrigger: {
+          trigger: sectionRef.current,
+          start: "top 75%",
+          toggleActions: "play none none reverse",
+        },
+      });
+      gsap.from(".sched-rule", {
+        scaleX: 0,
+        transformOrigin: "center",
+        duration: 0.8,
+        ease: "power2.out",
+        delay: 0.3,
+        scrollTrigger: {
+          trigger: sectionRef.current,
+          start: "top 75%",
+          toggleActions: "play none none reverse",
+        },
+      });
       gsap.from(".sched-row", {
         x: -20,
         opacity: 0,
-        duration: 0.8,
+        duration: 0.7,
         stagger: 0.12,
         ease: "power2.out",
+        delay: 0.35,
         scrollTrigger: {
           trigger: sectionRef.current,
           start: "top 75%",
@@ -103,17 +141,17 @@ export default function Schedule() {
     <section
       ref={sectionRef}
       id="schedule"
-      className="py-32 px-6 bg-cream"
+      className="min-h-[100svh] flex flex-col justify-center px-6 py-10 sm:py-20 bg-cream"
     >
-      <div className="max-w-2xl mx-auto">
-        <div className="text-center mb-16">
-          <p className="text-xs uppercase tracking-[0.4em] text-olive-deep mb-4">
+      <div className="max-w-2xl mx-auto w-full">
+        <div className="text-center mb-6 sm:mb-12">
+          <p className="sched-eyebrow text-xs uppercase tracking-[0.4em] text-olive-deep mb-3">
             The day
           </p>
-          <h2 className="font-display text-5xl md:text-6xl text-ink">
+          <h2 className="sched-title font-display text-3xl sm:text-5xl md:text-6xl text-ink">
             18 July 2026
           </h2>
-          <div className="w-16 h-px bg-gold mx-auto mt-8" />
+          <div className="sched-rule w-16 h-px bg-gold mx-auto mt-5" />
         </div>
 
         {/* Vertical timeline rail — gold line spans the schedule with a
@@ -135,7 +173,7 @@ export default function Schedule() {
           {events.map((e, i) => (
             <li
               key={i}
-              className="sched-row relative grid grid-cols-[1fr_auto] gap-3 sm:gap-6 py-5 sm:py-6 border-b border-ink/8 last:border-b-0 items-center"
+              className="sched-row relative grid grid-cols-[1fr_auto] gap-3 sm:gap-6 py-3 sm:py-5 border-b border-ink/8 last:border-b-0 items-center"
             >
               {/* Timeline disc */}
               <span
@@ -178,15 +216,15 @@ export default function Schedule() {
           ))}
         </ol>
 
-        <div className="text-center mt-10 space-y-3">
+        <div className="text-center mt-6 sm:mt-10 space-y-2">
           <button
             type="button"
             onClick={downloadAll}
-            className="inline-block text-xs uppercase tracking-[0.3em] text-olive-deep hover:text-olive border border-olive-deep/30 hover:border-olive px-5 py-3 transition-colors"
+            className="sched-cta inline-block text-xs uppercase tracking-[0.3em] text-olive-deep hover:text-olive border border-olive-deep/30 hover:border-olive px-5 py-2.5 transition-colors"
           >
             Add the whole day
           </button>
-          <p className="text-xs text-body/50 italic">
+          <p className="sched-cta text-[11px] text-body/50 italic">
             Times are working drafts — final schedule confirmed closer to the date.
           </p>
         </div>

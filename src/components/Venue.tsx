@@ -4,7 +4,6 @@ import { useEffect, useRef } from "react";
 import gsap from "gsap";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
 import { FrameSequence } from "./FrameSequence";
-import CalendarMark from "./CalendarMark";
 
 if (typeof window !== "undefined") gsap.registerPlugin(ScrollTrigger);
 
@@ -223,12 +222,20 @@ export default function Venue({ slice }: VenueProps = {}) {
           locked). Desktop gets restored breathing room via sm: breakpoints. */}
       <div className="venue-details-fill min-h-[100svh] flex flex-col justify-center px-6 py-8 sm:py-16 relative z-10">
         <div className="max-w-5xl mx-auto w-full">
-          {/* Calendar — desktop only. On mobile it pushes the address+map
-              out of the sticky pin window; the date is already shown on
-              the Gate, Hero card, and Countdown so removing it from
-              mobile loses nothing. */}
-          <div className="venue-calendar-band hidden sm:block pb-12">
-            <CalendarMark />
+          {/* Calendar removed per Anthony 2026-05-17 — redundant with
+              date shown on Gate + Hero invitation + Countdown. */}
+
+          {/* Section header — replaces the calendar's role of marking
+              the venue block visually. Same eyebrow + title rhythm as
+              other sections so the page reads consistent. */}
+          <div className="text-center mb-8 sm:mb-12">
+            <p className="text-xs uppercase tracking-[0.4em] text-olive-deep mb-3">
+              Where
+            </p>
+            <h2 className="font-display text-3xl sm:text-5xl text-ink">
+              Find us in Okaibe
+            </h2>
+            <div className="w-12 h-px bg-gold mx-auto mt-5" />
           </div>
 
           <div className="grid md:grid-cols-2 gap-6 sm:gap-12 items-center">
