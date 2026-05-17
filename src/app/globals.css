@@ -170,17 +170,9 @@ h3, h4 {
   mix-blend-mode: multiply;
 }
 
-/* Smooth scroll + section-locking scroll-snap per Anthony 2026-05-17 v22.
-   `proximity` (not `mandatory`) lets users scroll freely — snap only
-   kicks in when their natural stop is already close to a slot boundary,
-   so the page never feels "fighting" with their gesture. Each paper-slot
-   declares its own `scroll-snap-align: start` below. */
+/* Smooth scroll */
 html {
   scroll-behavior: smooth;
-  scroll-snap-type: y proximity;
-}
-@media (prefers-reduced-motion: reduce) {
-  html { scroll-snap-type: none; }
 }
 
 /*
@@ -210,14 +202,6 @@ html {
   min-height: 100vh;
   min-height: 100svh;
   background: var(--cream);
-  /* Scroll-snap per Anthony 2026-05-17 v22 — "make sure each section
-     locks in when we reach it, so it doesn't continue to the other
-     unless they keep scrolling." `start` aligns each slot's top to
-     the viewport top. `normal` (paired with html proximity below)
-     lets fast scrolls pass through multiple slots, but a slow/short
-     scroll snaps to the nearest slot edge. */
-  scroll-snap-align: start;
-  scroll-snap-stop: normal;
   /* Stronger paper-edge shadow on the top edge — pronounced enough that
      the rising paper visibly LANDS on top of the previous, like a real
      sheet being placed down. Strengthened 2026-05-15 per Anthony
