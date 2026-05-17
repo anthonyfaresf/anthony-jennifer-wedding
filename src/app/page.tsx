@@ -3,7 +3,7 @@
 // Couvent watercolor sequence, followed by the original animated Hero (wine
 // cheers scrub on scroll). VerseOpener archived; VerseGate (animated +
 // click-to-enter) + restored Hero are now wired in.
-import VerseGate from "@/components/VerseGate";
+import VideoGate from "@/components/VideoGate";
 import Hero from "@/components/Hero";
 import Countdown from "@/components/Countdown";
 import Story from "@/components/Story";
@@ -25,7 +25,7 @@ export default function Home() {
       {/* Cinematic verse gate — animated olive/wine/Couvent watercolor +
           Song of Solomon 3:4 + couple + date + venue. Tap to enter →
           fades to hero. Skipped on second visit via sessionStorage. */}
-      <VerseGate />
+      <VideoGate />
       {/* Sticky pill nav — appears after hero scrolls past */}
       <StickyNav />
       <AudioPlayer />
