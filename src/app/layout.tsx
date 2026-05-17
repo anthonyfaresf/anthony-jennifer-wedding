@@ -24,14 +24,37 @@ const italianno = Italianno({
 });
 
 export const metadata: Metadata = {
+  metadataBase: new URL("https://anthony-jennifer-wedding.pages.dev"),
   title: "Anthony & Jennifer · 18 July 2026",
   description:
     "Anthony Fares Faraj and Jennifer Haddad invite you to celebrate their wedding at Couvent Saint Jean, Okaibe — 18 July 2026.",
+  icons: {
+    icon: [
+      { url: "/favicon-32.png", sizes: "32x32", type: "image/png" },
+      { url: "/logo.png", sizes: "any", type: "image/png" },
+    ],
+    apple: "/apple-touch-icon.png",
+    shortcut: "/favicon-32.png",
+  },
   openGraph: {
     title: "Anthony & Jennifer · 18 July 2026",
     description: "Couvent Saint Jean, Okaibe — Lebanon",
     type: "website",
     locale: "en_US",
+    images: [
+      {
+        url: "/og-image.png",
+        width: 1200,
+        height: 1200,
+        alt: "Anthony & Jennifer — 18 July 2026",
+      },
+    ],
+  },
+  twitter: {
+    card: "summary_large_image",
+    title: "Anthony & Jennifer · 18 July 2026",
+    description: "Couvent Saint Jean, Okaibe — Lebanon",
+    images: ["/og-image.png"],
   },
   robots: { index: false, follow: false },
 };

@@ -48,14 +48,18 @@ export default function StickyNav() {
     return () => window.removeEventListener("scroll", onScroll);
   }, []);
 
-  // Active-section detection per Anthony 2026-05-17 v20 (fix nav up+down).
-  // Simple + correct: pick the section whose document offsetTop is the
-  // LARGEST value still ≤ the current scrollY (plus a small probe so the
-  // section activates as soon as its top hits the viewport top). This
-  // works identically scrolling up and down, and handles the gap slots
-  // (story-scene-1 isn't in the nav list — when the user is reading the
-  // reception verse, the previously-active "RSVP" stays lit until the
-  // next nav-listed section's top crosses the line).
+  // Active-section detection per Anthony 2026-05-17 v21 (fix up-nav too).
+  //
+  // The paper-stack layout makes ALL slots `position: sticky; top: 0`
+  // within paper-stack-root — so once a user scrolls past several slots,
+  // each one's getBoundingClientRect().top ≈ 0 (they're all pinned at
+  // the viewport top under higher-z layers). The "live" rect can't tell
+  // us where each section's NATURAL document position is — which is
+  // what we need for direction-agnostic active detection.
+  //
+  // Fix: cache each section's natural document top at mount + on
+  // resize / load, when sticky pinning hasn't yet pulled them around.
+  // Then on scroll, just compare scrollY to those frozen values.
   useEffect(() => {
     const items = SECTIONS.map((s) => ({
       id: s.id,
@@ -63,18 +67,39 @@ export default function StickyNav() {
     })).filter((s) => s.el) as { id: string; el: HTMLElement }[];
     if (!items.length) return;
 
+    const tops: { id: string; top: number }[] = [];
+
+    const recomputeTops = () => {
+      tops.length = 0;
+      const prevY = window.scrollY;
+      // Walk up the offsetParent chain so we get document-relative top,
+      // bypassing the sticky parent's rect distortion. This is stable
+      // and direction-agnostic — captured once, used forever.
+      for (const { id, el } of items) {
+        let n: HTMLElement | null = el;
+        let top = 0;
+        while (n) {
+          top += n.offsetTop;
+          n = n.offsetParent as HTMLElement | null;
+        }
+        tops.push({ id, top });
+      }
+      // Sort ascending so iteration finds the LAST one ≤ scrollY easily
+      tops.sort((a, b) => a.top - b.top);
+      // Trigger a measure right after with the fresh values
+      measure();
+    };
+
     let raf = 0;
     const measure = () => {
       raf = 0;
       const line = window.scrollY + 4;
-      let best: { id: string; top: number } | null = null;
-      for (const { id, el } of items) {
-        const top = el.getBoundingClientRect().top + window.scrollY;
-        if (top <= line && (!best || top > best.top)) {
-          best = { id, top };
-        }
+      let activeId: string | null = null;
+      for (const t of tops) {
+        if (t.top <= line) activeId = t.id;
+        else break; // tops is sorted ascending
       }
-      if (best) setActive(best.id);
+      if (activeId) setActive(activeId);
     };
 
     const onScroll = () => {
@@ -82,12 +107,17 @@ export default function StickyNav() {
       raf = requestAnimationFrame(measure);
     };
 
-    measure();
+    recomputeTops();
+    // Recompute after fonts + images settle (layout shifts) + on resize
+    window.setTimeout(recomputeTops, 600);
+    window.setTimeout(recomputeTops, 2000);
     window.addEventListener("scroll", onScroll, { passive: true });
-    window.addEventListener("resize", onScroll);
+    window.addEventListener("resize", recomputeTops);
+    window.addEventListener("load", recomputeTops);
     return () => {
       window.removeEventListener("scroll", onScroll);
-      window.removeEventListener("resize", onScroll);
+      window.removeEventListener("resize", recomputeTops);
+      window.removeEventListener("load", recomputeTops);
       if (raf) cancelAnimationFrame(raf);
     };
   }, []);
