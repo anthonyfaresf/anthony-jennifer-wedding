@@ -42,11 +42,13 @@ if (typeof window !== "undefined") gsap.registerPlugin(ScrollTrigger);
 // Schedule section per Anthony 2026-05-17 ("the schedule should be on the
 // photo of the ceremony, not a separate section"). Single source of truth
 // for times — every other place on the site that references times reads
-// from here.
+// from here. Structure mirrors the old Schedule component's vertical-rail
+// pattern (gold line + dots + time/label/note) so the timeline still reads
+// as a timeline, just compactly overlaid on the photo.
 const schedule = [
-  { time: "18:00", label: "Ceremony" },
-  { time: "19:00", label: "Welcome drink" },
-  { time: "20:00", label: "Dinner & party", suffix: "until late" },
+  { time: "18:00", label: "Ceremony", note: "Couvent Saint Jean" },
+  { time: "19:00", label: "Welcome drink", note: "Garden terrace" },
+  { time: "20:00", label: "Dinner & party", note: "Until late" },
 ];
 
 const scenes = [
@@ -437,30 +439,57 @@ export default function Story({ only }: StoryProps = {}) {
                     />
                     {i === 0 ? (
                       /* Schedule overlay on the Ceremony scene per Anthony
-                         2026-05-17 — replaces the standalone Schedule
-                         section so the times read against the chapel
-                         watercolor. */
-                      <ul
-                        className="text-cream/95 space-y-1.5 text-xs sm:text-sm leading-tight"
+                         2026-05-17 — vertical-rail timeline (gold hairline
+                         + dots) matching the old standalone Schedule's
+                         shape, just compactly overlaid on the photo. */
+                      <ol
+                        className="schedule-rail relative inline-block text-left pl-7 sm:pl-9"
                         style={{ textShadow: "0 2px 14px rgba(0,0,0,0.8)" }}
                       >
+                        {/* Gold vertical hairline rail */}
+                        <span
+                          aria-hidden
+                          className="absolute left-[10px] sm:left-[13px] top-2 bottom-2 w-px"
+                          style={{
+                            background:
+                              "linear-gradient(to bottom, transparent 0%, var(--gold) 18%, var(--gold) 82%, transparent 100%)",
+                            opacity: 0.7,
+                            boxShadow: "0 0 8px rgba(0,0,0,0.5)",
+                          }}
+                        />
                         {schedule.map((row, ri) => (
                           <li
                             key={ri}
-                            className="flex items-baseline justify-center gap-2 sm:gap-3"
+                            className="relative py-1.5 sm:py-2 flex items-baseline gap-2 sm:gap-3"
                           >
-                            <span className="text-gold tabular-nums tracking-wider">
+                            {/* Disc on the rail */}
+                            <span
+                              aria-hidden
+                              className="absolute top-1/2 -translate-y-1/2 rounded-full"
+                              style={{
+                                left: "-26px",
+                                width: 9,
+                                height: 9,
+                                background: "rgba(0,0,0,0.45)",
+                                border: "1.5px solid var(--gold)",
+                                boxShadow:
+                                  "0 0 0 3px rgba(0,0,0,0.4), 0 1px 4px rgba(0,0,0,0.55)",
+                              }}
+                            />
+                            <span className="text-gold text-sm sm:text-base tabular-nums tracking-wide">
                               {row.time}
                             </span>
-                            <span className="text-cream">{row.label}</span>
-                            {row.suffix && (
-                              <span className="text-cream/65 italic">
-                                · {row.suffix}
-                              </span>
-                            )}
+                            <span className="text-cream text-xs sm:text-sm leading-tight">
+                              {row.label}
+                              {row.note && (
+                                <span className="text-cream/65 italic ml-1.5">
+                                  · {row.note}
+                                </span>
+                              )}
+                            </span>
                           </li>
                         ))}
-                      </ul>
+                      </ol>
                     ) : (
                       <p
                         className="text-cream text-xs sm:text-sm leading-relaxed max-w-sm sm:max-w-md mx-auto"

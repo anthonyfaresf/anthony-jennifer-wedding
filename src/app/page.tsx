@@ -102,17 +102,20 @@ export default function Home() {
       <div className="paper-stack-root">
         <section className="paper-slot" data-paper="1"><Countdown /></section>
         <section className="paper-slot paper-slot--scene" data-paper="2">
-          <Story only={0} /> {/* Photo — Ceremony + schedule overlay */}
+          <Story only={0} /> {/* Photo — Ceremony + timeline overlay */}
         </section>
         <section className="paper-slot" data-paper="3"><RSVP /></section>
         <section className="paper-slot paper-slot--scene" data-paper="4">
           <Story only={1} /> {/* Photo — Reception */}
         </section>
         <section className="paper-slot" data-paper="5"><Gifts /></section>
-        <section className="paper-slot" data-paper="6"><Venue slice="hero" /></section>
+        <section className="paper-slot paper-slot--scene" data-paper="6">
+          <Story only={2} /> {/* Photo — Wedding (restored 2026-05-17) */}
+        </section>
+        <section className="paper-slot" data-paper="7"><Venue slice="hero" /></section>
         <section
           className="paper-slot flex items-center justify-center"
-          data-paper="7"
+          data-paper="8"
         >
           <Footer />
         </section>
