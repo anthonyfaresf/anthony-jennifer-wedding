@@ -106,7 +106,7 @@ export default function Venue({ slice }: VenueProps = {}) {
           Full-width cinematic full-screen establishing shot, scroll-scrubbed. */}
       <div
         ref={heroRef}
-        className="venue-hero relative w-full overflow-hidden bg-cream cream-fade-edges-light h-[100svh]"
+        className="venue-hero relative w-full overflow-hidden bg-cream h-[100svh]"
       >
         <div className="venue-hero-wrap absolute inset-0">
           <FrameSequence
@@ -118,16 +118,10 @@ export default function Venue({ slice }: VenueProps = {}) {
           />
         </div>
 
-        {/* Soft cream cloud at the very corners so the watercolor bleeds
-            into the paper instead of cutting hard against it. */}
-        <div
-          aria-hidden
-          className="absolute inset-0 pointer-events-none z-20"
-          style={{
-            background:
-              "radial-gradient(ellipse 120% 130% at center, transparent 60%, rgba(244,236,224,0.4) 88%, var(--cream) 100%)",
-          }}
-        />
+        {/* Cream edge-halo + bottom banner REMOVED per Anthony 2026-05-17
+            v18: "the couvent saint jean section has a weird white banner
+            at the bottom remove it." Watercolor now goes clean edge-to-
+            edge inside the slot. */}
 
         {/* Bottom scrim — soft dark wash behind the venue title for stable
             contrast across watercolor brightness variations (per 2026-05-15

@@ -53,27 +53,32 @@ const schedule = [
   { time: "20:00", label: "Dinner & Party" },
 ];
 
+// Scene→frame mapping rotated per Anthony 2026-05-17 v18 (all 3 scenes
+// now animated; static Positano photo retired from UI):
+//   The Day            → scene-02-promise frames (was the reception watercolor)
+//   The Reception      → scene-03-wedding frames (was the wedding watercolor)
+//   Celebrate with us  → scene-01-meeting frames (the original meeting/reception watercolor)
 const scenes = [
   {
     n: "01",
     title: "The Day",
     year: "",
     body: "",
-    sceneFolder: "scene-01-meeting",
+    sceneFolder: "scene-02-promise",
   },
   {
     n: "02",
     title: "The Reception",
     year: "20:00",
     body: "Welcome drink on the convent terrace at golden hour, dinner and party under the stars.",
-    sceneFolder: "scene-02-promise",
+    sceneFolder: "scene-03-wedding",
   },
   {
     n: "03",
     title: "Celebrate with us",
     year: "",
     body: "We can't wait to celebrate this day with you.",
-    sceneFolder: "scene-03-wedding",
+    sceneFolder: "scene-01-meeting",
   },
 ];
 
@@ -350,33 +355,13 @@ export default function Story({ only }: StoryProps = {}) {
                 {/* Full-bleed canvas — vertical 9:16 on mobile, horizontal
                     16:9 on desktop. FrameSequence default vertical scrub. */}
                 <div className="scene-frame-wrap absolute inset-0">
-                  {i === 0 ? (
-                    /* Scene 0 (Ceremony / The Day) uses a static proposal
-                       photo from Positano per Anthony 2026-05-17, NOT a
-                       FrameSequence watercolor scrub. Drop the real file
-                       at public/photos/positano.jpg (a single high-res JPG
-                       is enough — no scrub frames needed). Until the file
-                       is added, the bg-cream paper-grain shows through
-                       which still reads as a deliberately blank slide. */
-                    <img
-                      src="/photos/positano.jpg"
-                      alt=""
-                      aria-hidden
-                      className="scene-frame absolute inset-0 w-full h-full object-cover"
-                      onError={(e) => {
-                        // Hide gracefully if the file isn't there yet
-                        (e.currentTarget as HTMLImageElement).style.display = "none";
-                      }}
+                  {mounted && (
+                    <FrameSequence
+                      scene={isDesktop ? `${s.sceneFolder}-h` : s.sceneFolder}
+                      frameCount={31}
+                      triggerSelector={`.scene-${i}`}
+                      className="scene-frame absolute inset-0 w-full h-full"
                     />
-                  ) : (
-                    mounted && (
-                      <FrameSequence
-                        scene={isDesktop ? `${s.sceneFolder}-h` : s.sceneFolder}
-                        frameCount={31}
-                        triggerSelector={`.scene-${i}`}
-                        className="scene-frame absolute inset-0 w-full h-full"
-                      />
-                    )
                   )}
                 </div>
 

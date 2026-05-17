@@ -128,6 +128,13 @@ export default function VideoGate() {
       return;
     }
 
+    // Hide the SSR prepaint cover BEFORE the gate fade starts. Otherwise
+    // the wax-seal poster sits at z=99 BEHIND the gate (z=100) — and once
+    // the gate fades to opacity:0, the seal re-appears mid-fade for a
+    // beat before we finally remove it in cleanup(). Hiding it now means
+    // the fade reveals the hero directly. (Anthony 2026-05-17 v18.)
+    document.documentElement.classList.add("aj-gate-passed");
+
     const heroCard = document.querySelector(".hero-card");
     const heroFrame = document.querySelector(".hero-frame-wrap");
 

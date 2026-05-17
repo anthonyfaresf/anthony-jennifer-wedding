@@ -88,30 +88,45 @@ export default function Hero() {
           { y: 0, opacity: 1, ease: "power3.out", duration: 0.5, stagger: 0.018 },
           "-=0.6"
         )
-        // Names — slower + more dramatic. Each char enters with a film-
-        // title blur-clear (8px → 0), rotateX flip, opacity 0 → 1, lift
-        // y:36 → 0. Stagger 0.06s + per-char 1.1s = the names take ~1.8s
-        // to fully reveal. Cinematic per Anthony's 'more cinematic or
-        // dynamic animation with the texts.'
+        // Names enter from opposite sides per Anthony 2026-05-17 v18:
+        // "the hero section text should fade in from the sides, each one
+        // from a different side." Anthony slides in from the LEFT (x:-60
+        // → 0), Jennifer slides in from the RIGHT (x:+60 → 0), both with
+        // a soft blur-clear and opacity fade. Per-char stagger inside
+        // each name preserves the cinematic letter-by-letter feel.
         .fromTo(
-          ".hero-name-char",
+          ".hero-name-anthony",
           {
-            y: 44,
+            x: -60,
             opacity: 0,
-            rotateX: -55,
-            filter: "blur(8px)",
-            transformPerspective: 600,
+            filter: "blur(6px)",
           },
           {
-            y: 0,
+            x: 0,
             opacity: 1,
-            rotateX: 0,
             filter: "blur(0px)",
             ease: "power3.out",
-            duration: 1.1,
-            stagger: 0.07,
+            duration: 1.0,
+            stagger: 0.04,
           },
           "-=0.45"
+        )
+        .fromTo(
+          ".hero-name-jennifer",
+          {
+            x: 60,
+            opacity: 0,
+            filter: "blur(6px)",
+          },
+          {
+            x: 0,
+            opacity: 1,
+            filter: "blur(0px)",
+            ease: "power3.out",
+            duration: 1.0,
+            stagger: 0.04,
+          },
+          "<"
         )
         .fromTo(
           ".hero-and",
@@ -123,7 +138,7 @@ export default function Hero() {
             ease: "back.out(1.5)",
             duration: 0.7,
           },
-          "-=0.35"
+          "-=0.55"
         )
         .fromTo(
           ".hero-rule",
@@ -311,10 +326,10 @@ export default function Hero() {
               }}
             >
               <span className="inline-block whitespace-nowrap">
-                {splitChars("Anthony", "hero-name-char")}
+                {splitChars("Anthony", "hero-name-anthony")}
               </span>
               <span
-                className="inline-block mx-3 sm:mx-4 align-middle"
+                className="hero-and inline-block mx-3 sm:mx-4 align-middle"
                 style={{
                   color: "#d4b87a",
                   fontSize: "0.85em",
@@ -324,7 +339,7 @@ export default function Hero() {
                 &amp;
               </span>
               <span className="inline-block whitespace-nowrap">
-                {splitChars("Jennifer", "hero-name-char")}
+                {splitChars("Jennifer", "hero-name-jennifer")}
               </span>
             </p>
 
