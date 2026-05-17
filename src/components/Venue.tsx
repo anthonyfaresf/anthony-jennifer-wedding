@@ -146,11 +146,11 @@ export default function Venue({ slice }: VenueProps = {}) {
             Where
           </p>
           <h2
-            className="leading-none"
+            className="leading-tight uppercase"
             style={{
-              fontFamily: "var(--font-display)",
-              fontSize: "clamp(40px, 6vw, 88px)",
-              letterSpacing: "0.015em",
+              fontFamily: "var(--font-tenor), system-ui, sans-serif",
+              fontSize: "clamp(22px, 3.6vw, 44px)",
+              letterSpacing: "0.18em",
               color: "#ffffff",
               textShadow:
                 "0 0 28px rgba(0,0,0,0.98), 0 0 14px rgba(0,0,0,0.95), 0 4px 22px rgba(0,0,0,0.9), 0 2px 8px rgba(0,0,0,0.7)",
@@ -166,10 +166,11 @@ export default function Venue({ slice }: VenueProps = {}) {
             }}
           />
           <p
-            className="italic"
+            className="uppercase"
             style={{
-              fontFamily: "var(--font-display)",
-              fontSize: "clamp(16px, 1.7vw, 22px)",
+              fontFamily: "var(--font-tenor), system-ui, sans-serif",
+              fontSize: "clamp(11px, 1.2vw, 14px)",
+              letterSpacing: "0.4em",
               color: "#ffffff",
               textShadow:
                 "0 0 16px rgba(0,0,0,0.95), 0 2px 14px rgba(0,0,0,0.9)",

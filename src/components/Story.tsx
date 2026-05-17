@@ -497,23 +497,31 @@ export default function Story({ only }: StoryProps = {}) {
                             <span className="text-gold text-sm sm:text-base tabular-nums tracking-wide">
                               {row.time}
                             </span>
-                            <span className="text-cream text-xs sm:text-sm leading-tight">
+                            <span
+                              className="text-cream uppercase leading-tight"
+                              style={{
+                                fontFamily: "var(--font-tenor), system-ui, sans-serif",
+                                fontSize: "clamp(11px, 1.1vw, 13px)",
+                                letterSpacing: "0.22em",
+                              }}
+                            >
                               {row.label}
                             </span>
                           </li>
                         ))}
                       </ol>
                     ) : (
-                      /* Reception body = Matthew 19:9 verse — rendered in
-                         the cinematic display font, italic, larger, so it
-                         reads as scripture, not body copy. Per Anthony
-                         2026-05-17 v20: "make the verse the cinematic
-                         font we're using." */
+                      /* Reception body = Matthew 19:9 verse — sans-serif
+                         uppercase italic per Anthony 2026-05-17 v23.
+                         Letter-spacing tightened to keep the all-caps
+                         readable; line-height generous so the verse
+                         breathes. */
                       <p
-                        className="font-display italic text-cream leading-snug max-w-sm sm:max-w-md mx-auto"
+                        className="italic text-cream uppercase leading-relaxed max-w-sm sm:max-w-md mx-auto"
                         style={{
-                          fontSize: "clamp(18px, 2.6vw, 26px)",
-                          letterSpacing: "0.005em",
+                          fontFamily: "var(--font-tenor), system-ui, sans-serif",
+                          fontSize: "clamp(11px, 1.2vw, 14px)",
+                          letterSpacing: "0.16em",
                           textShadow: "0 2px 14px rgba(0,0,0,0.85)",
                         }}
                       >

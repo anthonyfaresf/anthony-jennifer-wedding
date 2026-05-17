@@ -230,24 +230,43 @@ export default function VideoGate() {
         preload="auto"
         onTimeUpdate={handleTimeUpdate}
       />
-      {/* Breathing tap-cue ring — centered, soft gold, only visible until
-          the user taps. Pure visual hint, no text per the brief. */}
+      {/* Breathing tap-cue ring — centered, soft gold. Now paired with a
+          small "ENTER" label below it per Anthony 2026-05-17 v23 ("add
+          enter in small dynamic so people can see it"). */}
       {!playing && (
         <div
           ref={pulseRef}
-          aria-hidden
-          className="absolute left-1/2 top-1/2 pointer-events-none"
+          className="absolute left-1/2 top-1/2 pointer-events-none flex flex-col items-center"
           style={{
-            width: 72,
-            height: 72,
             transform: "translate(-50%, -50%)",
-            borderRadius: "50%",
-            border: "1.5px solid rgba(212, 184, 122, 0.65)",
-            boxShadow:
-              "0 0 32px rgba(212, 184, 122, 0.35), inset 0 0 24px rgba(212, 184, 122, 0.25)",
             opacity: 0.6,
           }}
-        />
+        >
+          <div
+            aria-hidden
+            style={{
+              width: 72,
+              height: 72,
+              borderRadius: "50%",
+              border: "1.5px solid rgba(212, 184, 122, 0.65)",
+              boxShadow:
+                "0 0 32px rgba(212, 184, 122, 0.35), inset 0 0 24px rgba(212, 184, 122, 0.25)",
+            }}
+          />
+          <span
+            className="mt-4 uppercase"
+            style={{
+              fontFamily: "var(--font-tenor), system-ui, sans-serif",
+              fontSize: "11px",
+              letterSpacing: "0.5em",
+              color: "#f4ece0",
+              textShadow:
+                "0 0 14px rgba(0,0,0,0.85), 0 2px 8px rgba(0,0,0,0.7)",
+            }}
+          >
+            Enter
+          </span>
+        </div>
       )}
     </div>
   );

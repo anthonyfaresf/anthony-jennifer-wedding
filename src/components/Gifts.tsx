@@ -95,8 +95,16 @@ export default function Gifts() {
         <p className="gifts-eyebrow text-xs uppercase tracking-[0.4em] text-olive-deep mb-3">
           Gifts
         </p>
-        <h2 className="gifts-title font-display text-3xl sm:text-5xl md:text-6xl text-ink">
-          Your presence is the gift
+        <h2
+          className="gifts-title text-ink uppercase"
+          style={{
+            fontFamily: "var(--font-tenor), system-ui, sans-serif",
+            fontSize: "clamp(1.875rem, 3.5vw, 3.75rem)",
+            letterSpacing: "0.18em",
+            lineHeight: 1.15,
+          }}
+        >
+          Your Presence Is The Gift
         </h2>
         <div className="gifts-rule w-16 h-px bg-gold mx-auto mt-5 mb-7" />
         <p className="gifts-body text-body leading-relaxed sm:text-lg mb-8">
@@ -109,12 +117,26 @@ export default function Gifts() {
           <p className="text-xs uppercase tracking-[0.35em] text-olive-deep mb-3">
             For those who wish
           </p>
-          <p className="font-display text-2xl sm:text-3xl text-ink mb-1">
+          <p
+            className="text-ink uppercase mb-2"
+            style={{
+              fontFamily: "var(--font-tenor), system-ui, sans-serif",
+              fontSize: "clamp(20px, 2.2vw, 28px)",
+              letterSpacing: "0.18em",
+            }}
+          >
             Whish Money
           </p>
-          <p className="text-body/85 leading-relaxed">
-            Account no.{" "}
-            <span className="text-ink tabular-nums tracking-wide font-medium">
+          <p
+            className="text-body/85 uppercase"
+            style={{
+              fontFamily: "var(--font-tenor), system-ui, sans-serif",
+              fontSize: "clamp(11px, 1.1vw, 13px)",
+              letterSpacing: "0.28em",
+            }}
+          >
+            Account No.{" "}
+            <span className="text-ink tabular-nums tracking-wider font-medium">
               20939489-03
             </span>
           </p>

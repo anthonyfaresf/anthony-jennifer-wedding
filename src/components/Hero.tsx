@@ -373,7 +373,47 @@ export default function Hero() {
                 the Countdown + Venue slots already; hero stays clean. */}
           </div>
         </div>
-        {/* Scroll arrows REMOVED per Anthony 2026-05-16. */}
+        {/* Scroll indicator — restored per Anthony 2026-05-17 v23. Small
+            "scroll" label + a gentle bouncing chevron at the bottom of the
+            hero. Sits above the vignette + below the card. */}
+        <div
+          aria-hidden
+          className="hero-scroll-indicator absolute left-1/2 -translate-x-1/2 z-40 flex flex-col items-center pointer-events-none"
+          style={{
+            bottom: "max(env(safe-area-inset-bottom), 28px)",
+            opacity: 0.85,
+          }}
+        >
+          <span
+            className="uppercase text-cream/85 mb-2"
+            style={{
+              fontFamily: "var(--font-tenor), system-ui, sans-serif",
+              fontSize: "10px",
+              letterSpacing: "0.5em",
+              textShadow: "0 2px 10px rgba(0,0,0,0.85)",
+            }}
+          >
+            Scroll
+          </span>
+          <span
+            className="hero-scroll-chevron block"
+            style={{
+              width: 14,
+              height: 14,
+              borderRight: "1.5px solid rgba(244,236,224,0.85)",
+              borderBottom: "1.5px solid rgba(244,236,224,0.85)",
+              transform: "rotate(45deg)",
+              filter: "drop-shadow(0 2px 6px rgba(0,0,0,0.6))",
+              animation: "ajHeroScrollBob 1.6s ease-in-out infinite",
+            }}
+          />
+          <style>{`
+            @keyframes ajHeroScrollBob {
+              0%, 100% { transform: rotate(45deg) translate(0, 0); opacity: 0.85; }
+              50%      { transform: rotate(45deg) translate(3px, 3px); opacity: 1; }
+            }
+          `}</style>
+        </div>
       </div>
     </section>
   );

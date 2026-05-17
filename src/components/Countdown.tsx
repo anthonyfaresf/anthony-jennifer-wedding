@@ -155,14 +155,14 @@ export default function Countdown() {
             <span>{pad(tick?.seconds ?? 0)}</span>
           </p>
           <p
-            className="mt-4 text-olive-deep/70 italic"
+            className="mt-4 text-olive-deep/75 uppercase"
             style={{
-              fontFamily: "var(--font-italianno), 'Italianno', cursive",
-              fontSize: "24px",
-              letterSpacing: "0.05em",
+              fontFamily: "var(--font-tenor), system-ui, sans-serif",
+              fontSize: "11px",
+              letterSpacing: "0.4em",
             }}
           >
-            days · hours · minutes · seconds
+            Days · Hours · Minutes · Seconds
           </p>
         </div>
 
@@ -193,10 +193,11 @@ export default function Countdown() {
                   ))}
               </p>
               <p
-                className="mt-3 text-olive-deep/75 italic"
+                className="mt-3 text-olive-deep/80 uppercase"
                 style={{
-                  fontFamily: "var(--font-italianno), 'Italianno', cursive",
-                  fontSize: "clamp(22px, 2.4vw, 30px)",
+                  fontFamily: "var(--font-tenor), system-ui, sans-serif",
+                  fontSize: "clamp(11px, 1.1vw, 13px)",
+                  letterSpacing: "0.4em",
                 }}
               >
                 {c.label}
@@ -213,13 +214,14 @@ export default function Countdown() {
         {/* 3-line footnote per Anthony 2026-05-16 — was a single line. */}
         <div className="cd-footnote space-y-2.5">
           <p
-            className="italic text-body/85"
+            className="text-body/85 uppercase"
             style={{
-              fontFamily: "var(--font-display)",
-              fontSize: "clamp(18px, 2vw, 26px)",
+              fontFamily: "var(--font-tenor), system-ui, sans-serif",
+              fontSize: "clamp(13px, 1.5vw, 17px)",
+              letterSpacing: "0.35em",
             }}
           >
-            Until we say I do.
+            Until We Say I Do
           </p>
           <p
             className="text-body/75 uppercase"
