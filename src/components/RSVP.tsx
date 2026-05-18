@@ -179,7 +179,7 @@ export default function RSVP() {
     <section
       ref={sectionRef}
       id="rsvp"
-      className="min-h-[100svh] flex flex-col px-6 pt-20 pb-8 bg-cream overflow-y-auto"
+      className="min-h-[100svh] md:max-h-[100svh] flex flex-col px-6 pt-20 pb-8 bg-cream overflow-y-auto"
     >
       <div className="max-w-md mx-auto w-full">
         <div className="text-center mb-5">
