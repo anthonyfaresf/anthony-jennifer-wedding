@@ -30,7 +30,7 @@ type Sections = "ceremony" | "party" | "both" | null;
 
 export default function RSVP() {
   const sectionRef = useRef<HTMLElement>(null);
-  const bottomRef = useRef<HTMLDivElement>(null);
+  const fieldsRef = useRef<HTMLDivElement>(null);
   const [attending, setAttending] = useState<Attending>(null);
   const [partySize, setPartySize] = useState<1 | 2>(1);
   const [sections, setSections] = useState<Sections>(null);
@@ -94,12 +94,14 @@ export default function RSVP() {
     return () => ctx.revert();
   }, []);
 
-  // When the form grows (selecting accept, choosing companion), nudge scroll
-  // so the newly-revealed bottom (submit button) stays in view.
+  // When accepting reveals more fields (sections, guest count, companion
+  // names), scroll the fields region so the new rows come into view. The
+  // submit button itself is always visible — it's pinned below this region.
   useEffect(() => {
     if (attending !== "yes") return;
     requestAnimationFrame(() => {
-      bottomRef.current?.scrollIntoView({ behavior: "smooth", block: "end" });
+      const el = fieldsRef.current;
+      if (el) el.scrollTo({ top: el.scrollHeight, behavior: "smooth" });
     });
   }, [attending, partySize, sections]);
 
@@ -179,10 +181,10 @@ export default function RSVP() {
     <section
       ref={sectionRef}
       id="rsvp"
-      className="min-h-[100svh] md:max-h-[100svh] flex flex-col px-6 pt-20 pb-8 bg-cream overflow-y-auto"
+      className="min-h-[100svh] max-h-[100svh] flex flex-col px-6 pt-20 pb-8 bg-cream overflow-hidden"
     >
-      <div className="max-w-md mx-auto w-full">
-        <div className="text-center mb-5">
+      <div className="max-w-md mx-auto w-full flex flex-col min-h-0 flex-1">
+        <div className="text-center mb-5 shrink-0">
           <p className="rsvp-eyebrow text-xs uppercase tracking-[0.4em] text-olive-deep mb-2">
             RSVP
           </p>
@@ -192,7 +194,17 @@ export default function RSVP() {
           <div className="rsvp-rule w-12 h-px bg-gold mx-auto mt-4" />
         </div>
 
-        <form onSubmit={handleSubmit} className="space-y-3.5 relative">
+        <form onSubmit={handleSubmit} className="flex flex-col min-h-0 flex-1">
+          {/* Scrollable fields region — keeps the submit button pinned and
+              always visible below it, even on short phones. Per Anthony
+              2026-05-18: friends couldn't find the submit button on mobile
+              because the section grew past the viewport inside the sticky
+              paper-slot and the button was clipped below the fold. The fields
+              now scroll here; the button (outside this region) never moves. */}
+          <div
+            ref={fieldsRef}
+            className="space-y-3.5 overflow-y-auto overscroll-contain min-h-0 flex-1 relative pr-0.5"
+          >
           {/* Honeypot — bots fill it, humans don't see it */}
           <div className="absolute -left-[9999px]" aria-hidden>
             <label>
@@ -393,8 +405,13 @@ export default function RSVP() {
 
           {/* Companion name fields removed per Anthony 2026-05-17. Just
               party_size 1|2 — names captured later via WhatsApp. */}
+          </div>
 
-          <div ref={bottomRef} className="rsvp-field pt-2">
+          {/* Pinned submit — OUTSIDE the scroll region so it is always
+              visible at the bottom of the viewport, no matter how tall the
+              form grows or how short the phone is. No entrance fade so it
+              reads as present from first paint. */}
+          <div className="shrink-0 pt-3">
             <button
               type="submit"
               disabled={submitting || !attending}
@@ -408,13 +425,12 @@ export default function RSVP() {
                 ? "Send our acceptance"
                 : "Send our regrets"}
             </button>
+            {done === "err" && (
+              <p className="text-xs text-red-700 text-center pt-2">
+                Couldn&apos;t send: {errMsg}. Please try again or WhatsApp Anthony directly.
+              </p>
+            )}
           </div>
-
-          {done === "err" && (
-            <p className="text-xs text-red-700 text-center pt-2">
-              Couldn&apos;t send: {errMsg}. Please try again or WhatsApp Anthony directly.
-            </p>
-          )}
         </form>
       </div>
     </section>
