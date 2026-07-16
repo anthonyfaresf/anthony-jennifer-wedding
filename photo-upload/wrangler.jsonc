@@ -9,7 +9,9 @@
   "vars": {
     "R2_ACCOUNT_ID": "115bd9d989d2671d24df5c68ade4ce6f",
     "R2_BUCKET_NAME": "wedding-photos",
-    "MAX_PHOTO_MB": "30",
+    // 95 covers every real iPhone still — normal HEIC/JPEG are 2-10 MB, and even
+    // 48MP ProRAW (~80 MB) or giant panoramas fit. Matches the single-PUT ceiling.
+    "MAX_PHOTO_MB": "95",
     "MAX_VIDEO_MB": "2048",
     // Proxy-mode ceiling — keep under the Workers request-body limit (100 MB on
     // Free plan). Raise only after confirming the account's Workers plan.

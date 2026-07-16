@@ -169,7 +169,7 @@ footer{text-align:center;margin-top:30px;}
 
 <script>
 (function(){
-  var MAXP=30*1024*1024, MAXV=2048*1024*1024;
+  var MAXP=95*1024*1024, MAXV=2048*1024*1024;
   var input=document.getElementById("fileInput"),
       drop=document.getElementById("drop"),
       list=document.getElementById("list"),
@@ -230,7 +230,7 @@ footer{text-align:center;margin-top:30px;}
     it.el=li; it.bar=bar; it.statEl=st;
     if(it.status==="toobig"){
       barWrap.style.display="none"; rm.style.display="";
-      setStat(it,(isVid(it.file)?"Too large — videos up to 2 GB":"Too large — photos up to 30 MB"),"err");
+      setStat(it,(isVid(it.file)?"Too large — videos up to 2 GB":"Too large — photos up to 95 MB"),"err");
     } else { setStat(it,"Ready",""); }
     list.appendChild(li);
   }
