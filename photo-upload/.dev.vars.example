@@ -1,0 +1,7 @@
+# Copy to `.dev.vars` (gitignored) and fill in real values for local dev.
+# Create the R2 S3 credentials in: Cloudflare dashboard -> R2 -> Manage API Tokens -> Create S3 credentials.
+R2_ACCESS_KEY_ID = "your-r2-s3-access-key-id"
+R2_SECRET_ACCESS_KEY = "your-r2-s3-secret-access-key"
+
+# Any long random string. This gates the admin gallery + moderation endpoints.
+ADMIN_TOKEN = "replace-with-a-long-random-string"

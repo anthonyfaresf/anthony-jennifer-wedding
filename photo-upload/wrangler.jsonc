@@ -1,0 +1,46 @@
+{
+  "$schema": "node_modules/wrangler/config-schema.json",
+  "name": "wedding-photo-upload",
+  "main": "src/index.ts",
+  "compatibility_date": "2026-07-01",
+
+  // Non-secret config. Replace the account id + bucket name with the THROWAWAY
+  // staging values first; production values are swapped in at promote-time.
+  "vars": {
+    "R2_ACCOUNT_ID": "115bd9d989d2671d24df5c68ade4ce6f",
+    "R2_BUCKET_NAME": "wedding-photos",
+    "MAX_PHOTO_MB": "30",
+    "MAX_VIDEO_MB": "2048",
+    // Proxy-mode ceiling — keep under the Workers request-body limit (100 MB on
+    // Free plan). Raise only after confirming the account's Workers plan.
+    "PROXY_MAX_MB": "95",
+    // 'proxy' streams uploads through the Worker's native R2 binding — no S3
+    // creds at all. Presign mode died 2026-07-15 because its S3 keys had been
+    // derived from the main CLOUDFLARE_API_TOKEN, which stopped validating that
+    // day. Flip to 'presign' ONLY with a DEDICATED R2 token's secrets set
+    // (dashboard -> R2 -> Manage API Tokens), never a shared account token.
+    "UPLOAD_MODE": "proxy"
+  },
+
+  // Native R2 binding — used for head()/verify + admin reads. Same bucket the
+  // presigned S3 URLs target.
+  "r2_buckets": [
+    { "binding": "BUCKET", "bucket_name": "wedding-photos" }
+  ],
+
+  // Metadata store. database_id is filled in after `wrangler d1 create`.
+  "d1_databases": [
+    { "binding": "DB", "database_name": "wedding-photos", "database_id": "9b0ee384-7669-44a4-a0eb-1ac9c4d9bd28" }
+  ],
+
+  // Custom domain — attaches photos.anthonyandjenni.com to this Worker.
+  // custom_domain:true auto-creates the DNS record + edge TLS cert (the zone
+  // anthonyandjenni.com is already active in this Cloudflare account).
+  "routes": [
+    { "pattern": "photos.anthonyandjenni.com", "custom_domain": true }
+  ]
+
+  // Secrets (NOT in this file): R2_ACCESS_KEY_ID, R2_SECRET_ACCESS_KEY, ADMIN_TOKEN
+  //   local:    put them in .dev.vars  (see .dev.vars.example)
+  //   deployed: `wrangler secret put R2_ACCESS_KEY_ID`  (etc.)
+}
