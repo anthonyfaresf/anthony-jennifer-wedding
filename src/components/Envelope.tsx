@@ -590,15 +590,15 @@ export default function Envelope() {
         className="absolute bottom-3 left-0 right-0 text-center text-[9px] uppercase tracking-[0.3em] pointer-events-auto"
         style={{ color: "var(--display)", opacity: 0.5 }}
       >
-        By{" "}
+        
         <a
-          href="https://www.afandu.com"
+          href="https://afandu.com"
           target="_blank"
           rel="noopener noreferrer"
           className="underline-offset-4 hover:underline"
           style={{ color: "var(--display)" }}
         >
-          AF&amp;U
+          By AF&amp;U
         </a>
       </p>
       </div>

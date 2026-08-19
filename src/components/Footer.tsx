@@ -37,14 +37,16 @@ export default function Footer() {
           className="text-body/45 uppercase"
           style={{ fontSize: "clamp(11px, 1.1vw, 13px)", letterSpacing: "0.32em" }}
         >
-          Designed &amp; developed by{" "}
+          {/* The whole phrase is the link rather than a bare "AF&U" — a screen
+              reader reading links out of context needs to know what this one
+              is. Same correction applied to the splash and envelope credits. */}
           <a
-            href="https://www.afandu.com"
+            href="https://afandu.com"
             target="_blank"
             rel="noopener noreferrer"
             className="text-olive-deep/70 hover:text-olive-deep underline-offset-4 hover:underline transition-colors"
           >
-            AF&amp;U
+            Designed &amp; developed by AF&amp;U
           </a>
         </p>
       </div>

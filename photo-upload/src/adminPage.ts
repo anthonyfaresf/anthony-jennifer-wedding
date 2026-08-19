@@ -136,7 +136,7 @@ footer{text-align:center;margin-top:30px;}
   </section>
 
   <footer>
-    <p class="credit">Designed &amp; developed by <a href="https://www.afandu.com" target="_blank" rel="noopener noreferrer">AF&amp;U</a></p>
+    <p class="credit">Designed &amp; developed by <a href="https://afandu.com" target="_blank" rel="noopener noreferrer">AF&amp;U</a></p>
   </footer>
 </main>
 

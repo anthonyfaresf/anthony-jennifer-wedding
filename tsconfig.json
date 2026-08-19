@@ -30,5 +30,6 @@
     ".next/dev/types/**/*.ts",
     "**/*.mts"
   ],
-  "exclude": ["node_modules"]
+  "//exclude": "photo-upload is a separate Cloudflare Worker with its own tsconfig, package.json and @cloudflare/workers-types. The include globs above reach into it, so `next build` was type-checking Worker code against the Next app's types and failing on D1Database — the site could not build from a clean checkout. It compiles itself; leave it to its own config.",
+  "exclude": ["node_modules", "photo-upload"]
 }
