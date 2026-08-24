@@ -1,5 +1,24 @@
 # Wedding Website — Project Context
 
+## 🟥 DEPLOY: never hand-run the build/deploy commands. Use `npm run deploy`.
+*Installed 2026-08-24 after the site served HTTP 200 with a blank page for up to five days.*
+
+```
+npm run deploy      # DEPLOY_TARGET=cloudflare build → wrangler deploy → live asset verify
+npm run verify      # just the live check, any time
+```
+
+**What went wrong:** `next.config.ts` used to default `DEPLOY_TARGET` to `ghpages`, and that variable lived in **no script and no CI** — it had to be hand-typed on every deploy. The 2026-08-19 deploy omitted it, so every asset was requested under `/anthony-jennifer-wedding/` while the site is served at the Cloudflare **root**. Result: page returns 200, every CSS/JS/image 404s, blank screen, nothing alerts.
+
+**Rules that follow — these bind Claude, not just Anthony:**
+- **Never** run `next build` + `wrangler pages deploy` by hand. Always `npm run deploy`. A hand-run deploy skips the post-deploy verification, which is the only thing that catches a blank ship.
+- 🟥 **A deploy is not done when wrangler prints "Deployment complete!"** It is done when `npm run verify` passes against the real custom domain. Wrangler reports success for a build that renders nothing.
+- **Two destinations genuinely exist** (verified 2026-08-24), so `DEPLOY_TARGET` cannot simply be deleted: Cloudflare Pages root at **anthonyandjenni.com** (production, direct-upload project `anthony-jennifer-wedding`) and a **live** GitHub Pages mirror at anthonyfaresf.github.io/anthony-jennifer-wedding/ (branch `gh-pages`, status built). Only the ghpages build wants a basePath — opt-in via `DEPLOY_TARGET=ghpages`.
+- If you ever deploy the **mirror**, verify it too: `bash scripts/verify-live.sh https://anthonyfaresf.github.io/anthony-jennifer-wedding/`.
+- Deploying needs `CLOUDFLARE_ACCOUNT_ID=115bd9d989d2671d24df5c68ade4ce6f` in the environment — the current API token lacks `User Details:Read`, so wrangler cannot look the account up itself.
+
+**Known architectural debt (needs Anthony's approval — do NOT do it unasked):** this Pages project is **direct-upload**, which violates `website-build.md`'s "Git-connected from day one" rule. Codex's recommendation (2026-08-24, receipt `1787573051-codex.json`) is to convert to a Git-connected project with `DEPLOY_TARGET` set as a project env var, so the variable can never be forgotten again. A Pages project's deploy source cannot change in place — it means a new project plus a live-domain cutover, which is Anthony's call every time.
+
 *Anthony + [fiancée TBD] · personal wedding website · cinematic tier build*
 
 ## Who this is for
