@@ -1,13 +1,17 @@
 import type { NextConfig } from "next";
 
 // DEPLOY_TARGET routes basePath:
-//   "ghpages"     → /anthony-jennifer-wedding   (anthonyfaresf.github.io/anthony-jennifer-wedding/)
-//   "cloudflare"  → ""                          (anthony-jennifer-wedding.pages.dev/ root)
-//   unset (dev)   → ""                          (localhost:3000/)
-// Cloudflare is the canonical host per vault doctrine; ghpages stays as the
-// stopgap mirror until DNS is pointed at Pages.
+//   unset / anything → ""                        (Cloudflare Pages root — the LIVE host)
+//   "ghpages"        → /anthony-jennifer-wedding (opt-in only, for the GH Pages mirror)
+//
+// 🟥 The default is deliberately the SAFE one. It used to default to "ghpages",
+// so any build run without DEPLOY_TARGET=cloudflare produced a bundle whose every
+// asset lived under /anthony-jennifer-wedding/. Deployed to Cloudflare root that
+// build returns HTTP 200 with a blank page — every CSS/JS/image 404s. That is
+// exactly what took anthonyandjenni.com down (found 2026-08-24). basePath is now
+// opt-in: you must ASK for the ghpages mirror to get it.
 const isProd = process.env.NODE_ENV === "production";
-const target = process.env.DEPLOY_TARGET ?? "ghpages";
+const target = process.env.DEPLOY_TARGET ?? "cloudflare";
 const repo = "anthony-jennifer-wedding";
 const basePath = isProd && target === "ghpages" ? `/${repo}` : "";
 

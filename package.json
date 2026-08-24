@@ -5,7 +5,9 @@
   "scripts": {
     "dev": "next dev",
     "build": "next build",
-    "start": "next start"
+    "start": "next start",
+    "deploy": "DEPLOY_TARGET=cloudflare next build && wrangler pages deploy out --project-name=anthony-jennifer-wedding && npm run verify",
+    "verify": "bash scripts/verify-live.sh https://anthonyandjenni.com"
   },
   "dependencies": {
     "gsap": "^3.15.0",
