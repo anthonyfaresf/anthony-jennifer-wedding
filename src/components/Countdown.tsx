@@ -66,7 +66,7 @@ function FlipDigit({ value }: { value: string }) {
  *
  * 4 Blosta-olive digit clusters (days · hours · minutes · seconds) on cream
  * paper with paper-grain. Italianno italic-script labels under each. Gold
- * rule below. One line of Gordita italic body: "until we say I do."
+ * rule below. One line of italic body: "until we say I do."
  *
  * Per SYNTHESIS-v3 TIER 1 #1 — 5 of 10 IG refs include a live countdown.
  * We were the only one of 10 references without it. Now corrected.

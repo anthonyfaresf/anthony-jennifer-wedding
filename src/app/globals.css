@@ -1,14 +1,14 @@
 @import "tailwindcss";
 
 /* === BRAND IDENTITY (locked from save-the-date + Anthony 2026-05-02) === */
-/* Display font: Blosta (#495314 olive)
-   Body font:    Gordita (#2b2b2b near-black)
-   To activate the actual fonts, drop these files into public/fonts/:
-     - public/fonts/Blosta.woff2
-     - public/fonts/Gordita-Regular.woff2
-     - public/fonts/Gordita-Medium.woff2  (optional)
-   Until then, the @font-face rules silently fall through to the fallback
-   stack (Cormorant Garamond / Plus Jakarta Sans / Tenor Sans). */
+/* Display font: Blosta (#495314 olive) — bundled at public/fonts/Blosta.woff2
+   Body font:    Tenor Sans (#2b2b2b near-black) — loaded via next/font (--font-tenor)
+   Note: an earlier draft pointed the body font at "Gordita", but those files
+   were never added — so every page load 404'd on Gordita-*.woff2 while the text
+   silently rendered in the Tenor Sans fallback. The dead Gordita @font-face
+   rules were removed (2026-06-27) to stop the 404s; the rendered look is
+   unchanged. To use Gordita later: add Gordita-Regular.woff2 to public/fonts/,
+   re-add an @font-face, and put "Gordita" first in --font-body below. */
 
 /* Comma-separated src lets the browser try root path first (works in dev where
    basePath is empty) then fall through to the basePath-prefixed path (works in
@@ -23,23 +23,9 @@
   font-display: swap;
 }
 
-@font-face {
-  font-family: "Gordita";
-  src: url("/fonts/Gordita-Regular.woff2") format("woff2"),
-       url("/anthony-jennifer-wedding/fonts/Gordita-Regular.woff2") format("woff2");
-  font-weight: 400;
-  font-style: normal;
-  font-display: swap;
-}
-
-@font-face {
-  font-family: "Gordita";
-  src: url("/fonts/Gordita-Medium.woff2") format("woff2"),
-       url("/anthony-jennifer-wedding/fonts/Gordita-Medium.woff2") format("woff2");
-  font-weight: 500;
-  font-style: normal;
-  font-display: swap;
-}
+/* Body font = Tenor Sans (via next/font, --font-tenor). The dead "Gordita"
+   @font-face rules that 404'd on every load were removed 2026-06-27 — see the
+   brand-identity note above. */
 
 :root {
   --cream: #f4ece0;
@@ -76,16 +62,16 @@
   --color-olive: var(--olive);
   --color-olive-deep: var(--olive-deep);
 
-  /* Font stacks — Blosta + Gordita first, Google Fonts as graceful fallback */
+  /* Font stacks — Blosta (display) + Tenor Sans (body), Google Fonts fallback */
   --font-display: "Blosta", var(--font-cormorant), Georgia, serif;
-  --font-body: "Gordita", var(--font-tenor), system-ui, sans-serif;
+  --font-body: var(--font-tenor), system-ui, sans-serif;
   --font-script: var(--font-italianno);
 }
 
 html, body {
   background: var(--cream);
   color: var(--body);
-  font-family: "Gordita", var(--font-tenor), system-ui, sans-serif;
+  font-family: var(--font-tenor), system-ui, sans-serif;
   -webkit-font-smoothing: antialiased;
   text-rendering: optimizeLegibility;
   /* Body type — 16px mobile, 18px tablet+. 1.65 line-height per 2026

@@ -1,4 +1,4 @@
-# continue wedding website build
+# debug wedding media upload page
 
 *Scaffolded by CEO router 2026-05-14 · classification: `website` · worker: `Mateo`*
 
@@ -28,7 +28,7 @@
 
 ## What was the original task?
 
-`continue wedding website build`
+`debug wedding media upload page`
 
 ---
 
